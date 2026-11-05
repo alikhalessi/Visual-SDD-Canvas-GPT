@@ -1,6 +1,6 @@
 # Visual SDD Canvas
 
-**Sprint 02 — Interactive Visual SDD Canvas**
+**Sprint 03 — Controlled Spec Kit/Codex Handoff**
 
 Visual SDD is a visual operating environment for Spec-Driven Development. Its core product is the **visible, reviewable, and controllable SDD process**, rather than a generic AI app builder.
 
@@ -19,6 +19,16 @@ Visual SDD is a visual operating environment for Spec-Driven Development. Its co
 - Testable SDD domain model, a CI workflow, roadmap and design decisions.
 
 **Not implemented yet:** AI agent execution, automatic specification generation, repository synchronization, team accounts, cloud synchronization of planning/tasks, production code generation, and release verification.
+
+## Sprint 03: controlled GitHub handoff
+
+- The Implement stage creates a bounded JSON run manifest from explicitly approved Specification → Plan → Tasks.
+- A user-approved **validate-only** GitHub Actions handoff generates Spec Kit-compatible spec.md, plan.md and tasks.md (no AI).
+- Optional OpenAI Codex runner using GitHub Actions is designed to write ONLY isolated proposed files under agent-preview/<issue-number> and request human PR review.
+- **Codex is not enabled unless OPENAI_API_KEY is configured as a GitHub Actions secret.** No model call is claimed until an actual GitHub Actions run proves it.
+- The repository is public: the UI asks for explicit consent before exposing a selected task and its context as an Issue. Issue URL never includes idea text.
+- GitHub issue submission is manual. Only owner-submitted issues qualify. The adapter does not cryptographically attest browser-local human approval.
+- Account-based activity tracking and cloud storage for Plan/Tasks remain future work; the Codex runner doesn't deploy or merge automatically.
 
 ## Sprint 02: Interactive workflow and traceability
 
