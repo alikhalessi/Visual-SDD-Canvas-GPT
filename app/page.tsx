@@ -1,6 +1,6 @@
 'use client';
 import {useEffect,useRef,useState} from 'react';
-import {SDD_STAGES,getStage,buildIdeaDraft,type StageId} from '../lib/sdd-core';
+import {SDD_STAGES,getStage,buildIdeaDraft,normalizeIdea,type StageId} from '../lib/sdd-core';
 import SpecEditor from '../components/spec-editor';
 import UxGuide from '../components/ux-guide';
 import {createSpecification,readSpecification,validateSpecification,type Specification} from '../lib/spec-core';
@@ -17,7 +17,8 @@ export default function Page(){
  const [spec,setSpec]=useState<Specification|null>(null);
  const [hydrated,setHydrated]=useState(false);
  const [storageError,setStorageError]=useState('');
- const journey={ideaSaved:!!draft,specificationExists:!!spec,approvalStatus:spec?.approval.status??null,validationIssueCount:spec?validateSpecification(spec).length:0};
+ const ideaSynced=!!draft&&draft.description===normalizeIdea(idea);
+ const journey={ideaSaved:ideaSynced,specificationExists:!!spec,approvalStatus:spec?.approval.status??null,validationIssueCount:spec?validateSpecification(spec).length:0};
  useEffect(()=>{try{
  const raw=localStorage.getItem('visual-sdd-idea');if(raw){const value=JSON.parse(raw);if(typeof value.description==='string'){setIdea(value.description);setDraft(value);}}
  const rememberedMode=localStorage.getItem('visual-sdd-view-mode');if(rememberedMode==='simple'||rememberedMode==='professional')setMode(rememberedMode);
@@ -59,7 +60,7 @@ export default function Page(){
     <div className="overline"><span className="green-dot"></span> VISUAL SDD WORKSPACE <span className="overline-line"></span></div>
     {tab!=='specification'&&<div className="hero"><div><h1>See every decision.<br/><em>Understand every change.</em></h1><p>Shape your idea through a visible, reviewable development process. Know what is planned, what is approved, and what has actually been verified.</p></div><span className="hero-badge">GUIDED EXPERIENCE · SPRINT 01A</span></div>}
     {tab==='overview'&&<div className="intro-grid">
-     <section className="panel idea-panel"><div className="panel-top"><span className="eyebrow">01 / START WITH AN IDEA</span><span className="outlined">BROWSER-LOCAL</span></div><h2>What would you like to build?</h2><p>Describe your idea in everyday language. Your work stays in this browser; Google Login comes in Sprint 01B.</p><label className="sr-only" htmlFor="idea">Your product idea</label><textarea ref={ideaInput} id="idea" maxLength={600} value={idea} onChange={e=>{setIdea(e.target.value);setNotice('');}} placeholder="For example: A booking website where customers choose a wellness appointment and receive confirmation."/><div className="idea-actions"><span>{idea.trim().length} / 600 characters · {draft?'Idea saved locally':'Unsaved idea'}</span><div className="idea-buttons"><button className="spec-outline" onClick={save}>Save idea draft</button><button className="action" onClick={openSpec}>{spec?'Open specification':'Start specification'} →</button></div></div>{notice&&<div role="status" className="notice">{notice}</div>}</section>
+     <section className="panel idea-panel"><div className="panel-top"><span className="eyebrow">01 / START WITH AN IDEA</span><span className="outlined">BROWSER-LOCAL</span></div><h2>What would you like to build?</h2><p>Describe your idea in everyday language. Your work stays in this browser; Google Login comes in Sprint 01B.</p><label className="sr-only" htmlFor="idea">Your product idea</label><textarea ref={ideaInput} id="idea" maxLength={600} value={idea} onChange={e=>{setIdea(e.target.value);setNotice('');}} placeholder="For example: A booking website where customers choose a wellness appointment and receive confirmation."/><div className="idea-actions"><span>{idea.trim().length} / 600 characters · {ideaSynced?'Idea saved locally':'Unsaved idea'}</span><div className="idea-buttons"><button className="spec-outline" onClick={save}>Save idea draft</button><button className="action" onClick={openSpec}>{spec?'Open specification':'Start specification'} →</button></div></div>{notice&&<div role="status" className="notice">{notice}</div>}</section>
      <section className="panel mission-panel"><span className="eyebrow">WHY VISUAL SDD?</span><h2>From hidden work<br/>to visible progress.</h2><div className="benefits"><div><span className="check">✓</span> Review specifications before implementation</div><div><span className="check">✓</span> Understand what changes and why</div><div><span className="check">✓</span> Keep humans in control of approvals</div></div><p className="mission-note">Edit real structured specifications in Sprint 01. Agent execution and verified code changes remain future work.</p></section>
     </div>}
     {tab==='overview'&&<UxGuide journey={journey} onCapture={captureIdea} onSpecification={openSpec} onCanvas={()=>setTab('canvas')}/>}
