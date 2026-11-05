@@ -9,7 +9,7 @@ export type CloudProject={
 };
 export type CloudReference={id:string;updatedAt:string};
 type Activity={id:number;project_id:string;event_type:string;summary:string;revision:number;created_at:string};
-type Props={idea:string;spec:Specification|null;cloudRef:CloudReference|null;onRef:(v:CloudReference|null)=>void;onLoad:(project:CloudProject)=>void;};
+type Props={idea:string;spec:Specification|null;cloudRef:CloudReference|null;onRef:(v:CloudReference|null)=>void;onLoad:(project:CloudProject)=>boolean;};
 
 function friendlyDate(value:string){const time=new Date(value);return Number.isNaN(time.getTime())?value:time.toLocaleString();}
 function providerMessage(error:unknown){return error instanceof Error?error.message:'Authentication failed. Please retry.';}
@@ -90,7 +90,7 @@ export default function CloudPanel({idea,spec,cloudRef,onRef,onLoad}:Props){
     <div className="cloud-box"><h3>My Projects <span>{projects.length}</span></h3>{!projects.length?<p className="cloud-empty">No cloud projects yet. Save your first idea above.</p>:
      <div className="cloud-project-list">{projects.map(p=><div className={'cloud-project '+(cloudRef?.id===p.id?'cloud-current':'')} key={p.id}>
       <div><strong>{p.title}</strong><small>{p.approval_status==='approved'?'Approved':'Draft'} · Revision {p.revision} · {friendlyDate(p.updated_at)}</small></div>
-      <div className="cloud-project-actions"><button disabled={busy} onClick={()=>{onLoad(p);onRef({id:p.id,updatedAt:p.updated_at});setMessage('Opened project '+p.title);}}>Open</button><button disabled={busy} onClick={()=>void remove(p)} aria-label={'Delete '+p.title}>Delete</button></div>
+      <div className="cloud-project-actions"><button disabled={busy} onClick={()=>{if(!onLoad(p))return;onRef({id:p.id,updatedAt:p.updated_at});setMessage('Opened project '+p.title);}}>Open</button><button disabled={busy} onClick={()=>void remove(p)} aria-label={'Delete '+p.title}>Delete</button></div>
      </div>)}</div>}</div>
     <div className="cloud-box"><h3>Recent Activity</h3>{!events.length?<p className="cloud-empty">Your cloud activity will appear here after the first save.</p>:<div className="cloud-event-list">{events.map(item=><div key={item.id} className="cloud-event"><span className="cloud-event-icon" aria-hidden="true">●</span><div><strong>{item.event_type.replaceAll('_',' ')}</strong><small>{item.summary} · {friendlyDate(item.created_at)}</small></div></div>)}</div>}</div>
    </div>
