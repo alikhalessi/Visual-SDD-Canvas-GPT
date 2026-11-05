@@ -11,8 +11,8 @@ The product visualizes and controls **Spec-Driven Development**. Application cre
 | 02 | Interactive workflow and traceability, approved plans and linked tasks | Production delivered; owner-approved |
 | 03 | Owner-gated Spec Kit artifact adapter and optional GitHub Codex agent | Delivered; first real validate-only runner verified in Sprint 04 |
 | 04 | Owner Issue -> Actions -> checked SDD docs -> SHA256 evidence and read-only UI | Production READY; owner approved |
-| 05 | Baseline-aware visual change impact, dependent task review and stale approval gates | Production READY; 114/114 tests; owner acceptance pending |
-| 06 | GitHub integration and traceability graph | Pending |
+| 05 | Baseline-aware visual change impact, dependent task review and stale approval gates | Production delivered; owner-approved |
+| 06 | Read-only public PR/commit/check evidence and revision-bound Task traceability graph | Production READY (136 tests); real PR #4 CI success; owner acceptance pending |
 | 07 | Simple/Professional UX, security, pilot validation | Pending |
 
 **Definition of Done for every sprint:** functionality demonstrated, push/commit proof, tests and CI status, English DOCX report, deployed production URL, explicit owner sign-off.
