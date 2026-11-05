@@ -1,10 +1,12 @@
-import type {Specification,Requirement} from './spec-core.ts';
+import {readSpecification,type Specification,type Requirement} from './spec-core.ts';
 import {SDD_STAGES,type StageId} from './sdd-core.ts';
 
 export type WorkflowApproval={status:'draft'|'approved';revision:number|null;at:string|null};
 export type LinkedTask={id:string;title:string;requirementId:string;criterionIds:string[]};
 export type PlanningDocument={
  schemaVersion:1;sourceIdea:string;specRevision:number;updatedAt:string;
+ /** Immutable approved Specification baseline, captured when this Plan is created. Legacy plans may lack it. */
+ sourceSpec?:Specification;
  technical:{architecture:string;risks:string;assumptions:string;revision:number;approval:WorkflowApproval};
  breakdown:{tasks:LinkedTask[];revision:number;nextTaskNumber:number;approval:WorkflowApproval};
 };
@@ -27,9 +29,14 @@ export function tasksApproved(doc:PlanningDocument|null):boolean{
 }
 export function createPlanningDocument(spec:Specification,now?:string):PlanningDocument{
  if(!specIsApproved(spec))throw Error('Approve the specification before opening the technical plan.');
- return {schemaVersion:1,sourceIdea:spec.sourceIdea,specRevision:spec.revision,updatedAt:updated(now),
+ return {schemaVersion:1,sourceIdea:spec.sourceIdea,specRevision:spec.revision,updatedAt:updated(now),sourceSpec:JSON.parse(JSON.stringify(spec)) as Specification,
  technical:{architecture:'',risks:'',assumptions:'',revision:1,approval:draft()},
  breakdown:{tasks:[],revision:0,nextTaskNumber:1,approval:draft()}};
+}
+/** Capture a baseline for pre-Sprint-05 plans ONLY when the original approved revision is still current. */
+export function backfillCurrentBaseline(spec:Specification|null,doc:PlanningDocument):PlanningDocument{
+ if(doc.sourceSpec||!planIsCurrent(spec,doc)||!spec)return doc;
+ return {...doc,sourceSpec:JSON.parse(JSON.stringify(spec)) as Specification};
 }
 export function reviseTechnical(doc:PlanningDocument,patch:Partial<Pick<PlanningDocument['technical'],'architecture'|'risks'|'assumptions'>>,now?:string):PlanningDocument{
  return {...doc,updatedAt:updated(now),technical:{...doc.technical,...patch,revision:doc.technical.revision+1,approval:draft()},breakdown:{...doc.breakdown,approval:draft()}};
@@ -117,6 +124,7 @@ export function readPlanningDocument(raw:unknown):PlanningDocument|null{
  if(!raw||typeof raw!=='object'||Array.isArray(raw))return null;
  const v=raw as PlanningDocument;
  if(v.schemaVersion!==1||typeof v.sourceIdea!=='string'||v.sourceIdea.length>600||!Number.isSafeInteger(v.specRevision)||v.specRevision<1||typeof v.updatedAt!=='string'||!v.technical||!v.breakdown)return null;
+ if(v.sourceSpec!==undefined){const baseline=readSpecification(v.sourceSpec);if(!baseline||baseline.approval.status!=='approved'||baseline.revision!==v.specRevision||baseline.sourceIdea!==v.sourceIdea)return null;}
  const t=v.technical,b=v.breakdown;
  if(typeof t.architecture!=='string'||t.architecture.length>5000||typeof t.risks!=='string'||t.risks.length>2500||typeof t.assumptions!=='string'||t.assumptions.length>2500||!Number.isSafeInteger(t.revision)||t.revision<1)return null;
  if(!Array.isArray(b.tasks)||b.tasks.length>60||!Number.isSafeInteger(b.revision)||b.revision<0||!Number.isSafeInteger(b.nextTaskNumber)||b.nextTaskNumber<1)return null;
