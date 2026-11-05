@@ -2,6 +2,7 @@
 import {useMemo,useState} from 'react';
 import type {Specification} from '../lib/spec-core';
 import type {PlanningDocument} from '../lib/workflow-core';
+import RunEvidence from './run-evidence';
 import {runGate,makeRunManifest,manifestIssueBody,manifestIssueUrl,type RunManifest,type RunMode} from '../lib/agent-run-core';
 
 type Props={spec:Specification|null;plan:PlanningDocument|null;onReviewPlan:()=>void};
@@ -69,6 +70,7 @@ export default function AgentRunPanel({spec,plan,onReviewPlan}:Props){
    <a href="https://github.com/alikhalessi/Visual-SDD-Canvas-GPT/actions/workflows/sdd-agent.yml" target="_blank" rel="noreferrer">Check GitHub Actions run history ↗</a>
   </div>}
   {message&&<p className="agent-message" role="status">{message}</p>}
+  <RunEvidence/>
   <div className="agent-trust-footer"><span>GitHub Actions adapter</span><b>Installed</b><span>Codex provider credential</span><b>Not verified</b><span>Automated merge / deployment</span><b>Disabled</b></div>
  </div>;
 }
