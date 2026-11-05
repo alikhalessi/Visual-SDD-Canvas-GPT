@@ -6,6 +6,7 @@ const brief=readFileSync(new URL('../components/workspace-brief.tsx',import.meta
 const quality=readFileSync(new URL('../lib/quality-core.ts',import.meta.url),'utf8');
 const spec=readFileSync(new URL('../components/spec-editor.tsx',import.meta.url),'utf8');
 const guide=readFileSync(new URL('../components/ux-guide.tsx',import.meta.url),'utf8');
+const canvas=readFileSync(new URL('../components/visual-sdd-canvas.tsx',import.meta.url),'utf8');
 const css=readFileSync(new URL('../app/sprint07.css',import.meta.url),'utf8');
 const layout=readFileSync(new URL('../app/layout.tsx',import.meta.url),'utf8');
 test('project command center replaces generic marketing card with state-driven actions',()=>{
@@ -58,4 +59,8 @@ test('quality stylesheet is layered after existing domain styles',()=>{
 test('roadmap completion is not fabricated from progress indicators',()=>{
  assert.match(brief,/first 3 review steps complete/);
  assert.match(quality,/Nothing executes automatically/);
+});
+
+test('approved Specification opens the real Plan inspector when Canvas is entered',()=>{
+ assert.match(canvas,/spec\.approval\.approvedRevision===spec\.revision\?'plan':'specify'/);
 });
