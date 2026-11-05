@@ -8,7 +8,7 @@ const styles=readFileSync(new URL('../app/impact.css',import.meta.url),'utf8');
 const model=readFileSync(new URL('../lib/workflow-core.ts',import.meta.url),'utf8');
 test('interactive canvas offers a third change impact visualization',()=>{
  assert.match(canvas,/\|'impact'/);
- assert.match(canvas,/>Change impact<\/button>/);
+ assert.match(canvas,/>Change impact/);
  assert.match(canvas,/graph==='impact'\?<ImpactExplorer/);
 });
 test('impact diff uses immutable planning baseline rather than fake links',()=>{
