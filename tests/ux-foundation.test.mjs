@@ -25,11 +25,11 @@ test('validated draft is not represented as approved', () => {
   assert.match(getNextAction(input).title,/Review/);
   assert.equal(getJourneySteps(input)[2].state,'current');
 });
-test('approved specification is complete but planning is not implemented', () => {
+test('approved specification now points to available human-reviewed planning', () => {
   const input={...sample,specificationExists:true,approvalStatus:'approved',validationIssueCount:0};
   assert.equal(getNextAction(input).id,'planning');
   assert.equal(getJourneySteps(input).filter(x=>x.state==='complete').length,3);
-  assert.match(getNextAction(input).instruction,/not available/);
+  assert.match(getNextAction(input).instruction,/Technical Plan/);
 });
 test('existing specifications count as a captured idea after browser restore',()=>{
   const input={...sample,specificationExists:true,approvalStatus:'draft'};
