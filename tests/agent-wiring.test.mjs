@@ -27,7 +27,7 @@ test('workflow restricts issue actor and enforces API-key gate',()=>{
  assert.match(workflow,/OPENAI_API_KEY/);
 });
 test('workflow rejects changes outside an isolated prototype scope',()=>{
- assert.match(workflow,/unexpected file change outside isolated scope/);
+ assert.match(workflow,/change outside isolated prototype scope/);
  assert.match(workflow,/agent-preview/);
 });
 test('adapter never evals issue contents as a shell script',()=>{
