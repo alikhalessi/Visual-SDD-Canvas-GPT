@@ -11,7 +11,7 @@
     "test": "node --experimental-strip-types --test tests/*.test.mjs"
   },
   "dependencies": {
-    "next": "15.5.9",
+    "next": "16.4.5",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "@neondatabase/auth": "0.7.0-beta",
