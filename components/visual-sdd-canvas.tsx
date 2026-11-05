@@ -3,6 +3,7 @@ import {useEffect,useMemo,useState} from 'react';
 import type {Specification,Requirement} from '../lib/spec-core';
 import {SDD_STAGES,type StageId} from '../lib/sdd-core';
 import AgentRunPanel from './agent-run-panel';
+import ImpactExplorer from './impact-explorer';
 import {
  type PlanningDocument,type StageState,createPlanningDocument,reviseTechnical,approveTechnical,
  addLinkedTask,reviseLinkedTask,removeLinkedTask,validateTechnical,validateTaskBreakdown,approveTaskBreakdown,
@@ -25,7 +26,7 @@ const stageShort:Record<StageId,string>={idea:'Capture idea',specify:'Define nee
 function readable(s:StageState){return actionLabel[s]}
 export default function VisualSDDCanvas({idea,spec,projectId,mode,onMode,onIdea,onSpecification}:Props){
  const [selected,setSelected]=useState<StageId>('specify');
- const [graph,setGraph]=useState<'workflow'|'traceability'>('workflow');
+ const [graph,setGraph]=useState<'workflow'|'traceability'|'impact'>('workflow');
  const [plan,setPlan]=useState<PlanningDocument|null>(null);
  const [loadedKey,setLoadedKey]=useState('');
  const [message,setMessage]=useState('');
@@ -84,13 +85,14 @@ export default function VisualSDDCanvas({idea,spec,projectId,mode,onMode,onIdea,
  return <section className="live-canvas" aria-labelledby="live-canvas-title">
   <div className="live-canvas-intro">
    <div><span className="eyebrow">SPRINT 02 · GOVERNED VISUAL SDD</span><h2 id="live-canvas-title">An interactive development journey.</h2>
-    <p>Every step responds to real project artifacts and human approvals. Prepare a bounded GitHub/Codex handoff after your task approvals; no execution is implicit.</p></div>
+    <p>Explore your real approval chain, explicit requirement-to-task links, and change impact against the planning baseline. Agent execution is never implicit.</p></div>
    <div className="live-canvas-metrics"><strong>{status}<span> / 7</span></strong><small>Stages completed — planning only, no code execution</small></div>
   </div>
   <div className="live-canvas-toolbar">
    <div className="canvas-segments" role="group" aria-label="Graph view">
     <button aria-pressed={graph==='workflow'} onClick={()=>setGraph('workflow')}>Workflow graph</button>
     <button aria-pressed={graph==='traceability'} onClick={()=>setGraph('traceability')}>Traceability graph</button>
+    <button aria-pressed={graph==='impact'} onClick={()=>setGraph('impact')}>Change impact</button>
    </div>
    <div className="canvas-segments" role="group" aria-label="Viewing mode">
     <button aria-pressed={mode==='simple'} onClick={()=>onMode('simple')}>Simple</button>
@@ -109,7 +111,7 @@ export default function VisualSDDCanvas({idea,spec,projectId,mode,onMode,onIdea,
       {i<nodes.length-1&&<svg aria-hidden="true" className="canvas-edge" viewBox="0 0 32 28"><path d="M1 14 H26 M20 8 L26 14 L20 20" stroke="currentColor" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>}
     </div>)}</div>
     <div className="canvas-legend"><span><i className="legend-complete"/> Approved</span><span><i className="legend-available"/> Actionable</span><span><i className="legend-blocked"/> Awaiting input</span><span><i className="legend-future"/> Not connected</span></div>
-   </div>:<div className="traceability-panel">
+   </div>:graph==='impact'?<ImpactExplorer spec={spec} plan={plan} onSpecification={onSpecification} onPlan={()=>setSelected('plan')} onTasks={()=>setSelected('tasks')}/>:<div className="traceability-panel">
      <div className="traceability-heading"><div><h3>Requirement → Acceptance → Task</h3><p>These edges are generated from your actual requirement IDs and explicit task links. No relation is invented.</p></div><span>{coverage.covered} / {coverage.total} requirements linked</span></div>
      {!spec?<div className="canvas-empty"><h3>Start by writing a specification</h3><p>Traceability requires identifiable requirements and acceptance conditions.</p><button className="action" onClick={onSpecification}>Create specification →</button></div>:
       <div className="traceability-rows">{spec.requirements.map((req:Requirement)=><div key={req.id} className="traceability-row">
