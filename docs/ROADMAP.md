@@ -13,7 +13,7 @@ The product visualizes and controls **Spec-Driven Development**. Application cre
 | 04 | Owner Issue -> Actions -> checked SDD docs -> SHA256 evidence and read-only UI | Production READY; owner approved |
 | 05 | Baseline-aware visual change impact, dependent task review and stale approval gates | Production delivered; owner-approved |
 | 06 | Read-only public PR/commit/check evidence and revision-bound Task traceability graph | Production READY (136 tests); real PR #4 CI success; owner acceptance pending |
-| 07 | State-aware onboarding, progressively disclosed UX, safe local recovery, accessibility fixes and audit | Implemented; production build + owner/browser acceptance pending |
+| 07 | State-aware onboarding, progressively disclosed UX, safe local recovery, accessibility fixes and audit | Production READY; 160/160 tests; owner/browser acceptance pending |
 
 **Definition of Done for every sprint:** functionality demonstrated, push/commit proof, tests and CI status, English DOCX report, deployed production URL, explicit owner sign-off.
 No invented deadlines or artificial waiting periods; gates are quality-based.
