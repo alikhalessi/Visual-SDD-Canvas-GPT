@@ -12,7 +12,7 @@ test('real canvas component is accessible from SDD Canvas tab',()=>{
 test('workflow graph has accessible selectable nodes and state-driven labels',()=>{
  assert.match(canvas,/workflowGraph\(spec,plan,idea\)/);
  assert.match(canvas,/aria-pressed=\{selected===n.id\}/);
- assert.match(canvas,/state-\$\{n.state\}/);
+ assert.ok(canvas.includes("'canvas-node state-'+n.state"));
 });
 test('real traceability graph comes from criterion links',()=>{
  assert.match(canvas,/traceabilityGraph\(spec,plan\)/);
