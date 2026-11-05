@@ -4,6 +4,7 @@ import type {Specification,Requirement} from '../lib/spec-core';
 import {SDD_STAGES,type StageId} from '../lib/sdd-core';
 import AgentRunPanel from './agent-run-panel';
 import ImpactExplorer from './impact-explorer';
+import GithubTracePanel from './github-trace-panel';
 import {assessChangeImpact} from '../lib/impact-core';
 import {
  type PlanningDocument,type StageState,createPlanningDocument,reviseTechnical,approveTechnical,
@@ -27,7 +28,7 @@ const stageShort:Record<StageId,string>={idea:'Capture idea',specify:'Define nee
 function readable(s:StageState){return actionLabel[s]}
 export default function VisualSDDCanvas({idea,spec,projectId,mode,onMode,onIdea,onSpecification}:Props){
  const [selected,setSelected]=useState<StageId>('specify');
- const [graph,setGraph]=useState<'workflow'|'traceability'|'impact'>('workflow');
+ const [graph,setGraph]=useState<'workflow'|'traceability'|'impact'|'github'>('workflow');
  const [plan,setPlan]=useState<PlanningDocument|null>(null);
  const [loadedKey,setLoadedKey]=useState('');
  const [message,setMessage]=useState('');
@@ -90,8 +91,8 @@ export default function VisualSDDCanvas({idea,spec,projectId,mode,onMode,onIdea,
  const status=nodes.reduce((n,x)=>n+(x.state==='complete'?1:0),0);
  return <section className="live-canvas" aria-labelledby="live-canvas-title">
   <div className="live-canvas-intro">
-   <div><span className="eyebrow">SPRINT 05 · CHANGE IMPACT GOVERNANCE</span><h2 id="live-canvas-title">An interactive development journey.</h2>
-    <p>Explore your real approval chain, explicit requirement-to-task links, and change impact against the planning baseline. Agent execution is never implicit.</p></div>
+   <div><span className="eyebrow">SPRINT 06 · VERIFIED GITHUB TRACEABILITY</span><h2 id="live-canvas-title">An interactive development journey.</h2>
+    <p>Explore approval gates, requirement changes and verified public GitHub Pull Requests linked to selected tasks. GitHub checks are not proof of product acceptance.</p></div>
    <div className="live-canvas-metrics"><strong>{status}<span> / 7</span></strong><small>Stages completed — planning only, no code execution</small></div>
   </div>
   <div className="live-canvas-toolbar">
@@ -99,6 +100,7 @@ export default function VisualSDDCanvas({idea,spec,projectId,mode,onMode,onIdea,
     <button aria-pressed={graph==='workflow'} onClick={()=>setGraph('workflow')}>Workflow graph</button>
     <button aria-pressed={graph==='traceability'} onClick={()=>setGraph('traceability')}>Traceability graph</button>
     <button aria-pressed={graph==='impact'} onClick={()=>setGraph('impact')}>Change impact {changeImpact.state==='changed'?'●':''}</button>
+    <button aria-pressed={graph==='github'} onClick={()=>setGraph('github')}>GitHub traceability</button>
    </div>
    <div className="canvas-segments" role="group" aria-label="Viewing mode">
     <button aria-pressed={mode==='simple'} onClick={()=>onMode('simple')}>Simple</button>
@@ -107,7 +109,7 @@ export default function VisualSDDCanvas({idea,spec,projectId,mode,onMode,onIdea,
   </div>
   {changeImpact.state==='changed'&&graph!=='impact'&&<div className="canvas-callout" role="status">A Specification revision or content change affects the saved Plan and dependent Tasks. <button className="canvas-text-button" onClick={()=>setGraph('impact')}>Inspect affected artifacts →</button></div>}
   {changeImpact.state==='missing_baseline'&&graph!=='impact'&&<div className="canvas-callout" role="status">This legacy Plan lacks an approved baseline; exact differences cannot be reconstructed. <button className="canvas-text-button" onClick={()=>setGraph('impact')}>Review uncertainty →</button></div>}
-  {graph==='workflow'?<div className="live-canvas-viewport" role="region" tabIndex={0} aria-label="Interactive SDD workflow graph, scroll horizontally for more steps">
+  {graph==='github'?<GithubTracePanel spec={spec} plan={plan} projectId={projectId} onReviewTasks={()=>{setGraph('workflow');setSelected('tasks');}}/>:graph==='workflow'?<div className="live-canvas-viewport" role="region" tabIndex={0} aria-label="Interactive SDD workflow graph, scroll horizontally for more steps">
     <div className="live-canvas-graph">{nodes.map((n,i)=><div key={n.id} className="canvas-node-pair">
       <button type="button" aria-pressed={selected===n.id} className={'canvas-node state-'+n.state+(selected===n.id?' is-selected':'')} onClick={()=>setSelected(n.id)}>
        <span className="canvas-node-top"><span>{String(i+1).padStart(2,'0')} / 07</span><span className="canvas-node-status">{readable(n.state)}</span></span>
@@ -173,7 +175,8 @@ export default function VisualSDDCanvas({idea,spec,projectId,mode,onMode,onIdea,
       </div>}
     </div>}
     {selected==='implement'&&<AgentRunPanel spec={spec} plan={plan} onReviewPlan={()=>setSelected('tasks')}/>}
-     {['verify','release'].includes(selected)&&<div className="canvas-action-panel"><h4>Future gated execution</h4><p>This stage is intentionally disabled. Verified code changes, test evidence and deployment controls will be delivered and validated in subsequent sprints.</p>
+     {selected==='verify'&&<div className="canvas-action-panel"><h4>GitHub checks versus product verification</h4><p>Public GitHub can show changed files and check runs, but cannot prove acceptance criteria were satisfied or a release was deployed.</p><button className="canvas-outline" onClick={()=>setGraph('github')}>Review GitHub source and checks →</button></div>}
+     {selected==='release'&&<div className="canvas-action-panel"><h4>Future gated execution</h4><p>This stage is intentionally disabled. Verified code changes, test evidence and deployment controls will be delivered and validated in subsequent sprints.</p>
      <div className="canvas-callout">No agent has executed a task. A green node never indicates generated code or released software.</div>
     </div>}
     {message&&<p role="status" className="canvas-message">{message}</p>}
@@ -184,7 +187,7 @@ export default function VisualSDDCanvas({idea,spec,projectId,mode,onMode,onIdea,
      <div><dt>Technical plan</dt><dd>{!plan?'Not created':current?(architectureApproved?'Approved':'Draft'):'Stale / blocked'}</dd></div>
      <div><dt>Task definitions</dt><dd>{!plan?'Not created':taskDefinitionsApproved?'Approved':plan.breakdown.tasks.length+' drafted'}</dd></div>
      <div><dt>Acceptance links</dt><dd>{links.length} explicit</dd></div>
-     <div><dt>Agent execution</dt><dd>Not connected</dd></div>
+     <div><dt>Agent execution</dt><dd>Not verified</dd></div>
     </dl>
     {plan&&<div className="canvas-export"><button className="canvas-outline" onClick={()=>exportPlan('md')}>↓ Export plan & tasks (.md)</button><button className="canvas-outline" onClick={()=>exportPlan('json')}>↓ Backup planning JSON</button></div>}
     <div className="canvas-persistence"><strong>Storage boundary</strong><p>Plan and task drafts currently persist in this browser and can be exported. They are <strong>not yet synchronized to My Projects</strong>. Your existing cloud Specification functionality remains unchanged.</p></div>
