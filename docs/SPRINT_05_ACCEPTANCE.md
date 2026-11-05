@@ -1,6 +1,6 @@
 # Sprint 05 — Visual Change Impact Analysis
 
-Status: implemented; build, delivery and Product Owner verification tracked separately.
+Status: Production READY. Vercel automated test, TypeScript, and Next.js build gates passed. Product Owner browser review pending.
 
 ## Intended outcome
 A product owner can see **what changed** in a Specification and **which approved downstream decisions and task links require reconsideration** before an agent run. This feature analyzes explicit user-authored artifacts, not hypothetical AI-generated dependencies.
@@ -29,7 +29,7 @@ A product owner can see **what changed** in a Specification and **which approved
 | S05-08 | Current/previous values, affected tasks and uncertainty are accessible | UI + wiring tests; manual browser pending |
 | S05-09 | Markdown impact report can be exported | Pure function + UI wiring |
 | S05-10 | Existing Auth, project storage and GitHub run evidence remain intact | Build and route review; real browser test pending |
-| S05-11 | Automated suite, typecheck, production build and deployment READY | Vercel logs |
+| S05-11 | Automated suite, typecheck, production build and deployment READY | PASS: 114/114 tests, TypeScript & Next.js build, dpl_EGAbqAK8EJ52YENsFyddRBhTNd3d READY |
 | S05-12 | English DOCX report and Product Owner review | Delivery gate |
 
 ## Governance limits
