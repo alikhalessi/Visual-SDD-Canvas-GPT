@@ -6,7 +6,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
-  issues: read
+  issues: write
 
 concurrency:
   group: visual-sdd-issue-${{ github.event.issue.number }
@@ -54,6 +54,15 @@ jobs:
           echo '### Validated Spec Kit handoff' >> "$GITHUB_STEP_SUMMARY"
           echo 'Manifest and spec.md / plan.md / tasks.md were generated.' >> "$GITHUB_STEP_SUMMARY"
           echo 'Codex has NOT run. No code was changed.' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Attach validation evidence to the issue
+        if: "${{ steps.adapter.outputs.mode == 'validate_only' }}"
+        shell: bash
+        env:
+          GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        run: |
+          set -euo pipefail
+          gh issue comment "${{ github.event.issue.number }}" --body "Visual SDD validate-only handoff passed. [View GitHub Actions evidence](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}). No Codex agent was invoked; no code was implemented."
 
       - name: Require opt-in Codex API key
         if: "${{ steps.adapter.outputs.mode == 'codex' }"
