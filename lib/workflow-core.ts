@@ -29,7 +29,7 @@ export function tasksApproved(doc:PlanningDocument|null):boolean{
 }
 export function createPlanningDocument(spec:Specification,now?:string):PlanningDocument{
  if(!specIsApproved(spec))throw Error('Approve the specification before opening the technical plan.');
- return {schemaVersion:1,sourceIdea:spec.sourceIdea,specRevision:spec.revision,updatedAt:updated(now),specBaseline:snapshotSpecification(spec)
+ return {schemaVersion:1,sourceIdea:spec.sourceIdea,specRevision:spec.revision,updatedAt:updated(now),specBaseline:snapshotSpecification(spec),
  technical:{architecture:'',risks:'',assumptions:'',revision:1,approval:draft()},
  breakdown:{tasks:[],revision:0,nextTaskNumber:1,approval:draft()}};
 }
