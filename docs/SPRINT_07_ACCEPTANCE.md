@@ -1,6 +1,6 @@
 # Sprint 07 — UX & Quality Acceptance
 
-**Status:** implementation in progress; tests and production deployment to be verified separately.  
+**Status:** Production READY, 160/160 automated tests passed, TypeScript and Next.js production build successful. Owner/manual browser acceptance remains open.  
 **Approval:** Product Owner acceptance pending; Sprint 08 not authorized.
 
 ## Release intent
@@ -28,8 +28,8 @@ Turn Visual SDD from a feature-heavy prototype into a clearer, safer and more re
 | S07-06 | Unreadable Specification is preserved, exportable, and cleared only on explicit approval | recovery unit + wiring tests |
 | S07-07 | Invalid cloud Specification cannot erase local context | cloud-load guard wiring tests |
 | S07-08 | Navigation, focus and touch controls remain reachable | CSS and wiring tests; device QA pending |
-| S07-09 | Existing SDD approval, impact, GitHub and Neon Auth functionality preserved | full Node test suite, TypeScript & Next.js build |
-| S07-10 | Production release is READY and alias points to it | Vercel release data |
+| S07-09 | Existing SDD approval, impact, GitHub and Neon Auth functionality preserved | PASS — 160 Node tests, TypeScript and Next.js Production Build |
+| S07-10 | Production release is READY and alias points to it | PASS — dpl_CS5yVVtzyYavwWqmqYtYidtToc2a, canonical alias verified |
 | S07-11 | UX map, audit, English DOCX report and downloadable backup provided | GitHub docs and verified Word/ZIP |
 | S07-12 | Real-device/real-browser end-to-end acceptance | **Pending manual user/browser validation** |
 
