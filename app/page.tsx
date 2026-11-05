@@ -59,10 +59,10 @@ export default function Page(){
    <button aria-current={tab==='cloud'?'page':undefined} className={'nav-item '+(tab==='cloud'?'active':'')} onClick={()=>setTab('cloud')}><span>☁</span> My Projects</button>
    <div className="nav-label push-down">ACTIVE PROJECT</div>
    <div className="project"><span className="orange-dot"></span>{spec?.title||(draft?'Saved idea draft':'New project')}<small>LOCAL</small></div>
-   <div className="profile"><div className="avatar">VS</div><div><strong>Sprint 02</strong><small>Interactive Canvas</small></div></div>
+   <div className="profile"><div className="avatar">VS</div><div><strong>Sprint 03</strong><small>Agent Handoff</small></div></div>
   </aside>
   <div className="main">
-   <header className="topbar"><div>Workspace <span className="sep">/</span> {tab==='overview'?'Overview':tab==='canvas'?'SDD Canvas':tab==='cloud'?'My Projects':'Specification'}</div><div className="top-right"><AccountStatus onProjects={()=>setTab('cloud')}/><span className="tag">v0.2.0</span></div></header>
+   <header className="topbar"><div>Workspace <span className="sep">/</span> {tab==='overview'?'Overview':tab==='canvas'?'SDD Canvas':tab==='cloud'?'My Projects':'Specification'}</div><div className="top-right"><AccountStatus onProjects={()=>setTab('cloud')}/><span className="tag">v0.3.0</span></div></header>
    <nav className="mobile-workspace-nav" aria-label="Mobile workspace navigation">
     <button aria-current={tab==='overview'?'page':undefined} onClick={()=>setTab('overview')}>Overview</button>
     <button aria-current={tab==='canvas'?'page':undefined} onClick={()=>setTab('canvas')}>SDD Canvas</button>
@@ -71,7 +71,7 @@ export default function Page(){
    </nav>
    <main id="workspace-main" tabIndex={-1} className="content">
     <div className="overline"><span className="green-dot"></span> VISUAL SDD WORKSPACE <span className="overline-line"></span></div>
-    {tab==='overview'&&<div className="hero"><div><h1>See every decision.<br/><em>Understand every change.</em></h1><p>Shape your idea through a visible, reviewable development process. Know what is planned, what is approved, and what has actually been verified.</p></div><span className="hero-badge">GOVERNED VISUAL SDD · SPRINT 02</span></div>}
+    {tab==='overview'&&<div className="hero"><div><h1>See every decision.<br/><em>Understand every change.</em></h1><p>Shape your idea through a visible, reviewable development process. Know what is planned, what is approved, and what has actually been verified.</p></div><span className="hero-badge">CONTROLLED AGENT EXECUTION · SPRINT 03</span></div>}
     {tab==='overview'&&<div className="intro-grid">
      <section className="panel idea-panel"><div className="panel-top"><span className="eyebrow">01 / START WITH AN IDEA</span><span className="outlined">BROWSER-LOCAL</span></div><h2>What would you like to build?</h2><p>Describe your idea in everyday language. Browser drafts stay on this device until you choose Save to my account.</p><label className="sr-only" htmlFor="idea">Your product idea</label><textarea ref={ideaInput} id="idea" maxLength={600} value={idea} onChange={e=>{setIdea(e.target.value);setNotice('');}} placeholder="For example: A booking website where customers choose a wellness appointment and receive confirmation."/><div className="idea-actions"><span>{idea.trim().length} / 600 characters · {ideaSynced?'Idea saved locally':'Unsaved idea'}</span><div className="idea-buttons"><button className="spec-outline" onClick={save}>Save idea draft</button><button className="action" onClick={openSpec}>{spec?'Open specification':'Start specification'} →</button></div></div>{notice&&<div role="status" className="notice">{notice}</div>}</section>
      <section className="panel mission-panel"><span className="eyebrow">WHY VISUAL SDD?</span><h2>From hidden work<br/>to visible progress.</h2><div className="benefits"><div><span className="check">✓</span> Review specifications before implementation</div><div><span className="check">✓</span> Understand what changes and why</div><div><span className="check">✓</span> Keep humans in control of approvals</div></div><p className="mission-note">Edit real structured specifications in Sprint 01. Agent execution and verified code changes remain future work.</p></section>
@@ -87,7 +87,7 @@ export default function Page(){
     {tab==='specification'&&spec&&<SpecEditor spec={spec} onChange={setSpec} onBack={()=>setTab('overview')} onReset={resetSpec}/>}
     {tab==='cloud'&&<CloudPanel idea={idea} spec={spec} cloudRef={cloudRef} onRef={setCloudRef} onLoad={loadCloudProject}/>} 
     {storageError&&<div className="notice" role="alert">{storageError}</div>}
-    <footer>Visual SDD · Sprint 02 Interactive Workflow Canvas <span>A visual operating environment for SDD</span></footer>
+    <footer>Visual SDD · Sprint 03 Controlled Agent Handoff <span>A visual operating environment for SDD</span></footer>
    </main>
   </div>
  </div>;
