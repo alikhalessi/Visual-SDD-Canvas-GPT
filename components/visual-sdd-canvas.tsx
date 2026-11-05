@@ -2,6 +2,7 @@
 import {useEffect,useMemo,useState} from 'react';
 import type {Specification,Requirement} from '../lib/spec-core';
 import {SDD_STAGES,type StageId} from '../lib/sdd-core';
+import AgentRunPanel from './agent-run-panel';
 import {
  type PlanningDocument,type StageState,createPlanningDocument,reviseTechnical,approveTechnical,
  addLinkedTask,reviseLinkedTask,removeLinkedTask,validateTechnical,validateTaskBreakdown,approveTaskBreakdown,
@@ -20,7 +21,7 @@ function saveText(filename:string,data:string,type:string){
  setTimeout(()=>URL.revokeObjectURL(url),1500);
 }
 const actionLabel:Record<StageState,string>={complete:'Approved',available:'Needs action',blocked:'Blocked',future:'Not connected'};
-const stageShort:Record<StageId,string>={idea:'Capture idea',specify:'Define needs',plan:'Technical plan',tasks:'Linked tasks',implement:'Code changes',verify:'Evidence',release:'Publish'};
+const stageShort:Record<StageId,string>={idea:'Capture idea',specify:'Define needs',plan:'Technical plan',tasks:'Linked tasks',implement:'Agent handoff',verify:'Evidence',release:'Publish'};
 function readable(s:StageState){return actionLabel[s]}
 export default function VisualSDDCanvas({idea,spec,projectId,mode,onMode,onIdea,onSpecification}:Props){
  const [selected,setSelected]=useState<StageId>('specify');
@@ -83,7 +84,7 @@ export default function VisualSDDCanvas({idea,spec,projectId,mode,onMode,onIdea,
  return <section className="live-canvas" aria-labelledby="live-canvas-title">
   <div className="live-canvas-intro">
    <div><span className="eyebrow">SPRINT 02 · GOVERNED VISUAL SDD</span><h2 id="live-canvas-title">An interactive development journey.</h2>
-    <p>Every step responds to real project artifacts and human approvals. Explore the workflow or inspect links from requirements to planned tasks.</p></div>
+    <p>Every step responds to real project artifacts and human approvals. Prepare a bounded GitHub/Codex handoff after your task approvals; no execution is implicit.</p></div>
    <div className="live-canvas-metrics"><strong>{status}<span> / 7</span></strong><small>Stages completed — planning only, no code execution</small></div>
   </div>
   <div className="live-canvas-toolbar">
@@ -161,7 +162,8 @@ export default function VisualSDDCanvas({idea,spec,projectId,mode,onMode,onIdea,
        {taskDefinitionsApproved?<p className="canvas-pass">✓ Task breakdown approved. No code has been run.</p>:<button className="action" disabled={taskIssues.length>0} onClick={approveTasks}>Approve task breakdown</button>}
       </div>}
     </div>}
-    {['implement','verify','release'].includes(selected)&&<div className="canvas-action-panel"><h4>Future gated execution</h4><p>This stage is intentionally disabled. A real SDD runner, verified test evidence and deployment controls will be implemented and tested in subsequent sprints.</p>
+    {selected==='implement'&&<AgentRunPanel spec={spec} plan={plan} onReviewPlan={()=>setSelected('tasks')}/>}
+     {['verify','release'].includes(selected)&&<div className="canvas-action-panel"><h4>Future gated execution</h4><p>This stage is intentionally disabled. Verified code changes, test evidence and deployment controls will be delivered and validated in subsequent sprints.</p>
      <div className="canvas-callout">No agent has executed a task. A green node never indicates generated code or released software.</div>
     </div>}
     {message&&<p role="status" className="canvas-message">{message}</p>}
