@@ -1,6 +1,6 @@
 # Visual SDD Canvas
 
-**Sprint 06 — Public GitHub Traceability and Check Evidence**
+**Sprint 07 — Human-Centered UX & Quality Foundation**
 
 Visual SDD is a visual operating environment for Spec-Driven Development. Its core product is the **visible, reviewable, and controllable SDD process**, rather than a generic AI app builder.
 
@@ -19,6 +19,17 @@ Visual SDD is a visual operating environment for Spec-Driven Development. Its co
 - Testable SDD domain model, a CI workflow, roadmap and design decisions.
 
 **Not implemented yet:** AI agent execution, automatic specification generation, repository synchronization, team accounts, cloud synchronization of planning/tasks, production code generation, and release verification.
+
+## Sprint 07: clearer navigation, accessible editing and safe recovery
+
+- Live, state-aware **Current project** command center: one next step, honest approval stage, Browser vs Cloud-linked status.
+- Plain Language defaults to fewer competing panels; Professional reveals expanded process details while preserving every governance control.
+- Specification editor now includes inline field-level validation and a direct handoff to Technical Planning after human approval.
+- Browser-local Specification recovery is **fail-closed**: malformed cached JSON is never silently overwritten or removed. The original can be exported and then cleared only by explicit owner confirmation.
+- Incoming cloud documents are validated before changing current browser work.
+- Readability, keyboard focus, touch targets and mobile input sizes receive a dedicated responsive quality stylesheet.
+- UX journey diagrams and a source-grounded UX audit: [journey map](docs/SPRINT_07_UX_MAP.md), [audit](docs/SPRINT_07_UX_AUDIT.md), [acceptance criteria](docs/SPRINT_07_ACCEPTANCE.md).
+- **Not claimed:** live screenshot-based mobile testing, formal WCAG certification, completed cloud Plan/Task persistence or a successfully executed Codex coding task.
 
 ## Sprint 06: evidence-linked GitHub traceability
 
