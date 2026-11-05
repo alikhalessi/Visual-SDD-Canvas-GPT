@@ -4,8 +4,8 @@ The product visualizes and controls **Spec-Driven Development**. Application cre
 
 | Sprint | Definition of deliverable | Status |
 | --- | --- | --- |
-| 00 | Project foundation, interactive SDD overview, CI, production link, report | In progress |
-| 01 | Idea -> reviewable specification via a visual editor | Pending owner approval |
+| 00 | Project foundation, interactive SDD overview, CI, production link, report | Delivered, pending owner acceptance |
+| 01 | Idea -> reviewable specification via a visual editor | Implemented; delivery validation in progress |
 | 02 | Editable SDD canvas with explicit workflow transitions | Pending |
 | 03 | Controlled adapter connecting a real SDD engine and one coding agent | Pending |
 | 04 | First end-to-end run with verifiable automated checks | Pending |
