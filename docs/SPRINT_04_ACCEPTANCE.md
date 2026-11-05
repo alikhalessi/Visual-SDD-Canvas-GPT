@@ -1,6 +1,6 @@
 # Sprint 04 — End-to-End Evidence and Verified Execution Boundary
 
-**Delivery status:** implemented, verified live validate-only GitHub Actions run, production acceptance pending.
+**Delivery status:** production READY and real validate-only GitHub Actions run verified; Product Owner acceptance pending.
 
 ## Shipped
 - Repaired missing GitHub Actions expression delimiters in `.github/workflows/sdd-agent.yml` that blocked Sprint 03 issue events.
@@ -34,7 +34,7 @@
 | S04-06 | Result linked to original public Issue | PASS — GitHub Actions bot comment |
 | S04-07 | No API secret required for validate-only | PASS — Codex job skipped |
 | S04-08 | New UI performs read-only official GitHub check | Code/tests delivered; manual browser verification pending |
-| S04-09 | Full TS/Next production tests and typecheck | Vercel build pending |
+| S04-09 | Full TS/Next production tests and typecheck | PASS — 91/91, Vercel READY, dpl_42GA1o6x6LEGJFkC4WqLfBFgvmb7 |
 | S04-10 | Real Codex creates candidate source and PR | **NOT VERIFIED** — requires an API key and owner approval |
 | S04-11 | English DOCX report and owner acceptance | Report delivered; owner review pending |
 
