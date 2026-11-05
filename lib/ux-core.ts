@@ -37,7 +37,7 @@ export function getNextAction(input: JourneyInput): NextAction {
     id: 'specification', title: 'Turn your idea into a specification', instruction: 'Open the guided editor and describe what the product should do.'
   };
   if (input.approvalStatus === 'approved') return {
-    id: 'planning', title: 'Specification approved', instruction: 'Your revision is approved. Interactive planning and execution are not available in this sprint.'
+    id: 'planning', title: 'Specification approved', instruction: 'Create a Technical Plan and link Tasks in the SDD Canvas. Codex execution remains separately gated and is never automatic.'
   };
   return {
     id: 'approval',
