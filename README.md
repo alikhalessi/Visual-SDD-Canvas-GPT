@@ -1,6 +1,6 @@
 # Visual SDD Canvas
 
-**Sprint 04 — Verified GitHub Actions Evidence**
+**Sprint 05 — Visual Change Impact Analysis**
 
 Visual SDD is a visual operating environment for Spec-Driven Development. Its core product is the **visible, reviewable, and controllable SDD process**, rather than a generic AI app builder.
 
@@ -19,6 +19,14 @@ Visual SDD is a visual operating environment for Spec-Driven Development. Its co
 - Testable SDD domain model, a CI workflow, roadmap and design decisions.
 
 **Not implemented yet:** AI agent execution, automatic specification generation, repository synchronization, team accounts, cloud synchronization of planning/tasks, production code generation, and release verification.
+
+## Sprint 05: Explainable change impact
+
+- Every new Technical Plan captures a structural snapshot of its *approved source Specification*. Existing plans without a snapshot show an honest "legacy baseline missing" warning.
+- New **SDD Canvas → Change impact** view compares current content with that snapshot: changed Requirements, Acceptance Criteria and product intent; before/after text; directly linked and potentially affected tasks; and stale governance gates.
+- The user can inspect individual changes, return to related tasks and export an impact analysis as Markdown.
+- No reapproval is granted automatically, no task is declared safe solely because its explicit link is absent, and no AI code execution is implied.
+- Historical snapshots for Plan/Tasks are still browser-local, not signed audit records or cloud synced.
 
 ## Sprint 04: real, verifiable Actions evidence
 
