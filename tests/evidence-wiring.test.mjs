@@ -11,7 +11,7 @@ test('GitHub evidence panel is included in Implement without starting an agent',
 });
 test('evidence requests use only the public API and no API key',()=>{
  assert.match(ui,/https:\/\/api\.github\.com\/repos\/alikhalessi/);
- assert.match(ui,/github-actions/); // verified through pure helper
+ assert.match(ui,/extractBotRunId/); // bot identity verified through pure helper
  assert.ok(!ui.includes('OPENAI_API_KEY'));
  assert.ok(!ui.includes('Authorization: Bearer'));
 });
