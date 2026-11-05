@@ -1,6 +1,6 @@
 # Visual SDD Canvas
 
-**Sprint 05 — Visual Change Impact Analysis**
+**Sprint 06 — Public GitHub Traceability and Check Evidence**
 
 Visual SDD is a visual operating environment for Spec-Driven Development. Its core product is the **visible, reviewable, and controllable SDD process**, rather than a generic AI app builder.
 
@@ -19,6 +19,22 @@ Visual SDD is a visual operating environment for Spec-Driven Development. Its co
 - Testable SDD domain model, a CI workflow, roadmap and design decisions.
 
 **Not implemented yet:** AI agent execution, automatic specification generation, repository synchronization, team accounts, cloud synchronization of planning/tasks, production code generation, and release verification.
+
+## Sprint 06: evidence-linked GitHub traceability
+
+The SDD Canvas now offers a fourth visualization: **GitHub traceability**.
+An approved Task can be explicitly linked to a public GitHub Pull Request after inspecting its real PR metadata. The trace graph connects Requirement → Acceptance Criterion → Task → PR → verified head SHA, and shows provider-listed changed file paths and GitHub check runs.
+
+- Task-to-PR connections are **human-declared**, never inferred by guessing or text similarity.
+- GitHub API metadata is fetched read-only; no personal access token, Specification body, or customer data is sent.
+- Check-run state is only green when every reported check was returned and completed successfully. No checks, incomplete lists, in-progress runs and skipped-only runs are not called `passed`.
+- Links are tied to the exact approved Spec, Plan and Task revisions. A new revision or PR force-push makes prior evidence stale until reviewed.
+- Links persist **in the current browser only**, separately from account-backed idea/Specification storage; Markdown/JSON exports are available.
+- Real synthetic documentation-only draft PR: [#4](https://github.com/alikhalessi/Visual-SDD-Canvas-GPT/pull/4); its GitHub Actions CI [run 42110519364](https://github.com/alikhalessi/Visual-SDD-Canvas-GPT/actions/runs/42110519364) completed successfully.
+- Production v0.6.0: **136/136 Node tests, TypeScript and Next.js Build passed**. An earlier GitHub PR CI run exposed the need for an Auth cookie secret during build; CI now generates an ephemeral, nonproduction secret solely for testing. Real secrets are not copied to CI.
+- **Not implemented:** private-repository OAuth/GitHub App, semantic source-code-to-requirement proof, CI-based acceptance coverage, auto-merge, deployment evidence and cloud synchronization for Plan/Task/PR links. No Codex agent was invoked in this sprint.
+
+See `docs/SPRINT_06_ACCEPTANCE.md`, `docs/ADR-015-GITHUB-TRACEABILITY.md`, and `docs/SPRINT_06_OWNER_GUIDE.md`.
 
 ## Sprint 05: Explainable change impact
 
