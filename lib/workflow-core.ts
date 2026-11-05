@@ -94,7 +94,8 @@ export function workflowGraph(spec:Specification|null,doc:PlanningDocument|null,
   if(id==='specify')return {id,label:s.label,state:approved?'complete':spec?'available':'blocked',detail:approved?'Approved revision '+spec!.revision:spec?'Specification requires human approval':'Start from a saved idea'};
   if(id==='plan')return {id,label:s.label,state:planDone?'complete':approved?'available':'blocked',detail:planDone?'Technical plan approved':current?'Plan needs review':approved?'Create a technical plan':'Approve specification first'};
   if(id==='tasks')return {id,label:s.label,state:tasksDone?'complete':planDone?'available':'blocked',detail:tasksDone?'Task breakdown approved':planDone?'Define and link tasks':'Approve technical plan first'};
-  return {id,label:s.label,state:'future',detail:'Agent execution, code verification and release are not connected'};
+  if(id==='implement')return {id,label:s.label,state:tasksDone?'available':'blocked',detail:tasksDone?'An approved task can be handed to GitHub Actions. Codex needs an API key; no run is implied.':'Approve linked tasks to unlock the controlled agent handoff.'};
+  return {id,label:s.label,state:'future',detail:'Code verification and release are not connected'};
  });
 }
 export function traceabilityGraph(spec:Specification|null,doc:PlanningDocument|null):TraceLink[]{
