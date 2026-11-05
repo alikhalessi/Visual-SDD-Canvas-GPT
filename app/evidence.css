@@ -1,0 +1,21 @@
+.run-evidence{border:1px solid #456b77;border-radius:12px;padding:20px;background:linear-gradient(135deg,#132b38,#103231);margin-top:25px}
+.run-evidence-header{display:flex;gap:15px;justify-content:space-between;align-items:start}
+.run-evidence-header h4{font-size:19px;letter-spacing:-.3px;margin:9px 0}
+.run-evidence-header p{color:#a7c5ce;font-size:11px;line-height:1.75;margin:0}
+.run-evidence-header>span{font-size:9px;color:#b3e6d5;background:#255b51;border-radius:99px;padding:7px 10px;white-space:nowrap}
+.run-evidence-form{margin-top:20px;display:grid;gap:8px}
+.run-evidence-form>label{font-size:11px;color:#d0e5e9;font-weight:750}
+.run-evidence-form>div{display:flex;gap:8px}
+.run-evidence-form input{width:100%;min-width:0;flex:1;border-radius:9px;border:1px solid #4c7283;background:#0e2434;color:#eafbf8;font-size:13px;padding:12px}
+.run-evidence-form>div>button{white-space:nowrap;border:0;border-radius:9px;background:#a6ead6;color:#17382e;font-weight:800;font-size:11px;padding:12px 15px;min-height:43px}
+.run-evidence-form button:disabled{opacity:.55;cursor:not-allowed}
+.run-evidence-example{width:max-content;border:0;background:transparent;padding:5px 0;color:#a3e0cc;font-size:10px;text-decoration:underline}
+.run-evidence-success{margin-top:20px;padding:18px;border:1px solid #50977f;background:#173c35;border-radius:10px}
+.run-evidence-result{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.run-evidence-result strong{font-size:13px;color:#d1fdec}.run-evidence-result>span{font-size:10px;color:#bcf7d7}
+.run-evidence-success p{font-size:11px;line-height:1.75;color:#c1dcd3}
+.run-evidence-links{display:flex;flex-wrap:wrap;gap:15px}
+.run-evidence-links a{font-size:11px;color:#a6f1d9;text-decoration:underline}
+.run-evidence-error{background:#452e2d;color:#ffcbc0;border:1px solid #805e55;padding:13px;border-radius:8px;font-size:11px;line-height:1.65;margin-top:15px}
+.run-evidence-fineprint{color:#90afbd;font-size:10px;line-height:1.7;border-top:1px solid #36585d;margin:18px 0 0;padding-top:16px}
+@media(max-width:700px){.run-evidence{padding:15px}.run-evidence-header{display:block}.run-evidence-header>span{display:inline-block;margin-top:12px}.run-evidence-form>div{display:grid}.run-evidence-result{display:block}.run-evidence-result>span{display:block;margin-top:7px}}
