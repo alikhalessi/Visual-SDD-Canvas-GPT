@@ -8,8 +8,8 @@ The product visualizes and controls **Spec-Driven Development**. Application cre
 | 01 | Idea -> reviewable specification via a visual editor | Production delivered; browser acceptance pending |
 | 01A | Guided UX, contextual help, accessible mobile navigation and persisted display mode | Delivered; awaiting owner sign-off |
 | 01B | Google Login, secure per-user projects and activity history | Deployed; owner confirmed sign-in/sign-out, cloud save/reload deferred |
-| 02 | Interactive workflow and traceability, approved plans and linked tasks | Implemented; release verification in progress |
-| 03 | Controlled adapter connecting a real SDD engine and one coding agent | Pending |
+| 02 | Interactive workflow and traceability, approved plans and linked tasks | Production delivered; owner-approved |
+| 03 | Owner-gated Spec Kit artifact adapter and optional GitHub Codex agent | Implemented; deployment & real runner evidence pending |
 | 04 | First end-to-end run with verifiable automated checks | Pending |
 | 05 | Visual change impact from requirement to dependent artifacts | Pending |
 | 06 | GitHub integration and traceability graph | Pending |
