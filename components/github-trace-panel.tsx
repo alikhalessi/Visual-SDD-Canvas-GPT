@@ -44,7 +44,7 @@ export default function GithubTracePanel({spec,plan,projectId,onReviewTasks}:Pro
  useEffect(()=>{
   if(!key){setLinks([]);setLoadedKey('');return;}
   try{const saved=localStorage.getItem(key);setLinks(saved?readPullLinks(JSON.parse(saved)):[]);setStorageIssue('');}
-  catch{setLinks([]);setStorageIssue('Browser storage cannot restore your saved GitHub associations. No existing data was deleted.');}
+  catch{setLinks([]);setStorageIssue('Could not restore links from browser storage; existing saved data will be preserved.');setLoadedKey('');return;}
   setLoadedKey(key);setEvidence(null);setInput('');setMessage('');
  },[key]);
  useEffect(()=>{
