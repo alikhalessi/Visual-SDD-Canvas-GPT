@@ -56,12 +56,13 @@ test('a new specification revision makes previous plan stale and gates block',()
  assert.equal(planIsCurrent(s,p),false);
  assert.equal(workflowGraph(s,p,s.sourceIdea).find(x=>x.id==='plan')?.state,'blocked');
 });
-test('workflow graph has seven ordered stages with future execution disabled',()=>{
+test('workflow graph has seven stages, with gated agent handoff',()=>{
  const {s,p}=taskReady();const nodes=workflowGraph(s,p,s.sourceIdea);
  assert.deepEqual(nodes.map(x=>x.id),['idea','specify','plan','tasks','implement','verify','release']);
  assert.equal(nodes.find(x=>x.id==='plan')?.state,'complete');
  assert.equal(nodes.find(x=>x.id==='tasks')?.state,'available');
- assert.equal(nodes.find(x=>x.id==='implement')?.state,'future');
+ assert.equal(nodes.find(x=>x.id==='implement')?.state,'blocked');
+ assert.equal(nodes.find(x=>x.id==='verify')?.state,'future');
 });
 test('no plan is falsely marked as approved for a draft spec',()=>{
  const s=spec();const states=workflowGraph(s,null,s.sourceIdea);
