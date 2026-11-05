@@ -1,0 +1,13 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+const page=readFileSync(new URL('../app/page.tsx', import.meta.url),'utf8');
+const layout=readFileSync(new URL('../app/layout.tsx',import.meta.url),'utf8');
+const css=readFileSync(new URL('../app/ux-foundation.css',import.meta.url),'utf8');
+const editor=readFileSync(new URL('../components/spec-editor.tsx',import.meta.url),'utf8');
+test('main content has a keyboard skip target',()=>{assert.match(page,/href="#workspace-main"/);assert.match(page,/id="workspace-main"/)});
+test('mobile navigation has three reachable destinations',()=>{assert.match(page,/mobile-workspace-nav/);assert.match(page,/Mobile workspace navigation/);assert.match(page,/onClick=\{\(\)=>setTab\('canvas'\)\}/)});
+test('guided next action reads real specification state',()=>{assert.match(page,/validateSpecification\(spec\)/);assert.match(page,/UxGuide journey=\{journey\}/)});
+test('view mode preference is persisted locally',()=>{assert.match(page,/visual-sdd-view-mode/);assert.match(page,/localStorage\.setItem\('visual-sdd-view-mode'/)});
+test('foundation stylesheet is imported and includes reduced motion rules',()=>{assert.match(layout,/ux-foundation\.css/);assert.match(css,/prefers-reduced-motion:reduce/)});
+test('writing help is present and does not imply AI execution',()=>{assert.match(editor,/Need help writing your product goal/);assert.match(editor,/this is not AI-generated content/)});
