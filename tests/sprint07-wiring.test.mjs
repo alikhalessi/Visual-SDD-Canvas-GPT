@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 const page=readFileSync(new URL('../app/page.tsx',import.meta.url),'utf8');
 const brief=readFileSync(new URL('../components/workspace-brief.tsx',import.meta.url),'utf8');
+const quality=readFileSync(new URL('../lib/quality-core.ts',import.meta.url),'utf8');
 const spec=readFileSync(new URL('../components/spec-editor.tsx',import.meta.url),'utf8');
 const guide=readFileSync(new URL('../components/ux-guide.tsx',import.meta.url),'utf8');
 const css=readFileSync(new URL('../app/sprint07.css',import.meta.url),'utf8');
@@ -56,5 +57,5 @@ test('quality stylesheet is layered after existing domain styles',()=>{
 });
 test('roadmap completion is not fabricated from progress indicators',()=>{
  assert.match(brief,/first 3 review steps complete/);
- assert.match(brief,/Nothing executes automatically/);
+ assert.match(quality,/Nothing executes automatically/);
 });
