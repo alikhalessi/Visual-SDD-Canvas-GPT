@@ -19,4 +19,12 @@ jobs:
       - run: python3 -m unittest discover -s tests_python -v
       - run: npm run test
       - run: npm run typecheck
-      - run: npm run build
+      - name: Build using ephemeral, non-production Auth configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Static build needs an Auth cookie secret, but no live Auth/database calls.
+          # Never copy production credentials into untrusted pull-request workflows.
+          export NEON_AUTH_BASE_URL="https://example.invalid"
+          export NEON_AUTH_COOKIE_SECRET="$(openssl rand -hex 32)"
+          npm run build
