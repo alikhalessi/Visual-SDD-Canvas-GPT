@@ -11,3 +11,6 @@ This intentionally tiny documentation-only change is an **observable PR evidence
 This file does not implement any user's task, and a successful CI job does **not** prove the satisfaction of any Requirement or Acceptance Criterion. Visual SDD's link from an approved Task to a PR is a human-declared relationship; the GitHub API independently verifies only public PR/commit/check facts. No Codex execution is implied.
 
 This fixture is proposed as an unmerged draft PR and should remain review-only.
+
+## Reproducible CI boundary
+The Pull Request runs the repository's test, TypeScript and Next.js build workflow using a synthetic ephemeral cookie secret for CI. It never uses production credentials or runs application login tests.
