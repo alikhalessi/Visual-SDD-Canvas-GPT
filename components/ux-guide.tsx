@@ -11,7 +11,7 @@ export default function UxGuide({journey,onCapture,onSpecification,onCanvas}:Pro
  return <section className="ux-guide" aria-labelledby="ux-guide-heading">
   <div className="ux-guide-heading">
    <div><span className="eyebrow">YOUR GUIDED JOURNEY</span><h2 id="ux-guide-heading">Know where you are. Know what comes next.</h2>
-   <p>Three human-controlled steps, based on your real saved work — not simulated agent progress.</p></div>
+   <p>Three starting steps for your Specification. Technical planning and GitHub evidence continue in the Canvas; no agent progress is simulated.</p></div>
    <span className="ux-counter" aria-label={progress+' of 3 stages complete'}>{progress} / 3 complete</span>
   </div>
   <div className="ux-step-list" role="list">
@@ -24,7 +24,7 @@ export default function UxGuide({journey,onCapture,onSpecification,onCanvas}:Pro
   <div className="ux-next">
    <div><span className="eyebrow">RECOMMENDED NEXT ACTION</span><h3>{next.title}</h3><p>{next.instruction}</p></div>
    <button onClick={handler} className="ux-next-action">
-    {next.id==='idea'?'Write an idea':next.id==='planning'?'Explore the canvas':'Open specification'} <span aria-hidden="true">→</span>
+    {next.id==='idea'?'Write an idea':next.id==='planning'?'Continue to planning':'Open specification'} <span aria-hidden="true">→</span>
    </button>
   </div>
  </section>;
