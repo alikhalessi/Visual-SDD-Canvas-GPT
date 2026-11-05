@@ -22,7 +22,7 @@ test('real traceability graph comes from criterion links',()=>{
 test('plan approval gate is not an execution claim',()=>{
  assert.match(canvas,/approveTechnical\(spec,plan\)/);
  assert.match(canvas,/approveTaskBreakdown\(spec,plan\)/);
- assert.match(canvas,/Agent execution remains disabled/);
+ assert.match(canvas,/Code execution remains disabled until Sprint 03/);
 });
 test('planning state is restored locally and exporting is explicit',()=>{
  assert.match(canvas,/localStorage\.getItem\(key\)/);
