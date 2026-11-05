@@ -1,6 +1,6 @@
 # Visual SDD Canvas
 
-**Sprint 01B — Google Login & Persistent Workspace**
+**Sprint 02 — Interactive Visual SDD Canvas**
 
 Visual SDD is a visual operating environment for Spec-Driven Development. Its core product is the **visible, reviewable, and controllable SDD process**, rather than a generic AI app builder.
 
@@ -18,7 +18,15 @@ Visual SDD is a visual operating environment for Spec-Driven Development. Its co
 - Markdown / JSON export and browser-local persistence.
 - Testable SDD domain model, a CI workflow, roadmap and design decisions.
 
-**Not implemented yet:** AI agent execution, automatic specification generation, repository synchronization, team accounts, persistent cloud storage, production code generation, and release verification.
+**Not implemented yet:** AI agent execution, automatic specification generation, repository synchronization, team accounts, cloud synchronization of planning/tasks, production code generation, and release verification.
+
+## Sprint 02: Interactive workflow and traceability
+
+- Clickable workflow graph with live, artifact-driven statuses and approval gates.
+- Separate traceability graph generated from explicit Requirement / Acceptance Criterion / Task relationships.
+- Technical Plan and Task definitions are genuinely editable; human approval is tied to the current revision.
+- An edited Specification invalidates dependent planning approvals; agent execution remains disabled.
+- Planning artifacts are **stored in this browser only**, with Markdown and JSON export. They do **not** yet synchronize to the My Projects cloud workspace.
 
 ## Sprint 01B cloud workspace
 
