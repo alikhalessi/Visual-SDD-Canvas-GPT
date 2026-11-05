@@ -59,7 +59,7 @@ export default function CloudPanel({idea,spec,cloudRef,onRef,onLoad}:Props){
    const result=await response.json();
    if(!response.ok)throw new Error(result.error||'Save failed.');
    onRef({id:result.project.id,updatedAt:result.project.updated_at});
-   setMessage(result.created?'New project saved securely to your account.':'Project revision and activity saved.');
+   setMessage(result.created?'New project saved securely to your account.':'Project revision and activity saved. Planning and task drafts are still browser-local.');
    await refresh();
   }catch(e){setError(providerMessage(e));}finally{setBusy(false);}
  }
@@ -75,7 +75,7 @@ export default function CloudPanel({idea,spec,cloudRef,onRef,onLoad}:Props){
   }catch(e){setError(providerMessage(e));}finally{setBusy(false);}
  }
  return <section className="cloud-workspace" aria-labelledby="cloud-title">
-  <div className="cloud-heading"><div><span className="eyebrow">SPRINT 01B · PERSISTENT WORKSPACE</span><h2 id="cloud-title">Your projects, under your control.</h2>
+  <div className="cloud-heading"><div><span className="eyebrow">PRIVATE WORKSPACE · GOOGLE ACCOUNT</span><h2 id="cloud-title">Your projects, under your control.</h2>
    <p>Sign in with Google to access your private project collection, backed by an independent cloud database.</p></div>
    <span className="cloud-secure-chip">Private workspace</span></div>
   {isPending?<p className="cloud-state">Checking your account session…</p>:!session?.user?<div className="cloud-signin-panel">
