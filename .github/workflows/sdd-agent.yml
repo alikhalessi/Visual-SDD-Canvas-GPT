@@ -1,140 +1,158 @@
-name: Visual SDD — Approved Agent Handoff
+name: Visual SDD - Verified Agent Handoff
 on:
   issues:
     types: [opened]
 
-permissions:
-  contents: write
-  pull-requests: write
-  issues: write
+permissions: {}
 
 concurrency:
-  group: visual-sdd-issue-${{ github.event.issue.number }
+  group: visual-sdd-issue-${{ github.event.issue.number }}
   cancel-in-progress: false
 
 jobs:
-  agent-handoff:
-    # Only the repository owner can request a run. Never trust a public issue
-    # from another author, even when its text claims approvals.
-    if: "${{ github.event.issue.user.login == 'alikhalessi' && startsWith(github.event.issue.title, '[Visual SDD Run]') }"
+  verify-handoff:
+    name: Verify owner-requested artifacts
+    if: "${{ github.event.issue.user.login == 'alikhalessi' && startsWith(github.event.issue.title, '[Visual SDD Run]') }}"
     runs-on: ubuntu-latest
-    timeout-minutes: 18
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      issues: write
+    outputs:
+      mode: "${{ steps.adapter.outputs.mode }}"
     steps:
-      - name: Checkout the reviewed main branch without credentials
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Checkout reviewed main source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           persist-credentials: false
 
-      - name: Validate issue owner, bounded JSON and approval claims
-        id: adapter
+      - name: Execute parser and adapter regression checks
         shell: bash
         run: |
           set -euo pipefail
           python3 scripts/sdd_runner_adapter.py --self-test
-          python3 scripts/sdd_runner_adapter.py --event "$GITHUB_EVENT_PATH" --output .
-          python3 - "specs/900-visual-sdd-run-${{ github.event.issue.number }/manifest.json" >> "$GITHUB_OUTPUT" <<'PY'
-          import json,sys
-          payload=json.load(open(sys.argv[1],encoding='utf-8'))
-          print('mode='+payload['mode'])
-          print('task_id='+payload['task']['id'])
-          PY
-          echo "feature=specs/900-visual-sdd-run-${{ github.event.issue.number }" >> "$GITHUB_OUTPUT"
+          python3 -m unittest discover -s tests_python -v
 
-      - name: Publish inspectable handoff artifacts (no AI execution)
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - name: Produce verified, traceable run artifact
+        id: adapter
+        shell: bash
+        env:
+          ISSUE_NUMBER: "${{ github.event.issue.number }}"
+        run: |
+          set -euo pipefail
+          python3 scripts/sdd_runner_adapter.py --event "$GITHUB_EVENT_PATH" --output .
+          feature="specs/900-visual-sdd-run-$ISSUE_NUMBER"
+          python3 scripts/verify_run.py --feature "$feature" --evidence "$feature/evidence.json"
+          python3 - "$feature/manifest.json" >> "$GITHUB_OUTPUT" <<'PY'
+          import json,sys
+          obj=json.load(open(sys.argv[1], encoding='utf8'))
+          print('mode='+obj['mode'])
+          PY
+          echo "feature=$feature" >> "$GITHUB_OUTPUT"
+
+      - name: Upload immutable evidence package
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: sdd-handoff-${{ github.event.issue.number }
-          path: specs/900-visual-sdd-run-${{ github.event.issue.number }/
+          name: visual-sdd-evidence-${{ github.event.issue.number }}
+          path: "${{ steps.adapter.outputs.feature }}/"
           if-no-files-found: error
           retention-days: 14
 
-      - name: Mark validation-only handoff
-        if: "${{ steps.adapter.outputs.mode == 'validate_only' }"
-        run: |
-          echo '### Validated Spec Kit handoff' >> "$GITHUB_STEP_SUMMARY"
-          echo 'Manifest and spec.md / plan.md / tasks.md were generated.' >> "$GITHUB_STEP_SUMMARY"
-          echo 'Codex has NOT run. No code was changed.' >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Attach validation evidence to the issue
-        if: "${{ steps.adapter.outputs.mode == 'validate_only' }}"
+      - name: Publish run link and verified scope
         shell: bash
         env:
           GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          ISSUE_NUMBER: "${{ github.event.issue.number }}"
+          RUN_URL: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          RUN_MODE: "${{ steps.adapter.outputs.mode }}"
         run: |
           set -euo pipefail
-          gh issue comment "${{ github.event.issue.number }}" --body "Visual SDD validate-only handoff passed. [View GitHub Actions evidence](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}). No Codex agent was invoked; no code was implemented."
+          echo "### Verified Visual SDD handoff" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Mode: $RUN_MODE" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Verified: source manifest, task links, generated specification, plan, and SHA256 digests" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Unverified: agent execution, code implementation, functional product acceptance" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Evidence: $RUN_URL" >> "$GITHUB_STEP_SUMMARY"
+          gh issue comment "$ISSUE_NUMBER" --body "Visual SDD artifact validation PASSED. [Official GitHub Actions evidence]($RUN_URL). Download the evidence artifact for SHA256 digests. Mode: $RUN_MODE. This does not prove AI execution or completed code."
 
-      - name: Require opt-in Codex API key
-        if: "${{ steps.adapter.outputs.mode == 'codex' }"
-        env:
-          CODEX_KEY: "${{ secrets.OPENAI_API_KEY }"
+  codex-proposal:
+    name: Optional isolated Codex proposal
+    needs: verify-handoff
+    if: "${{ needs.verify-handoff.outputs.mode == 'codex' }}"
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout source without persisted token
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Read verified Spec Kit-compatible artifacts
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: visual-sdd-evidence-${{ github.event.issue.number }}
+          path: specs/900-visual-sdd-run-${{ github.event.issue.number }}
+
+      - name: Check explicit API credential
         shell: bash
+        env:
+          CODEX_KEY: "${{ secrets.OPENAI_API_KEY }}"
+          ISSUE_NUMBER: "${{ github.event.issue.number }}"
         run: |
           set -euo pipefail
           if [ -z "$CODEX_KEY" ]; then
-            echo 'BLOCKED: OPENAI_API_KEY is not configured as a repository Actions secret.' >> "$GITHUB_STEP_SUMMARY"
-            echo 'No model was called and no code was changed.'
+            echo "BLOCKED: OPENAI_API_KEY is not configured as a repository Actions secret." >> "$GITHUB_STEP_SUMMARY"
             exit 42
           fi
-          echo 'Codex credential available; execution remains restricted to agent-preview output.' >> "$GITHUB_STEP_SUMMARY"
+          mkdir -p "agent-preview/$ISSUE_NUMBER"
 
-      - name: Prepare isolated output folder
-        if: "${{ steps.adapter.outputs.mode == 'codex' }"
-        shell: bash
-        run: |
-          mkdir -p "agent-preview/${{ github.event.issue.number }"
-
-      - name: Run one bounded Codex coding task
-        if: "${{ steps.adapter.outputs.mode == 'codex' }"
+      - name: Execute one Codex task in scoped sandbox
         uses: openai/codex-action@v1
         with:
-          openai-api-key: "${{ secrets.OPENAI_API_KEY }"
+          openai-api-key: "${{ secrets.OPENAI_API_KEY }}"
+          safety-strategy: drop-sudo
           permission-profile: ":workspace"
-          prompt-file: "specs/900-visual-sdd-run-${{ github.event.issue.number }/AGENT_PROMPT.md"
-          output-file: "agent-preview/${{ github.event.issue.number }/CODEX_RESULT.md"
+          prompt-file: specs/900-visual-sdd-run-${{ github.event.issue.number }}/AGENT_PROMPT.md
+          output-file: agent-preview/${{ github.event.issue.number }}/CODEX_RESULT.md
 
-      - name: Reject model changes outside the isolated output folder
-        if: "${{ steps.adapter.outputs.mode == 'codex' }"
+      - name: Reject unexpected source modifications
         shell: bash
+        env:
+          ISSUE_NUMBER: "${{ github.event.issue.number }}"
         run: |
           set -euo pipefail
           python3 - <<'PY'
-          import subprocess,sys
-          issue='${{ github.event.issue.number }'
-          output=subprocess.check_output(['git','status','--porcelain','-z'],text=True)
-          records=[x for x in output.split('\0') if x]
-          allowed=('agent-preview/'+issue+'/', 'specs/900-visual-sdd-run-'+issue+'/')
-          for record in records:
-            path=record[3:]
-            if not path.startswith(allowed):
-              print('BLOCKED: unexpected file change outside isolated scope',file=sys.stderr)
-              sys.exit(43)
-          print('Scope validation: only isolated preview and Spec Kit run artifacts')
+          import os, subprocess, sys
+          issue = os.environ["ISSUE_NUMBER"]
+          changed = subprocess.check_output(["git","status","--porcelain","-z"],text=True)
+          prefixes = ("agent-preview/"+issue+"/", "specs/900-visual-sdd-run-"+issue+"/")
+          for entry in (item for item in changed.split("\0") if item):
+              path = entry[3:]
+              if not path.startswith(prefixes):
+                  sys.exit("BLOCKED: change outside isolated prototype scope")
+          print("Preview-only source scope PASSED")
           PY
 
-      - name: Open a review-only GitHub pull request
-        if: "${{ steps.adapter.outputs.mode == 'codex' }"
+      - name: Open human-review pull request without merging
         shell: bash
         env:
-          GH_TOKEN: "${{ secrets.GITHUB_TOKEN }"
+          GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          ISSUE_NUMBER: "${{ github.event.issue.number }}"
         run: |
           set -euo pipefail
-          issue="${{ github.event.issue.number }"
-          branch="sdd/agent-issue-$issue"
+          branch="sdd/proposal-issue-$ISSUE_NUMBER"
           git config user.name "visual-sdd-agent[bot]"
           git config user.email "visual-sdd-agent@users.noreply.github.com"
           git checkout -b "$branch"
-          git add -- "agent-preview/$issue" "specs/900-visual-sdd-run-$issue"
+          git add -- "agent-preview/$ISSUE_NUMBER" "specs/900-visual-sdd-run-$ISSUE_NUMBER"
           if git diff --cached --quiet; then
-            echo 'Codex produced no reviewable files.' >&2
+            echo "No reviewable changes" >&2
             exit 44
           fi
-          git commit -m "agent: proposed work for issue #$issue"
+          git commit -m "agent: isolated proposal for issue #$ISSUE_NUMBER"
           gh auth setup-git
-          git -c core.hooksPath=/dev/null push -u origin "$branch"
-          gh pr create \
-            --base main --head "$branch" \
-            --title "Visual SDD agent proposal #$issue" \
-            --body "Generated proposal for #$issue. Human review required. No automated merge or deployment; source-only output under agent-preview/$issue."
-          echo '### Agent ran and proposed a pull request' >> "$GITHUB_STEP_SUMMARY"
-          echo 'Review changes before any merge. Verification is not claimed.' >> "$GITHUB_STEP_SUMMARY"
+          git -c core.hooksPath=/dev/null push origin "$branch"
+          gh pr create --base main --head "$branch" --title "Visual SDD proposal for issue #$ISSUE_NUMBER" --body "For issue #$ISSUE_NUMBER. Human review required. Never automatically merged or deployed."
+          echo "Agent produced a review proposal; functional tests and deployment not claimed." >> "$GITHUB_STEP_SUMMARY"
