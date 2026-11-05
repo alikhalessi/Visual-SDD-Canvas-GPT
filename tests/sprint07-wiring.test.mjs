@@ -14,7 +14,7 @@ test('project command center replaces generic marketing card with state-driven a
  assert.match(brief,/onCanvas/);
 });
 test('simple mode reduces redundant overview process graph while professional mode shows it',()=>{
- assert.match(page,/tab==='overview'&&mode==='professional'&&<section className="panel workflow"/);
+ assert.match(page,/tab==='overview'&&displayDetailedOverview\(\)&&<section className="panel workflow"/);
  assert.match(brief,/aria-pressed=\{mode==='simple'\}/);
  assert.match(brief,/aria-pressed=\{mode==='professional'\}/);
 });
