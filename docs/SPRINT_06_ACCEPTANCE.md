@@ -18,11 +18,11 @@
 
 - Main repository: https://github.com/alikhalessi/Visual-SDD-Canvas-GPT
 - Synthetic demo PR: https://github.com/alikhalessi/Visual-SDD-Canvas-GPT/pull/4
-- Demo PR was opened as draft. Its source is `docs/SPRINT_06_PUBLIC_PR_FIXTURE.md` only; the PR has no real product requirement attached.
+- Demo PR was opened as draft. **Actual PR CI: https://github.com/alikhalessi/Visual-SDD-Canvas-GPT/actions/runs/42110519364 (success).** Its source is `docs/SPRINT_06_PUBLIC_PR_FIXTURE.md` only; the PR has no real product requirement attached.
 - Vercel deployment: https://vercel.com/aleksi9/visual-sdd-platform/D27YAGhzh1SkjZCkueUFMJs35Mjp
 - Production: https://visual-sdd-platform.vercel.app
 - Vercel enforced **136/136 automated Node tests, TypeScript, and successful Next.js production build**.
-- GitHub CI smoke PR originally passed tests and typechecking but failed at Next.js build because the unprivileged runner lacked a runtime Auth cookie secret. The GitHub workflow was amended to generate an **ephemeral, nonproduction cookie secret for CI builds only**, without exposing live environment variables. A new PR head was pushed to re-run CI; record the final outcome after inspection.
+- GitHub CI smoke PR originally passed tests and typechecking but failed at Next.js build because the unprivileged runner lacked a runtime Auth cookie secret. The GitHub workflow was amended to generate an **ephemeral, nonproduction cookie secret for CI builds only**, without exposing live environment variables. Retested PR head e49b291ac8c31ff3e15dbf1ce3f594089d86257f. **GitHub Actions run 42110519364 completed SUCCESS**; Python adapter self-test, Python regressions, Node tests, TypeScript and Next.js build all passed with a temporary CI-only cookie secret. No production secrets were exposed.
 
 ## Acceptance cases
 
@@ -37,7 +37,7 @@
 | S06-07 | New revisions and PR force-push invalidate current matching | Unit tests |
 | S06-08 | Trace graph follows actual requirement and criterion IDs | Unit tests |
 | S06-09 | Links saved per project in browser, exportable and removable | UI wiring |
-| S06-10 | Public PR proven with actual GitHub draft PR | PR #4 |
+| S06-10 | Public PR and actual GitHub check-run pipeline | Draft PR #4; CI run 42110519364 SUCCESS |
 | S06-11 | Full Node/TypeScript/Next Vercel build succeeds | 136/136 tests; deployment READY |
 | S06-12 | Product Owner can open browser, inspect PR #4 and link it to an approved Task | Manual browser acceptance pending |
 | S06-13 | English DOCX, ZIP alternative and source documentation delivered | Sprint report delivery |
