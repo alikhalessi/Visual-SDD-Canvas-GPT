@@ -1,13 +1,13 @@
 import { auth } from './lib/auth/server';
 
-// The landing page stays available to guests, and /api/workspace performs
-// its own session + ownership checks so unauthenticated calls return JSON 401.
-// The auth proxy is still required to finalize OAuth return callbacks.
-export default auth.middleware({
-  loginUrl: '/',
-  publicRoutes: ['/', '/api/workspace'],
-});
+// Next.js 16 OAuth callback finalizer. The public homepage is not globally
+// protected: only OAuth callback requests are routed through this proxy.
+// All cloud API operations independently verify the user session and owner ID.
+export default auth.middleware({ loginUrl: '/' });
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
+  matcher: [
+    { source: '/', has: [{ type: 'query', key: 'code' }] },
+    { source: '/', has: [{ type: 'query', key: 'neon_auth_session_verifier' }] },
+  ],
 };
