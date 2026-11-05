@@ -4,11 +4,12 @@ import type {Specification,Requirement} from '../lib/spec-core';
 import {SDD_STAGES,type StageId} from '../lib/sdd-core';
 import AgentRunPanel from './agent-run-panel';
 import ImpactExplorer from './impact-explorer';
+import {assessChangeImpact} from '../lib/impact-core';
 import {
  type PlanningDocument,type StageState,createPlanningDocument,reviseTechnical,approveTechnical,
  addLinkedTask,reviseLinkedTask,removeLinkedTask,validateTechnical,validateTaskBreakdown,approveTaskBreakdown,
  workflowGraph,traceabilityGraph,requirementCoverage,planIsCurrent,technicalApproved,tasksApproved,
- localPlanningKey,readPlanningDocument,planningMarkdown
+ localPlanningKey,readPlanningDocument,planningMarkdown,backfillCurrentBaseline
 } from '../lib/workflow-core';
 
 type Mode='simple'|'professional';
@@ -43,6 +44,8 @@ export default function VisualSDDCanvas({idea,spec,projectId,mode,onMode,onIdea,
   try{localStorage.setItem(key,JSON.stringify(plan));}
   catch{setStorageWarning('Browser storage is unavailable. Export the plan before leaving.');}
  },[key,loadedKey,plan]);
+ useEffect(()=>{if(plan&&spec&&!plan.specBaseline&&planIsCurrent(spec,plan))setPlan(backfillCurrentBaseline(spec,plan));},[spec,plan]);
+ const changeImpact=useMemo(()=>assessChangeImpact(spec,plan),[spec,plan]);
  const nodes=useMemo(()=>workflowGraph(spec,plan,idea),[spec,plan,idea]);
  const links=useMemo(()=>traceabilityGraph(spec,plan),[spec,plan]);
  const coverage=spec?requirementCoverage(spec,plan):{covered:0,total:0};
@@ -58,7 +61,10 @@ export default function VisualSDDCanvas({idea,spec,projectId,mode,onMode,onIdea,
  function update(value:PlanningDocument){setPlan(value);setMessage('Changes saved in this browser. Cloud sync for planning is not connected yet.');}
  function createPlan(){
   if(!spec)return;
-  if(plan&&!window.confirm('Create a new technical plan for this approved specification revision? Export the old plan first if needed.'))return;
+  if(plan){
+   if(!window.confirm('A new Plan will replace the existing local Plan and Tasks. Click OK to download a backup of the old Plan before creating the new draft.'))return;
+   saveText('visual-sdd-previous-plan-r'+plan.specRevision+'.json',JSON.stringify(plan,null,2),'application/json');
+  }
   try{update(createPlanningDocument(spec));setSelected('plan');setMessage('Technical plan created and linked to the approved specification revision.');}
   catch(e){setMessage(e instanceof Error?e.message:'Could not create plan.');}
  }
@@ -73,7 +79,7 @@ export default function VisualSDDCanvas({idea,spec,projectId,mode,onMode,onIdea,
  }
  function approveTasks(){
   if(!spec||!plan||!window.confirm('Approve this task breakdown? This does not run agents or mark tasks as implemented.'))return;
-  try{update(approveTaskBreakdown(spec,plan));setMessage('Task definitions approved. Code execution remains disabled until Sprint 03.');}
+  try{update(approveTaskBreakdown(spec,plan));setMessage('Task definitions approved. The Implement handoff is available after approval; actual Codex execution remains separately gated.');}
   catch(e){setMessage(e instanceof Error?e.message:'Task approval blocked.');}
  }
  function exportPlan(format:'json'|'md'){
@@ -84,7 +90,7 @@ export default function VisualSDDCanvas({idea,spec,projectId,mode,onMode,onIdea,
  const status=nodes.reduce((n,x)=>n+(x.state==='complete'?1:0),0);
  return <section className="live-canvas" aria-labelledby="live-canvas-title">
   <div className="live-canvas-intro">
-   <div><span className="eyebrow">SPRINT 02 · GOVERNED VISUAL SDD</span><h2 id="live-canvas-title">An interactive development journey.</h2>
+   <div><span className="eyebrow">SPRINT 05 · CHANGE IMPACT GOVERNANCE</span><h2 id="live-canvas-title">An interactive development journey.</h2>
     <p>Explore your real approval chain, explicit requirement-to-task links, and change impact against the planning baseline. Agent execution is never implicit.</p></div>
    <div className="live-canvas-metrics"><strong>{status}<span> / 7</span></strong><small>Stages completed — planning only, no code execution</small></div>
   </div>
@@ -92,13 +98,15 @@ export default function VisualSDDCanvas({idea,spec,projectId,mode,onMode,onIdea,
    <div className="canvas-segments" role="group" aria-label="Graph view">
     <button aria-pressed={graph==='workflow'} onClick={()=>setGraph('workflow')}>Workflow graph</button>
     <button aria-pressed={graph==='traceability'} onClick={()=>setGraph('traceability')}>Traceability graph</button>
-    <button aria-pressed={graph==='impact'} onClick={()=>setGraph('impact')}>Change impact</button>
+    <button aria-pressed={graph==='impact'} onClick={()=>setGraph('impact')}>Change impact {changeImpact.state==='changed'?'●':''}</button>
    </div>
    <div className="canvas-segments" role="group" aria-label="Viewing mode">
     <button aria-pressed={mode==='simple'} onClick={()=>onMode('simple')}>Simple</button>
     <button aria-pressed={mode==='professional'} onClick={()=>onMode('professional')}>Professional</button>
    </div>
   </div>
+  {changeImpact.state==='changed'&&graph!=='impact'&&<div className="canvas-callout" role="status">A Specification revision or content change affects the saved Plan and dependent Tasks. <button className="canvas-text-button" onClick={()=>setGraph('impact')}>Inspect affected artifacts →</button></div>}
+  {changeImpact.state==='missing_baseline'&&graph!=='impact'&&<div className="canvas-callout" role="status">This legacy Plan lacks an approved baseline; exact differences cannot be reconstructed. <button className="canvas-text-button" onClick={()=>setGraph('impact')}>Review uncertainty →</button></div>}
   {graph==='workflow'?<div className="live-canvas-viewport" role="region" tabIndex={0} aria-label="Interactive SDD workflow graph, scroll horizontally for more steps">
     <div className="live-canvas-graph">{nodes.map((n,i)=><div key={n.id} className="canvas-node-pair">
       <button type="button" aria-pressed={selected===n.id} className={'canvas-node state-'+n.state+(selected===n.id?' is-selected':'')} onClick={()=>setSelected(n.id)}>
@@ -111,7 +119,7 @@ export default function VisualSDDCanvas({idea,spec,projectId,mode,onMode,onIdea,
       {i<nodes.length-1&&<svg aria-hidden="true" className="canvas-edge" viewBox="0 0 32 28"><path d="M1 14 H26 M20 8 L26 14 L20 20" stroke="currentColor" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>}
     </div>)}</div>
     <div className="canvas-legend"><span><i className="legend-complete"/> Approved</span><span><i className="legend-available"/> Actionable</span><span><i className="legend-blocked"/> Awaiting input</span><span><i className="legend-future"/> Not connected</span></div>
-   </div>:graph==='impact'?<ImpactExplorer spec={spec} plan={plan} onSpecification={onSpecification} onPlan={()=>setSelected('plan')} onTasks={()=>setSelected('tasks')}/>:<div className="traceability-panel">
+   </div>:graph==='impact'?<ImpactExplorer spec={spec} plan={plan} onSpecification={onSpecification} onPlan={()=>{setGraph('workflow');setSelected('plan');}} onTasks={()=>{setGraph('workflow');setSelected('tasks');}}/>:<div className="traceability-panel">
      <div className="traceability-heading"><div><h3>Requirement → Acceptance → Task</h3><p>These edges are generated from your actual requirement IDs and explicit task links. No relation is invented.</p></div><span>{coverage.covered} / {coverage.total} requirements linked</span></div>
      {!spec?<div className="canvas-empty"><h3>Start by writing a specification</h3><p>Traceability requires identifiable requirements and acceptance conditions.</p><button className="action" onClick={onSpecification}>Create specification →</button></div>:
       <div className="traceability-rows">{spec.requirements.map((req:Requirement)=><div key={req.id} className="traceability-row">
