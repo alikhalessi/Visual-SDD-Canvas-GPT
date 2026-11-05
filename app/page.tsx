@@ -59,10 +59,10 @@ export default function Page(){
    <button aria-current={tab==='cloud'?'page':undefined} className={'nav-item '+(tab==='cloud'?'active':'')} onClick={()=>setTab('cloud')}><span>☁</span> My Projects</button>
    <div className="nav-label push-down">ACTIVE PROJECT</div>
    <div className="project"><span className="orange-dot"></span>{spec?.title||(draft?'Saved idea draft':'New project')}<small>LOCAL</small></div>
-   <div className="profile"><div className="avatar">VS</div><div><strong>Sprint 03</strong><small>Agent Handoff</small></div></div>
+   <div className="profile"><div className="avatar">VS</div><div><strong>Sprint 04</strong><small>Verified Evidence</small></div></div>
   </aside>
   <div className="main">
-   <header className="topbar"><div>Workspace <span className="sep">/</span> {tab==='overview'?'Overview':tab==='canvas'?'SDD Canvas':tab==='cloud'?'My Projects':'Specification'}</div><div className="top-right"><AccountStatus onProjects={()=>setTab('cloud')}/><span className="tag">v0.3.0</span></div></header>
+   <header className="topbar"><div>Workspace <span className="sep">/</span> {tab==='overview'?'Overview':tab==='canvas'?'SDD Canvas':tab==='cloud'?'My Projects':'Specification'}</div><div className="top-right"><AccountStatus onProjects={()=>setTab('cloud')}/><span className="tag">v0.4.0</span></div></header>
    <nav className="mobile-workspace-nav" aria-label="Mobile workspace navigation">
     <button aria-current={tab==='overview'?'page':undefined} onClick={()=>setTab('overview')}>Overview</button>
     <button aria-current={tab==='canvas'?'page':undefined} onClick={()=>setTab('canvas')}>SDD Canvas</button>
@@ -87,7 +87,7 @@ export default function Page(){
     {tab==='specification'&&spec&&<SpecEditor spec={spec} onChange={setSpec} onBack={()=>setTab('overview')} onReset={resetSpec}/>}
     {tab==='cloud'&&<CloudPanel idea={idea} spec={spec} cloudRef={cloudRef} onRef={setCloudRef} onLoad={loadCloudProject}/>} 
     {storageError&&<div className="notice" role="alert">{storageError}</div>}
-    <footer>Visual SDD · Sprint 03 Controlled Agent Handoff <span>A visual operating environment for SDD</span></footer>
+    <footer>Visual SDD · Sprint 04 Verified Execution Evidence <span>A visual operating environment for SDD</span></footer>
    </main>
   </div>
  </div>;
