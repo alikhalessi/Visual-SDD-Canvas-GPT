@@ -27,7 +27,7 @@ const actionLabel:Record<StageState,string>={complete:'Approved',available:'Need
 const stageShort:Record<StageId,string>={idea:'Capture idea',specify:'Define needs',plan:'Technical plan',tasks:'Linked tasks',implement:'Agent handoff',verify:'Evidence',release:'Publish'};
 function readable(s:StageState){return actionLabel[s]}
 export default function VisualSDDCanvas({idea,spec,projectId,mode,onMode,onIdea,onSpecification}:Props){
- const [selected,setSelected]=useState<StageId>('specify');
+ const [selected,setSelected]=useState<StageId>(()=>spec?.approval.status==='approved'&&spec.approval.approvedRevision===spec.revision?'plan':'specify');
  const [graph,setGraph]=useState<'workflow'|'traceability'|'impact'|'github'>('workflow');
  const [plan,setPlan]=useState<PlanningDocument|null>(null);
  const [loadedKey,setLoadedKey]=useState('');
