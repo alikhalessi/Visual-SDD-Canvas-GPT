@@ -10,8 +10,8 @@ The product visualizes and controls **Spec-Driven Development**. Application cre
 | 01B | Google Login, secure per-user projects and activity history | Deployed; owner confirmed sign-in/sign-out, cloud save/reload deferred |
 | 02 | Interactive workflow and traceability, approved plans and linked tasks | Production delivered; owner-approved |
 | 03 | Owner-gated Spec Kit artifact adapter and optional GitHub Codex agent | Delivered; first real validate-only runner verified in Sprint 04 |
-| 04 | Owner Issue -> Actions -> checked SDD docs -> SHA256 evidence and read-only UI | Production READY; 91 tests passed; owner acceptance pending |
-| 05 | Visual change impact from requirement to dependent artifacts | Pending |
+| 04 | Owner Issue -> Actions -> checked SDD docs -> SHA256 evidence and read-only UI | Production READY; owner approved |
+| 05 | Baseline-aware visual change impact, dependent task review and stale approval gates | Implemented; verification in progress |
 | 06 | GitHub integration and traceability graph | Pending |
 | 07 | Simple/Professional UX, security, pilot validation | Pending |
 
