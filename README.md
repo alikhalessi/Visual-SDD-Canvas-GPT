@@ -1,6 +1,6 @@
 # Visual SDD Canvas
 
-**Sprint 03 — Controlled Spec Kit/Codex Handoff**
+**Sprint 04 — Verified GitHub Actions Evidence**
 
 Visual SDD is a visual operating environment for Spec-Driven Development. Its core product is the **visible, reviewable, and controllable SDD process**, rather than a generic AI app builder.
 
@@ -19,6 +19,14 @@ Visual SDD is a visual operating environment for Spec-Driven Development. Its co
 - Testable SDD domain model, a CI workflow, roadmap and design decisions.
 
 **Not implemented yet:** AI agent execution, automatic specification generation, repository synchronization, team accounts, cloud synchronization of planning/tasks, production code generation, and release verification.
+
+## Sprint 04: real, verifiable Actions evidence
+
+- Corrected malformed GitHub Actions expressions that had prevented trustworthy issue-triggered results.
+- Verified a real end-to-end **validate-only** workflow: synthetic public Issue #3 → Actions run [42102571615](https://github.com/alikhalessi/Visual-SDD-Canvas-GPT/actions/runs/42102571615) → 9 Python checks → 9 artifact checks → SHA256 evidence upload → issue comment.
+- Added a read-only **Verify evidence** panel to the Implement stage. It verifies a GitHub Actions bot comment, successful official run metadata, and an unexpired, correctly named evidence artifact.
+- The Codex job was **skipped** during this run. AI implementation, code changes and PR creation remain unverified, contingent on a repo API secret and separate owner approval.
+- Planning and Task drafts remain browser-local; do not put proprietary ideas in this public GitHub Issue channel.
 
 ## Sprint 03: controlled GitHub handoff
 
