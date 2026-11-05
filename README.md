@@ -22,6 +22,8 @@ Visual SDD is a visual operating environment for Spec-Driven Development. Its co
 
 ## Sprint 07: clearer navigation, accessible editing and safe recovery
 
+**v0.7.0 production verified:** 160/160 Node tests, TypeScript, Next.js build and canonical Vercel deployment READY. See [release evidence](docs/SPRINT_07_RELEASE_EVIDENCE.md). Manual mobile and cloud save/reload acceptance remains pending.
+
 - Live, state-aware **Current project** command center: one next step, honest approval stage, Browser vs Cloud-linked status.
 - Plain Language defaults to fewer competing panels; Professional reveals expanded process details while preserving every governance control.
 - Specification editor now includes inline field-level validation and a direct handoff to Technical Planning after human approval.
