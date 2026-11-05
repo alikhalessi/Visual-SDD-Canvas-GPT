@@ -1,0 +1,97 @@
+/*
+  Sprint 07 Quality Layer — progressive disclosure, readable hierarchy,
+  touch ergonomics, visible keyboard navigation, and safety messaging.
+  Kept additive to preserve the governed SDD components and business logic.
+*/
+:root{--s07-ink:#eef9fa;--s07-muted:#b5cbd4;--s07-line:#486879;--s07-focus:#f2cf88}
+html{scroll-padding-top:95px}
+body{font-size:14px}
+button,input,textarea,select,summary{font:inherit}
+button{cursor:pointer}
+button:disabled{cursor:not-allowed}
+button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--s07-focus);outline-offset:3px}
+button:not(.canvas-node):not(.canvas-remove):not(.spec-danger):not(.spec-mini):not(.canvas-text-button):not(.step){min-height:44px}
+input,textarea,select{max-width:100%}
+[aria-invalid=true]{border-color:#e4a890!important;box-shadow:0 0 0 1px #e4a89088}
+::placeholder{color:#a5b8c5;opacity:1}
+.content{padding-top:34px}
+.hero{margin-bottom:23px}
+.hero p{font-size:15px;line-height:1.72;color:#b2c8d1}
+.hero-badge{color:#d7f5ea;border-color:#558b7b;background:#1b3c37;white-space:normal;text-align:right;line-height:1.5;max-width:200px}
+.nav-item{font-size:14px;font-weight:650}
+.project{overflow-wrap:anywhere;align-items:start}.project small{white-space:nowrap}
+.panel h2{line-height:1.3}
+.idea-panel .panel-top{align-items:center;gap:11px}
+.idea-panel textarea{font-size:15px;min-height:136px;line-height:1.7}
+.idea-actions>span{font-size:12px;color:#bdd2dd;line-height:1.5}
+.idea-buttons .spec-outline,.idea-buttons .action{font-size:12px}
+.intro-grid{grid-template-columns:minmax(0,1.13fr) minmax(320px,.87fr);align-items:stretch;gap:18px}
+.workspace-brief{min-width:0;display:flex;flex-direction:column;gap:16px;border:1px solid #547f79;background:radial-gradient(ellipse at top right,#245347,#122d38 60%,#112437);border-radius:16px;padding:25px 26px;box-shadow:inset 0 1px #b1f8db12}
+.brief-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.brief-heading>div{min-width:0}.brief-heading h2{font-size:clamp(19px,1.8vw,27px);letter-spacing:-.5px;line-height:1.3;margin:12px 0 0;overflow-wrap:anywhere}
+.brief-revision{flex:0 0 auto;color:#cdf6e6;border:1px solid #5d9884;border-radius:99px;padding:8px 10px;font-size:10px;max-width:118px;text-align:center}
+.brief-status-line{display:flex;align-items:center;gap:10px;font-size:12px;line-height:1.55;color:#c9e1df;border-bottom:1px solid #3c6469;padding-bottom:17px}
+.brief-status-dot{width:9px;height:9px;flex:0 0 9px;border-radius:50%;background:#95dfc5;box-shadow:0 0 0 4px #95dfc522}
+.brief-progress{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.brief-progress span{border:1px solid #4b6875;border-radius:8px;padding:10px 7px;text-align:center;color:#a7c2cd;background:#142937;font-size:11px;line-height:1.35}
+.brief-progress span.is-complete{border-color:#599a82;background:#1d493c;color:#d1f5e5;font-weight:750}
+.brief-progress span.is-complete:before{content:"✓";color:#93f0d0;font-weight:900;margin-right:4px}
+.brief-next{display:flex;flex-direction:column;gap:12px;background:#102633;border:1px solid #426777;padding:16px;border-radius:11px;margin-top:auto}
+.brief-next h3{font-size:18px;letter-spacing:-.3px;margin:10px 0 8px}
+.brief-next p{color:#b1cbd2;font-size:12px;line-height:1.65;margin:0}
+.brief-next .action{align-self:flex-start;font-size:12px;line-height:1.4}
+.brief-bottom{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
+.brief-mode{display:flex;border:1px solid #4e777c;padding:4px;border-radius:9px;background:#0e2631}
+.brief-mode button{border:0;background:transparent;color:#bad5dc;padding:9px 11px;border-radius:6px;font-size:11px}
+.brief-mode button[aria-pressed=true]{background:#b4f3dd;color:#173e36;font-weight:800}
+.brief-cloud-link{border:0;background:transparent;color:#b1f1dc;text-decoration:underline;font-size:11px;text-align:left;padding:8px 0;line-height:1.6}
+.brief-professional{font-size:11px;line-height:1.7;color:#b2cfd5;border-top:1px solid #3d6670;padding-top:13px;margin:0}
+.ux-guide{margin-top:19px}
+.ux-guide-heading p,.ux-next p{font-size:13px}
+.ux-step strong{font-size:13px}.ux-step small{font-size:11px}.ux-step-state{font-size:10px}
+.ux-next-action{font-size:12px}
+.spec-workspace .spec-intro p{font-size:13px;line-height:1.75}
+.spec-field span{font-size:12px}
+.spec-field input,.spec-field textarea,.spec-field select,.criterion input{font-size:14px;min-height:44px}
+.spec-field-error,.spec-criterion-error{display:block;color:#ffd5c8;font-size:11px;line-height:1.55}
+.spec-criterion-error{grid-column:2/3;grid-row:2;text-align:left}
+.criterion{display:grid;grid-template-columns:45px minmax(0,1fr) 42px;gap:8px;align-items:center}
+.criterion>span{grid-column:1;grid-row:1}
+.criterion input{grid-column:2;grid-row:1}
+.criterion .spec-danger{grid-column:3;grid-row:1}
+.spec-help{font-size:13px}
+.spec-checklist li{font-size:12px}
+.spec-side-note,.spec-trace small{font-size:11px}
+.spec-side-card{padding:19px}
+.spec-reset{min-height:44px;text-align:center}
+.spec-approved-note p{font-size:12px;color:#d3f7e7;line-height:1.6;margin:10px 0 13px}
+.spec-approved-note button{max-width:100%}
+.cloud-heading p,.cloud-save p,.cloud-signin-panel p{font-size:13px}
+.cloud-privacy{font-size:12px}
+.cloud-project strong{font-size:13px}
+.cloud-project small{font-size:11px}
+.cloud-project-actions button{min-height:44px;font-size:12px}
+.cloud-workspace .account-error{display:block}
+.live-canvas-intro p,.canvas-action-panel>p,.canvas-editor>p,.traceability-heading p{font-size:13px}
+.canvas-node strong{font-size:13px}
+.canvas-node small{font-size:11px}
+.canvas-node-footer{font-size:10px}
+.canvas-segments button{font-size:12px;min-height:44px}
+.canvas-action-panel h4{font-size:18px}
+.canvas-inspector p,.canvas-callout{line-height:1.75}
+.canvas-task .canvas-remove{min-height:38px}
+.canvas-criteria label,.canvas-criteria legend{font-size:12px}
+.canvas-editor textarea,.canvas-editor input:not([type=checkbox]),.canvas-editor select{font-size:14px;min-height:44px}
+.github-trace-disclaimer,.agent-safety p,.impact-disclaimer,.run-evidence-fineprint{font-size:11px;line-height:1.7}
+.recovery-banner{margin:20px 0;padding:22px;border:1px solid #e1a77d;background:#462f2b;border-radius:12px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px}
+.recovery-banner strong{font-size:15px;color:#ffe9d4}
+.recovery-banner p{color:#f3c8b7;font-size:12px;max-width:660px;line-height:1.7}
+.recovery-actions{display:flex;gap:9px;flex-wrap:wrap}
+.recovery-actions .spec-outline{min-height:44px;background:#243f3e;color:#f2fffa;border:1px solid #719e91;border-radius:8px;padding:10px 15px;font-size:12px}
+.recovery-actions .spec-danger{min-height:44px;padding:10px 13px;border:1px solid #cb8c81;border-radius:8px;background:#583532;color:#ffe0d5;font-size:12px}
+.notice[role=alert]{background:#4d322e;border-color:#dea68b;color:#ffe0d0}
+footer{font-size:12px;color:#a9c2cf}
+@media(max-width:1220px){.intro-grid{grid-template-columns:minmax(0,1fr)}.workspace-brief{padding:22px}}
+@media(max-width:760px){.hero{display:block}.hero-badge{display:inline-block;margin-top:15px;text-align:left}.content{padding-left:18px;padding-right:18px}.brief-heading{display:block}.brief-revision{display:inline-block;max-width:none;margin-top:11px}.brief-next .action{width:100%}.brief-bottom{display:grid;grid-template-columns:1fr}.brief-cloud-link{width:100%}.workflow-head{padding:20px}.spec-layout{gap:12px}.cloud-workspace{padding:17px}}
+@media(max-width:650px){.topbar{padding:0 15px;gap:7px}.topbar .tag{display:none}.topbar>div:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:48%}.topbar .top-right{min-width:0;margin-left:auto}.topbar .account-toolbar>.google-button{width:auto!important;font-size:11px!important;padding:9px 10px!important}.topbar .account-toolbar>.google-button .google-g{width:20px;height:20px;font-size:13px!important}.topbar .account-projects{max-width:100px}.mobile-workspace-nav{padding:8px 9px}.mobile-workspace-nav button{font-size:12px;min-height:44px}.workspace-brief{padding:18px}.brief-progress span{font-size:10px;padding:11px 4px}.idea-panel{padding:18px}.idea-buttons{grid-template-columns:1fr 1fr}.spec-field input,.spec-field textarea,.spec-field select,.criterion input,.idea-panel textarea,.canvas-editor textarea,.canvas-editor input:not([type=checkbox]),.canvas-editor select,.github-trace-form input,.github-trace-form select{font-size:16px}.criterion{grid-template-columns:38px minmax(0,1fr) 40px}.spec-box{padding:17px}.spec-req-head .spec-outline{width:100%}.recovery-banner{padding:17px}.recovery-actions{width:100%;display:grid}.recovery-actions button{width:100%}}
+@media(prefers-reduced-motion:reduce){html:focus-within{scroll-behavior:auto}*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
