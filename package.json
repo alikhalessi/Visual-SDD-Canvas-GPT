@@ -1,6 +1,6 @@
 {
   "name": "visual-sdd-canvas-gpt",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "type": "module",
   "scripts": {
@@ -13,7 +13,9 @@
   "dependencies": {
     "next": "15.5.9",
     "react": "19.2.0",
-    "react-dom": "19.2.0"
+    "react-dom": "19.2.0",
+    "@neondatabase/auth": "0.7.0-beta",
+    "@neondatabase/serverless": "1.2.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
