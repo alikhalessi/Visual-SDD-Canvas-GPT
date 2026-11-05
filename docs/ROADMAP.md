@@ -7,8 +7,8 @@ The product visualizes and controls **Spec-Driven Development**. Application cre
 | 00 | Project foundation, interactive SDD overview, CI, production link, report | Delivered, pending owner acceptance |
 | 01 | Idea -> reviewable specification via a visual editor | Production delivered; browser acceptance pending |
 | 01A | Guided UX, contextual help, accessible mobile navigation and persisted display mode | Delivered; awaiting owner sign-off |
-| 01B | Google Login, secure per-user projects and activity history | Implemented; verification in progress |
-| 02 | Editable SDD canvas with explicit workflow transitions | Pending |
+| 01B | Google Login, secure per-user projects and activity history | Deployed; owner confirmed sign-in/sign-out, cloud save/reload deferred |
+| 02 | Interactive workflow and traceability, approved plans and linked tasks | Implemented; release verification in progress |
 | 03 | Controlled adapter connecting a real SDD engine and one coding agent | Pending |
 | 04 | First end-to-end run with verifiable automated checks | Pending |
 | 05 | Visual change impact from requirement to dependent artifacts | Pending |
