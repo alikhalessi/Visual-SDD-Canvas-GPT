@@ -10,6 +10,7 @@ import {inspectCachedSpecification} from '../lib/quality-core';
 import VisualSDDCanvas from '../components/visual-sdd-canvas';
 import CloudPanel,{AccountStatus,type CloudReference,type CloudProject} from '../components/cloud-panel';
 import {createSpecification,readSpecification,validateSpecification,type Specification} from '../lib/spec-core';
+import {CLOUD_LINK_KEY,readCloudReference,storeCloudReference,preserveLocalReviewOnFirstSave} from '../lib/cloud-link-core';
 type Mode='simple'|'professional';
 type Draft={id:string;title:string;description:string;status:'draft'};
 export default function Page(){
@@ -43,6 +44,15 @@ export default function Page(){
     setUnreadableSpec(result.raw);
     setStorageError('Your saved Specification could not be read. The original data is preserved. Export a recovery copy before clearing this cache.');
    }
+   if(result.status!=='unreadable')try{
+    const rawLink=localStorage.getItem(CLOUD_LINK_KEY);
+    if(rawLink){
+     const restoredIdea=JSON.parse(localStorage.getItem('visual-sdd-idea')||'null');
+     const reference=readCloudReference(JSON.parse(rawLink),result.spec,restoredIdea?.description??'');
+     if(reference)setCloudRef(reference);
+     else setStorageError('The saved cloud project link no longer matches this browser draft. The draft is preserved; open the intended project before saving.');
+    }
+   }catch{setStorageError('The saved cloud project link could not be restored. Your browser draft is preserved.');}
   }catch{setStorageError('Browser storage access failed. No cached Specification was removed.');}
   setHydrated(true);
  },[]);
@@ -51,6 +61,13 @@ export default function Page(){
   try{if(spec)localStorage.setItem('visual-sdd-specification-v1',JSON.stringify(spec));else localStorage.removeItem('visual-sdd-specification-v1');}
   catch{setStorageError('Local storage blocked; export your document before leaving.');}
  },[spec,hydrated,unreadableSpec]);
+ useEffect(()=>{
+  if(!hydrated||unreadableSpec!==null)return;
+  try{
+   if(cloudRef)localStorage.setItem(CLOUD_LINK_KEY,JSON.stringify(storeCloudReference(cloudRef,spec,idea)));
+   else localStorage.removeItem(CLOUD_LINK_KEY);
+  }catch{setStorageError('The cloud project link could not be saved locally. Export your work before closing the browser.');}
+ },[cloudRef,spec,idea,hydrated,unreadableSpec]);
  useEffect(()=>{if(!hydrated)return;try{localStorage.setItem('visual-sdd-view-mode',mode);}catch{setStorageError('Cannot save your view preference in this browser.');}},[mode,hydrated]);
  function exportRecoveryCopy(){
   if(unreadableSpec===null)return;
@@ -90,6 +107,10 @@ export default function Page(){
   return true;
  }
  function resetSpec(){if(window.confirm('Remove the local specification and start again? Export first if needed.')){setSpec(null);setCloudRef(null);setTab('overview');setStage('idea');setNotice('Specification cleared. Your idea draft is preserved.');}}
+ function linkCloudProject(next:CloudReference|null,firstSave=false){
+  if(next&&firstSave&&spec)preserveLocalReviewOnFirstSave(localStorage,spec,next.id);
+  setCloudRef(next);
+ }
  return <div className="app-shell">
   <a className="skip-link" href="#workspace-main">Skip to main content</a>
   {experience==='engineering'&&<aside className="nav" aria-label="Workspace navigation">
@@ -104,7 +125,7 @@ export default function Page(){
    <div className="profile"><div className="avatar">VS</div><div><strong>Visual SDD</strong><small>UX & Quality · Sprint 07</small></div></div>
   </aside>}
   <div className="main">
-   <header className="topbar"><div>Workspace <span className="sep">/</span> {experience==='business'?'Business Review':tab==='overview'?'Overview':tab==='canvas'?'SDD Canvas':tab==='cloud'?'My Projects':'Specification'}</div><div className="top-right"><AccountStatus onProjects={()=>{setExperience('engineering');setTab('cloud');}}/><span className="tag">v0.8.0-preview</span></div></header>
+   <header className="topbar"><div>Workspace <span className="sep">/</span> {experience==='business'?'Business Review':tab==='overview'?'Overview':tab==='canvas'?'SDD Canvas':tab==='cloud'?'My Projects':'Specification'}</div><div className="top-right"><AccountStatus onProjects={()=>{setExperience('engineering');setTab('cloud');}}/><span className="tag">v0.9.0-preview</span></div></header>
    {experience==='engineering'&&<nav className="mobile-workspace-nav" aria-label="Mobile workspace navigation">
     <button aria-current={tab==='overview'?'page':undefined} onClick={()=>setTab('overview')}>Overview</button>
     <button aria-current={tab==='canvas'?'page':undefined} onClick={()=>setTab('canvas')}>SDD Canvas</button>
@@ -120,6 +141,8 @@ export default function Page(){
      </div>
     </section>
     {experience==='business'?<BusinessReviewCanvas spec={spec} idea={idea} projectId={cloudRef?.id||null} onSpecificationChange={setSpec}
+     onImportedSourceIdea={(source)=>{setIdea(source);setDraft(buildIdeaDraft(source));setCloudRef(null);}}
+     canImport={hydrated&&unreadableSpec===null}
      onCreateSpecification={()=>{setExperience('engineering');if(idea.trim().length>=12)openSpec();else captureIdea();}}
      onOpenSpecification={()=>{setExperience('engineering');openSpec();}}/>:<>
     <StakeholderEngineeringSummary spec={spec} projectId={cloudRef?.id||null} onReview={()=>setExperience('business')}/>
@@ -139,11 +162,11 @@ export default function Page(){
     </section>}
     {(tab==='overview'||tab==='canvas')&&<div className="features"><div><b className="feature-icon">◇</b><div><strong>Traceability by design</strong><p>Review actual PR and GitHub check metadata after explicitly linking approved tasks.</p></div></div><div><b className="feature-icon">✓</b><div><strong>Approval before action</strong><p>Decisions remain reviewable and human-controlled.</p></div></div><div><b className="feature-icon">✧</b><div><strong>Two views, one model</strong><p>Simple for newcomers, detailed for Product Owners.</p></div></div></div>}
     {tab==='specification'&&spec&&<SpecEditor spec={spec} mode={mode} onChange={setSpec} onBack={()=>setTab('overview')} onCanvas={()=>setTab('canvas')} onReset={resetSpec}/>}
-    {tab==='cloud'&&<CloudPanel idea={idea} spec={spec} cloudRef={cloudRef} onRef={setCloudRef} onLoad={loadCloudProject}/>} 
-    {storageError&&<div className="notice" role="alert">{storageError}</div>}
-    {unreadableSpec!==null&&<section className="recovery-banner" aria-labelledby="recovery-title"><div><strong id="recovery-title">Recovery needed: unreadable browser Specification</strong><p>We will not overwrite or delete the original cached text automatically. First export it to inspect or recover later, then choose whether to clear this single cache.</p></div><div className="recovery-actions"><button className="spec-outline" onClick={exportRecoveryCopy}>Download recovery copy</button><button className="spec-danger" onClick={clearUnreadableCache}>Clear unreadable cache…</button></div></section>}
+    {tab==='cloud'&&<CloudPanel idea={idea} spec={spec} cloudRef={cloudRef} onRef={linkCloudProject} onLoad={loadCloudProject}/>}
     <footer>Visual SDD · Sprint 07 UX & Quality <span>A visual operating environment for SDD</span></footer>
     </>}
+    {storageError&&<div className="notice" role="alert">{storageError}</div>}
+    {unreadableSpec!==null&&<section className="recovery-banner" aria-labelledby="recovery-title"><div><strong id="recovery-title">Recovery needed: unreadable browser Specification</strong><p>We will not overwrite or delete the original cached text automatically. First export it to inspect or recover later, then choose whether to clear this single cache.</p></div><div className="recovery-actions"><button className="spec-outline" onClick={exportRecoveryCopy}>Download recovery copy</button><button className="spec-danger" onClick={clearUnreadableCache}>Clear unreadable cache…</button></div></section>}
    </main>
   </div>
  </div>;

@@ -1,6 +1,8 @@
 'use client';
 import {useEffect,useMemo,useState} from 'react';
 import type {Specification} from '../lib/spec-core';
+import VibeImportPanel from './vibe-import-panel';
+import {localVibeHistoryKey,readVibeImportHistory,appendVibeImportHistory,type ImportResult} from '../lib/vibe-ingestor-core.ts';
 import {updateRequirement} from '../lib/spec-core';
 import {
  createStakeholderReview,rebaseStakeholderReview,readStakeholderReview,projectStakeholderRules,localStakeholderKey,
@@ -9,7 +11,7 @@ import {
  type StakeholderReviewDocument,type RuleCard,type WorkflowKind,type EdgeCondition,type BehaviourExample
 } from '../lib/stakeholder-view-core';
 
-type Props={spec:Specification|null;idea:string;projectId:string|null;onSpecificationChange:(s:Specification)=>void;onCreateSpecification:()=>void;onOpenSpecification:()=>void};
+type Props={spec:Specification|null;idea:string;projectId:string|null;onSpecificationChange:(s:Specification)=>void;onCreateSpecification:()=>void;onOpenSpecification:()=>void;onImportedSourceIdea:(text:string)=>void;canImport:boolean};
 function download(name:string,value:string){
  const url=URL.createObjectURL(new Blob([value],{type:'application/json;charset=utf-8'}));
  const link=document.createElement('a');link.href=url;link.download=name;document.body.appendChild(link);link.click();link.remove();
@@ -79,7 +81,7 @@ function RuleEditor({card,spec,onWording,onChange,doc}:{card:RuleCard;spec:Speci
   {notice&&<p role="status" className="business-notice">{notice}</p>}
  </section>;
 }
-export default function BusinessReviewCanvas({spec,idea,projectId,onSpecificationChange,onCreateSpecification,onOpenSpecification}:Props){
+export default function BusinessReviewCanvas({spec,idea,projectId,onSpecificationChange,onCreateSpecification,onOpenSpecification,onImportedSourceIdea,canImport}:Props){
  const [document,setDocument]=useState<StakeholderReviewDocument|null>(null);
  const [loadedKey,setLoadedKey]=useState('');
  const [rawRecovery,setRawRecovery]=useState<string|null>(null);
@@ -113,6 +115,39 @@ export default function BusinessReviewCanvas({spec,idea,projectId,onSpecificatio
   if(!key||loadedKey!==key||!spec||!document||document.specRevision!==spec.revision||rawRecovery!==null)return;
   try{localStorage.setItem(key,JSON.stringify(document));}catch{setMessage('Could not save stakeholder notes. Export them before closing the browser.');}
  },[key,loadedKey,spec,document,rawRecovery]);
+
+ function commitVibeImport(result:ImportResult,brief:string){
+  if(!canImport)throw Error('Recover the unreadable source Specification before importing.');
+  if(rawRecovery!==null|| (spec&&(!document||loadedKey!==key||document.specRevision!==spec.revision)))throw Error('Current review is not safely loaded.');
+  const nextKey=localStakeholderKey(result.spec,projectId);
+  const sourceKey='visual-sdd-specification-v1';
+  const historyKey=localVibeHistoryKey(result.spec,projectId);
+  const originalSpec=localStorage.getItem(sourceKey),originalReview=localStorage.getItem(nextKey),originalHistory=localStorage.getItem(historyKey);
+  let oldHistory=null;
+  if(originalHistory!==null){
+   try{oldHistory=readVibeImportHistory(JSON.parse(originalHistory));}catch{oldHistory=null;}
+   if(!oldHistory)throw Error('Existing import provenance is unreadable. Export its raw backup before importing again.');
+  }
+  const nextHistory=appendVibeImportHistory(oldHistory,result.receipt);
+  // Store review and append-only provenance before the source; rollback all three keys on write failure.
+  try{
+   localStorage.setItem(nextKey,JSON.stringify(result.review));
+   localStorage.setItem(historyKey,JSON.stringify(nextHistory));
+   localStorage.setItem(sourceKey,JSON.stringify(result.spec));
+  }catch(error){
+   try{
+    if(originalReview===null)localStorage.removeItem(nextKey);else localStorage.setItem(nextKey,originalReview);
+    if(originalHistory===null)localStorage.removeItem(historyKey);else localStorage.setItem(historyKey,originalHistory);
+    if(originalSpec===null)localStorage.removeItem(sourceKey);else localStorage.setItem(sourceKey,originalSpec);
+   }catch{throw Error('Import stopped. Storage rollback failed; export and inspect existing local data before continuing.');}
+   throw Error('Import stopped because browser storage was unavailable. Existing records restored.');
+  }
+  setDocument(result.review);setLoadedKey(nextKey);setRawRecovery(null);
+  if(!spec)onImportedSourceIdea(result.spec.sourceIdea||brief.slice(0,600));
+  onSpecificationChange(result.spec);
+  setSelected(result.addedRequirements[0]??null);
+  setMessage('New unapproved specification revision saved with '+result.addedRequirements.length+' imported candidate rule(s). Linked review notes are browser-local, not cloud-synced.');
+ }
  const ready=loadedKey===key&&!!spec&&!!document&&document.specRevision===spec.revision&&rawRecovery===null;
  const cards=spec?projectStakeholderRules(spec,ready?document:null):[];
  const active=cards.find(c=>c.id===selected)??cards[0];
@@ -124,10 +159,17 @@ export default function BusinessReviewCanvas({spec,idea,projectId,onSpecificatio
  }
  return <section className="business-view" aria-labelledby="business-view-title">
   <header className="business-hero"><div><span className="eyebrow">SPRINT 08 · BUSINESS REVIEW</span><h1 id="business-view-title">Understand the rules.<br/><em>See what could be missed.</em></h1><p>Review how your product should behave, including the work people never see. The same source requirements remain available to engineers. Nothing is approved automatically.</p></div><span className="business-local">REVIEW NOTES: BROWSER ONLY</span></header>
+  <VibeImportPanel spec={spec} key={projectId??'guest'} review={ready?document:null} reviewReady={canImport&&(!spec||ready)} onCommit={commitVibeImport}/>
   {!spec?<section className="business-empty"><h2>Start with your product idea</h2><p>{idea.trim()||'No idea has been saved yet.'}</p><p>Write the first specification to make its business rules visible here.</p><button className="business-primary" onClick={onCreateSpecification}>Start a specification</button></section>:
    <>
     <div className="business-summary"><div><strong>{cards.length}</strong><span>Business rules</span></div><div><strong>{examples}</strong><span>Example attached, review pending</span></div><div><strong>{signed}</strong><span>Behaviour reviewed &amp; approved</span></div><div><strong>r{spec.revision}</strong><span>Source specification revision</span></div></div>
-    <div className="business-source"><div><strong>{spec.title}</strong><p>Specification {spec.id} · {spec.approval.status==='approved'?'Source approved':'Source draft — separate source approval pending'} · Review notes and edge flags are not cloud-synced.</p></div><div className="business-source-actions"><button className="business-outline" onClick={onOpenSpecification}>Open source specification</button>{document&&ready&&<button className="business-outline" onClick={()=>download('stakeholder-review-r'+document.revision+'.json',JSON.stringify(document,null,2))}>Export review JSON</button>}</div></div>
+    <div className="business-source"><div><strong>{spec.title}</strong><p>Specification {spec.id} · {spec.approval.status==='approved'?'Source approved':'Source draft — separate source approval pending'} · Review notes and edge flags are not cloud-synced.</p></div><div className="business-source-actions"><button className="business-outline" onClick={onOpenSpecification}>Open source specification</button>{document&&ready&&<button className="business-outline" onClick={()=>download('stakeholder-review-r'+document.revision+'.json',JSON.stringify(document,null,2))}>Export review JSON</button>}{ready&&<button className="business-outline" onClick={()=>{
+ const raw=localStorage.getItem(localVibeHistoryKey(spec,projectId));
+ if(!raw){setMessage('No import provenance has been recorded for this project.');return;}
+ let history=null;try{history=readVibeImportHistory(JSON.parse(raw));}catch{history=null;}
+ download(history?'vibe-import-provenance.json':'vibe-import-raw-recovery.txt',history?JSON.stringify(history,null,2):raw);
+ setMessage(history?'Import provenance exported. Keep it private and back it up.':'Unreadable import provenance exported without modification; recover it before importing again.');
+ }}>Export import provenance</button>}</div></div>
     {rawRecovery!==null&&<div className="business-recovery" role="alert"><strong>Stakeholder review recovery required</strong><p>The existing review cache will not be replaced automatically. Export the exact stored value, then choose whether to clear that single cache.</p><button className="business-outline" disabled={rawRecovery==='unavailable'} onClick={()=>download('stakeholder-cache-recovery.json',rawRecovery)}>Download original</button><button className="business-link-danger" onClick={clearInvalid}>Clear invalid review cache…</button></div>}
     {ready&&document&&<div className="business-layout"><div className="business-rule-list" aria-label="Business rules"><h2>Business rules and coverage</h2>{cards.map(c=><button key={c.id} className={'business-rule-card'+(active?.id===c.id?' selected':'')} aria-pressed={active?.id===c.id} onClick={()=>setSelected(c.id)}><span className="business-rule-top"><small>{c.id}</small><span className={'business-coverage '+(c.coverage==='Behaviour Reviewed & Approved'?'reviewed':c.coverage==='Example Attached'?'attached':'missing')}>{c.coverage}</span></span><strong>{c.title||'Untitled rule'}</strong><span className="business-rule-statement">{c.statement||'The business behaviour has not been written yet.'}</span><span className="business-rule-foot">{c.workflows.length} workflow(s) · {c.edges.filter(e=>e.status==='open').length} uncovered path(s) · {c.examples.length} example(s)</span></button>)}</div>
      {active&&<RuleEditor key={active.id} card={active} spec={spec} doc={document} onChange={setDocument} onWording={statement=>onSpecificationChange(updateRequirement(spec,active.id,{statement}))}/>}

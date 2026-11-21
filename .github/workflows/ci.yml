@@ -9,16 +9,30 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    env:
+      CI_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: '22'
-      - run: npm install --no-audit --no-fund
-      - run: python3 scripts/sdd_runner_adapter.py --self-test
-      - run: python3 -m unittest discover -s tests_python -v
-      - run: npm run test
-      - run: npm run typecheck
+      - run: npm ci --no-audit --no-fund
+      - name: Record verification context
+        run: |
+          mkdir -p qa-reports
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          names = ['CI_HEAD_SHA', 'GITHUB_SHA', 'GITHUB_RUN_ID', 'GITHUB_RUN_ATTEMPT', 'GITHUB_EVENT_NAME', 'GITHUB_REPOSITORY', 'RUNNER_OS']
+          Path('qa-reports/run-context.json').write_text(json.dumps({name: os.environ.get(name) for name in names}, indent=2))
+          PY
+      - run: python3 scripts/sdd_runner_adapter.py --self-test 2>&1 | tee qa-reports/adapter-self-test.log
+      - run: python3 -m unittest discover -s tests_python -v 2>&1 | tee qa-reports/python-tests.log
+      - run: npm run test 2>&1 | tee qa-reports/node-tests.log
+      - run: npm run typecheck 2>&1 | tee qa-reports/typecheck.log
       - name: Build using ephemeral, non-production Auth configuration
         shell: bash
         run: |
@@ -27,4 +41,19 @@ jobs:
           # Never copy production credentials into untrusted pull-request workflows.
           export NEON_AUTH_BASE_URL="https://example.invalid"
           export NEON_AUTH_COOKIE_SECRET="$(openssl rand -hex 32)"
-          npm run build
+          npm run build 2>&1 | tee qa-reports/build.log
+      - name: Install browser for isolated import tests
+        run: npx playwright install --with-deps chromium firefox webkit
+      - name: Verify import in desktop and mobile browsers
+        run: npm run test:e2e 2>&1 | tee qa-reports/browser-tests.log
+      - name: Preserve verification evidence even after failure
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: sprint-09-verification-${{ env.CI_HEAD_SHA }}-${{ github.run_attempt }}
+          path: |
+            qa-reports/
+            test-results/
+            playwright-report/
+          retention-days: 90
+          if-no-files-found: warn

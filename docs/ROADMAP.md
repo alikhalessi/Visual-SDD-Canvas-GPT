@@ -1,8 +1,8 @@
 # Visual SDD Canvas — Engineering & MSc Thesis Roadmap v0.2
 
 **Repository:** `alikhalessi/Visual-SDD-Canvas-GPT` (`main`)
-**Current delivery baseline:** Sprint 07 / product v0.7.0
-**Current engineering work:** Sprint 08 implementation package prepared for integration and verification; owner sign-off and production release remain pending.
+**Current delivery baseline:** Sprint 08 production (merged PR #5, deployment READY at https://visual-sdd-platform.vercel.app/; manually deferred QA documented)
+**Current engineering work:** Sprint 09 on `sprint-09-vibe-to-spec`: scheduled/open-edge browser regression suite and explicit placeholder counts prepared for owner review. Earlier owner rule/provenance acceptance is credited. Exact final CI/preview evidence is recorded in PR #6; final product sign-off and production release remain pending.
 **Research context:** MSc Computer Science, Åbo Akademi University. This roadmap is an engineering and study plan, not an approved thesis protocol or a claim of experimental results.
 
 ## 1. Product direction
@@ -32,8 +32,8 @@ The proposed response is a **Dual-Mode Experience over a Single Underlying Model
 | 05 | Baseline-aware change impact, dependent task review and stale approval gates | Delivered; owner-approved |
 | 06 | Public PR/commit/check evidence and revision-bound task traceability | Production READY; 136 tests and real CI evidence; owner acceptance pending |
 | 07 | State-aware UX, progressive disclosure, safe local recovery, accessibility fixes and audit | Production READY; **160/160 Node tests**, typecheck/build verified; owner/real-browser acceptance pending |
-| **08** | **Dual-Mode Stakeholder Experience** | **Implementation package prepared; full repository CI/build, deployment, browser acceptance and owner sign-off pending** |
-| **09** | **Vibe-to-Spec Ingestion Bridge** | **Planned — not started** |
+| **08** | **Dual-Mode Stakeholder Experience** | **Owner-authorized production release, PR #5 merged; CI and production READY; deferred keyboard/recovery/project-isolation QA remains** |
+| **09** | **Vibe-to-Spec Ingestion Bridge** | **220 Node / 9 Python regressions and expanded Chromium/Firefox/WebKit browser scenarios; selected-path provenance and count clarification prepared for PR #6 owner review; final sign-off and production pending** |
 | **10** | **Human-Readable Impact & Agent Handoff** | **Planned — not started** |
 | **11** | **Empirical Evaluation Sandbox** | **Planned — not started** |
 
@@ -107,7 +107,7 @@ No invented deadlines. Gates are evidence- and owner-based.
 
 ## 5. Sprint 09 — Vibe-to-Spec Ingestion Bridge
 
-**Status:** Planned / not started; depends on accepted Sprint 08.
+**Status:** In implementation on `sprint-09-vibe-to-spec`; owner acceptance pending. Initial delivery is a deterministic offline *text-brief* importer, not screenshot crawling.
 **ADR:** `docs/ADR-018-VIBE-TO-SPEC-INGESTION.md`
 **Goal:** Turn an exploratory prototype description or feature brief into reviewable, linked specification *candidates*.
 

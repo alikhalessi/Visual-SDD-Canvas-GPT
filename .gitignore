@@ -5,3 +5,7 @@ out/
 !.env.example
 .DS_Store
 *.tsbuildinfo
+playwright-report/
+test-results/
+__pycache__/
+qa-reports/
