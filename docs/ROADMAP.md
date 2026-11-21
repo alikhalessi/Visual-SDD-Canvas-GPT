@@ -2,7 +2,7 @@
 
 **Repository:** `alikhalessi/Visual-SDD-Canvas-GPT` (`main`)
 **Current delivery baseline:** Sprint 08 production (merged PR #5, deployment READY at https://visual-sdd-platform.vercel.app/; manually deferred QA documented)
-**Current engineering work:** Sprint 09 vibe-to-spec ingestion on `sprint-09-vibe-to-spec`; implementation and verification underway, not accepted or deployed.
+**Current engineering work:** Sprint 09 vibe-to-spec ingestion on `sprint-09-vibe-to-spec`; CI and preview succeeded, Product Owner browser acceptance pending. No production release claimed.
 **Research context:** MSc Computer Science, Åbo Akademi University. This roadmap is an engineering and study plan, not an approved thesis protocol or a claim of experimental results.
 
 ## 1. Product direction
@@ -33,7 +33,7 @@ The proposed response is a **Dual-Mode Experience over a Single Underlying Model
 | 06 | Public PR/commit/check evidence and revision-bound task traceability | Production READY; 136 tests and real CI evidence; owner acceptance pending |
 | 07 | State-aware UX, progressive disclosure, safe local recovery, accessibility fixes and audit | Production READY; **160/160 Node tests**, typecheck/build verified; owner/real-browser acceptance pending |
 | **08** | **Dual-Mode Stakeholder Experience** | **Owner-authorized production release, PR #5 merged; CI and production READY; deferred keyboard/recovery/project-isolation QA remains** |
-| **09** | **Vibe-to-Spec Ingestion Bridge** | **Feature branch implementation underway; automated CI and owner acceptance pending** |
+| **09** | **Vibe-to-Spec Ingestion Bridge** | **Feature branch implementation, GitHub CI #206 passed, Vercel preview READY; owner acceptance and production release pending** |
 | **10** | **Human-Readable Impact & Agent Handoff** | **Planned — not started** |
 | **11** | **Empirical Evaluation Sandbox** | **Planned — not started** |
 
