@@ -12,11 +12,11 @@ Convert a written prototype or feature brief into **unapproved, reviewable candi
 4. Explicitly check each rule you intend to import. If it really is a known user-visible workflow, optionally check the corresponding workflow link.
 5. Review **potentially missed paths** separately. An accepted suggestion becomes an **open review flag**, *not* a confirmed background job. If its rule was not selected, the import is blocked.
 6. Review the blind-spots section. Select **Review changes & commit draft**, then confirm the count. A failed validation leaves the existing source and review unchanged.
-7. Open **Engineering Cockpit → Specification** to add real Given–When–Then acceptance criteria and complete missing goal/audience fields. Review all flags, examples and rationale in Business Review. Neither source nor stakeholder review becomes approved automatically.
+7. Use **Export import provenance** in the Business Review source controls to download original evidence, quotes and imported requirement IDs. Keep it private; it is browser-local. Then open **Engineering Cockpit → Specification** to add real Given–When–Then acceptance criteria and complete missing goal/audience fields. Review all flags, examples and rationale in Business Review. Neither source nor stakeholder review becomes approved automatically.
 
 ## Privacy and persistence
 
-The written brief stays in the browser while editing. The resulting Specification and stakeholder-review sidecar are stored in separate browser keys, and the review sidecar is **not** cloud-synced. Export backups before changing computers or clearing browser storage. To save the source Specification to the cloud, use the existing explicit **My Projects** action.
+The written brief stays in the browser while editing. The resulting Specification and stakeholder-review sidecar are stored in separate browser keys, and the review sidecar is **not** cloud-synced. Export backups before changing computers or clearing browser storage. An append-only import receipt is stored locally under a separate project key and never auto-synced. To save the source Specification to the cloud, use the existing explicit **My Projects** action.
 
 ## Known limits
 
