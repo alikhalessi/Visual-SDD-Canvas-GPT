@@ -4,7 +4,7 @@ import type {Specification} from '../lib/spec-core';
 import type {StakeholderReviewDocument} from '../lib/stakeholder-view-core';
 import {
  parseVibeBrief,defaultImportChoices,prepareVibeImport,
- type VibeProposal,type ImportChoices,type ImportResult,type RuleChoice
+ type VibeProposal,type ImportChoices,type ImportResult,type RuleChoice,type PathChoice
 } from '../lib/vibe-ingestor-core';
 
 type Props={spec:Specification|null;review:StakeholderReviewDocument|null;reviewReady:boolean;onCommit:(result:ImportResult,brief:string)=>void};
@@ -26,8 +26,8 @@ export default function VibeImportPanel({spec,review,reviewReady,onCommit}:Props
  function rule(id:string,patch:Partial<RuleChoice>){
   setChoices(prev=>prev?{...prev,rules:prev.rules.map(r=>r.id===id?{...r,...patch}:r)}:prev);
  }
- function path(id:string,include:boolean){
-  setChoices(prev=>prev?{...prev,paths:prev.paths.map(p=>p.id===id?{...p,include}:p)}:prev);
+ function path(id:string,patch:Partial<PathChoice>){
+  setChoices(prev=>prev?{...prev,paths:prev.paths.map(p=>p.id===id?{...p,...patch}:p)}:prev);
  }
  function commit(){
   if(!proposal||!choices||!reviewReady||busy)return;
@@ -65,11 +65,12 @@ export default function VibeImportPanel({spec,review,reviewReady,onCommit}:Props
      </div>;})}
      <h3>Potentially missed paths — these are questions, not facts</h3>
      {proposal.paths.length===0&&<p>No heuristically detected path. Absence of suggestions does not mean complete coverage.</p>}
-     {proposal.paths.map(p=>{const c=choices.paths.find(x=>x.id===p.id)!;return <label className="vibe-path" key={p.id}>
-      <input type="checkbox" checked={c.include} onChange={e=>path(p.id,e.target.checked)}/>
-      <span><strong>{p.id} · {p.kind==='background'?'Potential background/timing path':'Potential UI path'}</strong><span>{p.description}</span><small>{p.reason} Linked to {p.ruleId}. If selected, it becomes an OPEN review flag, not a confirmed workflow.</small></span>
-     </label>;})}
+     {proposal.paths.map(p=>{const c=choices.paths.find(x=>x.id===p.id)!;return <div className="vibe-path" key={p.id}>
+      <label className="vibe-choice"><input type="checkbox" checked={c.include} onChange={e=>path(p.id,{include:e.target.checked})}/><span><strong>{p.id} · {p.kind==='background'?'Potential background/timing path':'Potential UI path'}</strong><small>{p.reason} Linked to {p.ruleId}. If selected, it becomes an OPEN review flag, not a confirmed workflow.</small></span></label>
+      <label>Proposed path to investigate<input maxLength={420} value={c.description} onChange={e=>path(p.id,{description:e.target.value})}/></label>
+     </div>;})}
      <h3>Blind spots and missing evidence</h3><ul>{proposal.blindSpots.map(s=><li key={s}>{s}</li>)}</ul>
+     <div className="vibe-diff" role="note"><strong>Changes if confirmed</strong><p>Current source: {spec?'revision '+spec.revision:'no Specification'} → draft revision {spec?spec.revision+1:2}. Existing rules: {spec?.requirements.filter(r=>r.statement.trim()).length??0} retained. New rules: {selected}. Potential paths becoming OPEN flags: {choices.paths.filter(x=>x.include).length}. Interactive links: {choices.rules.filter(x=>x.include&&x.linkInteractive).length}. No approval or cloud save is implied.</p></div>
      <p className="vibe-warning">Acceptance conditions are left blank for human specification editing. Import changes the source revision and clears earlier approvals. Nothing is committed until you confirm.</p>
      <div className="vibe-actions"><span>{selected} selected rule(s)</span><button type="button" className="business-primary" disabled={selected===0||!reviewReady||busy} onClick={commit}>Review changes &amp; commit draft</button></div>
     </div>}
