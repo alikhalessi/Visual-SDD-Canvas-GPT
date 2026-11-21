@@ -1,33 +1,26 @@
-# Sprint 09 — Vibe-to-Spec Ingestion: Acceptance Matrix
+# Sprint 09 — Acceptance matrix for owner review
 
-**Status (2026-11-21):** 208/208 Node tests, 9/9 Python tests, typecheck and build passed in GitHub CI #206; Vercel preview READY. Real-browser owner acceptance, keyboard/mobile and production release remain pending.
+Date: 2026-11-21. Engineering verification is separate from owner acceptance and production release. Exact remote evidence: [PR #6](https://github.com/alikhalessi/Visual-SDD-Canvas-GPT/pull/6).
 
-| ID | Contract | Evidence required | Status |
-| --- | --- | --- | --- |
-| S09-01 | Offline, bounded deterministic parser with original source spans | Unit tests plus repeated same-input run | Automated CI passed; browser acceptance pending |
-| S09-02 | Clear explicit-vs-speculative classifications and blind spots | Unit tests and owner preview | Automated checks passed; real-browser acceptance pending |
-| S09-03 | Hidden queued/report/cache/session/role paths only proposed | Unit tests and walkthrough | Automated checks passed; real-browser acceptance pending |
-| S09-04 | Every proposed rule and path starts unselected; title, statement, priority can be edited | UI wiring and browser interaction | Automated checks passed; real-browser acceptance pending |
-| S09-05 | Preview and confirmed import are distinct; no silent source or review approval | Unit and browser tests | Automated checks passed; real-browser acceptance pending |
-| S09-06 | Convert to v1 requirements plus versioned, project-linked review records | Domain unit/validation tests | Automated CI passed; browser acceptance pending |
-| S09-07 | Duplicate/malformed/hostile/oversized input fails closed without partial source change | Negative/fuzz unit tests | Automated CI passed; browser acceptance pending |
-| S09-08 | Source change invalidates source and stakeholder approvals, retaining prior notes | Unit tests and real browser | Automated checks passed; real-browser acceptance pending |
-| S09-09 | Browser-local persistence rollback and recovery are explicit, no cloud claims | Unit/wiring and failed-storage browser tests | Automated checks passed; real-browser acceptance pending |
-| S09-10 | Preserve all Sprint 00–08 Node/Python, typing and build tests | Real CI run | Pending |
-| S09-11 | Accessible mobile and keyboard-only interaction | Real device and keyboard QA | Pending |
-| S09-12 | ADR, owner guide, roadmap, PR/review, deployment evidence and owner sign-off | GitHub record and real deployment | Preview READY; final owner sign-off pending |
-| S09-13 | Original source quotes, offsets and imported revision links survive commit in exportable browser-local history | Unit/wiring tests plus browser export/reload | Automated suite passed; browser export/reload pending |
+| ID | Contract | Evidence / status |
+| --- | --- | --- |
+| S09-01 | Bounded deterministic extraction with original spans | Node regression tests passed; supplied owner export confirms two mappings |
+| S09-02 | Explicit/speculative wording and blind spots | Domain and UI browser assertions; human comprehension decision pending |
+| S09-03 | Scheduled/revocation suggestions become open flags, never confirmed background workflows | All background proposals tested in core; scheduled flag verified through browser commit/reload/export |
+| S09-04 | Rules and paths start unchecked, explicit selection | Desktop/mobile automated browser checks passed; title/statement editing covered by core/wiring |
+| S09-05 | Preview, confirmation, persistence and approval remain distinct | Cancel preserves records; orphan path rejected before dialog; confirmed import remains draft |
+| S09-06 | Existing v1 requirements retained and IDs linked | REQ-001 preserved, C-001 → REQ-002 and C-002 → REQ-003 verified |
+| S09-07 | Duplicate, unsafe, oversized or corrupt input fails closed | Core negatives; malformed provenance and ambiguous mappings rejected |
+| S09-08 | Changes invalidate source/stakeholder approval; preserve notes | Regression tests; browser blocks stale preview after rationale edit |
+| S09-09 | Browser-local source/review/provenance rollback | Injected failure of each of three writes passed on desktop/mobile; permanent storage/crash durability unclaimed |
+| S09-10 | Preserve prior sprint regressions | 214 Node tests, 9 Python tests, adapter self-test, typecheck/build passed locally; final CI linked in PR |
+| S09-11 | Keyboard/mobile usability | Space/focus and viewport overflow automated in Chromium/mobile emulation; real device, screen reader and human UX acceptance pending |
+| S09-12 | Documentation, PR and exact deployment evidence | Updated matrix/evidence/guide/ADR/roadmap; owner release decision pending |
+| S09-13 | Export source/path provenance and reload | Owner's earlier two-rule export verified; new scheduled-path browser download equals stored history and links edge ID |
+| S09-14 | Counts include existing empty placeholders | 1 total retained, 0 with text, 1 empty REQ-001, 3 after two new rules; core and browser assertions |
 
-## Manual owner acceptance scenario
+## Decision boundary
 
-Paste: "An athlete must be able to revoke coach access to the dashboard. The system should queue weekly reports and check permissions when delivering a report."
+The owner already verified importing two rules and their source provenance. The previously missing selected-path engineering check is now automated through a real Chromium engine, including reload and download. Final owner approval of the revised preview remains pending; automation does not impersonate that approval.
 
-Expected: two rule candidates with source quotes; at least one potential background/timing path is presented as **speculative**. Nothing is selected by default. Select one or both rules, optionally choose interactive links and open edge flags. Confirm. Newly imported requirements are source **draft**, not approved; acceptance criteria still need human editing. Old records are not removed. Refresh; confirm persistence. Edit a source rule; any previous sign-off must become stale.
-
-Also test unsafe/duplicated brief errors, selecting a path whose rule is unselected, an unrelated project and storage failure. A successful CI result is not a substitute for mobile/keyboard or owner acceptance.
-
-**Gate to Sprint 10:** Owner verifies preview/commit and explicitly approves candidate-to-canonical mapping. Do not advance automatically.
-
-## Verified automated release candidate
-
-On 2026-11-21, [GitHub Actions CI #206](https://github.com/alikhalessi/Visual-SDD-Canvas-GPT/actions/runs/44910993852) completed successfully on commit `8caddfef2bc3b77f122d331dbdcde231cd5b8ba1`: **208 Node tests passed**, **9 Python tests passed**, TypeScript and Next.js optimized build passed. The matched Vercel preview deployment `dpl_6LA6HgcCt3yx1dtL1DYzSMZeagN4` is READY at `https://visual-sdd-platform-git-sprint-09-vibe-to-spec-aleksi9.vercel.app/`. These are automation/deployment facts, not human acceptance or live OAuth proof.
+Live Google sign-in, real mobile/accessibility acceptance, signed-in cloud-project switching and cross-device persistence remain unverified here. Notes/provenance are explicitly browser-local. No merge to main, production publication or Sprint 10 advancement is authorized by a green test result.

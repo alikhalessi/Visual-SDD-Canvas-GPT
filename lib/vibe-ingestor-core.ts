@@ -10,7 +10,7 @@ export type RuleChoice={id:string;include:boolean;title:string;statement:string;
 export type PathChoice={id:string;include:boolean;description:string};
 export type ImportChoices={rules:RuleChoice[];paths:PathChoice[]};
 export type VibeRuleEvidence={candidateId:string;requirementId:string;source:SourceSpan;originalStatement:string;importedStatement:string;confidence:'explicit'|'review-required'};
-export type VibePathEvidence={proposalId:string;requirementId:string;source:SourceSpan;description:string;kind:'interactive'|'background'};
+export type VibePathEvidence={proposalId:string;requirementId:string;source:SourceSpan;description:string;kind:'interactive'|'background';edgeId?:string;disposition?:'open-edge-flag'};
 export type VibeImportReceipt={schemaVersion:1;kind:'vibe-import-receipt';specId:string;sourceIdea:string;specRevision:number;at:string;brief:string;rules:VibeRuleEvidence[];paths:VibePathEvidence[]};
 export type VibeImportHistory={schemaVersion:1;kind:'vibe-import-history';specId:string;sourceIdea:string;receipts:VibeImportReceipt[]};
 export type ImportResult={spec:Specification;review:StakeholderReviewDocument;addedRequirements:string[];openedEdges:string[];linkedWorkflows:string[];receipt:VibeImportReceipt};
@@ -86,6 +86,12 @@ export function defaultImportChoices(proposal:VibeProposal):ImportChoices {
  return {rules:proposal.rules.map(r=>({id:r.id,include:false,title:r.title,statement:r.statement,priority:r.priority,linkInteractive:false})),
   paths:proposal.paths.map(p=>({id:p.id,include:false,description:p.description}))};
 }
+/** Empty source rows are retained too; do not hide them in the before/after count. */
+export function retainedVibeRequirements(spec:Specification|null){
+ const requirements=spec?.requirements??[];
+ return {total:requirements.length,withStatements:requirements.filter(r=>r.statement.trim()).length,
+  emptyIds:requirements.filter(r=>!r.statement.trim()).map(r=>r.id)};
+}
 /** Validated, all-or-nothing adapter. No input text gains approval or execution authority. */
 export function prepareVibeImport(spec:Specification|null,review:StakeholderReviewDocument|null,proposal:VibeProposal,choices:ImportChoices,now=new Date().toISOString()):ImportResult {
  if(!proposal||proposal.schemaVersion!==1)throw Error('Unsupported proposal schema.');
@@ -126,7 +132,7 @@ export function prepareVibeImport(spec:Specification|null,review:StakeholderRevi
  const nextSpec=revise(base,{requirements:[...existing,...added]},now);
  if(!readSpecification(nextSpec)||nextSpec.approval.status!=='draft')throw Error('Specification validation failed; import aborted.');
  let nextReview=review?rebaseStakeholderReview(review,nextSpec,now):createStakeholderReview(nextSpec,now);
- const linkedWorkflows:string[]=[],openedEdges:string[]=[];
+ const linkedWorkflows:string[]=[],openedEdges:string[]=[],edgeIds=new Map<string,string>();
  for(const [candidateId,c] of chosen){
   if(!c.linkInteractive)continue;
   const id=ids.get(candidateId)!;
@@ -140,6 +146,7 @@ export function prepareVibeImport(spec:Specification|null,review:StakeholderRevi
   const target=ids.get(p.ruleId)!;
   // Potential paths are *open questions*, never asserted background workflows.
   nextReview=flagEdgeCondition(nextReview,target,normalize(choice.description)+' Source: '+p.source.quote.slice(0,150),now);
+  edgeIds.set(choice.id,nextReview.rules.find(r=>r.requirementId===target)!.edges.at(-1)!.id);
   openedEdges.push(target);
  }
  if(!readStakeholderReview(nextReview))throw Error('Stakeholder sidecar validation failed; import aborted.');
@@ -151,7 +158,7 @@ export function prepareVibeImport(spec:Specification|null,review:StakeholderRevi
   }),
   paths:chosenPaths.map(c=>{
    const p=proposal.paths.find(x=>x.id===c.id)!;
-   return {proposalId:c.id,requirementId:ids.get(p.ruleId)!,source:p.source,description:normalize(c.description),kind:p.kind};
+   return {proposalId:c.id,requirementId:ids.get(p.ruleId)!,source:p.source,description:normalize(c.description),kind:p.kind,edgeId:edgeIds.get(c.id)!,disposition:'open-edge-flag'};
   })
  };
  return {spec:nextSpec,review:nextReview,addedRequirements:added.map(r=>r.id),openedEdges,linkedWorkflows,receipt};
@@ -172,10 +179,14 @@ export function readVibeImportHistory(value:unknown):VibeImportHistory|null{
     !bounded(r.at,45,10)||Number.isNaN(Date.parse(r.at))||!bounded(r.brief,MAX_BRIEF,12)||
     !Array.isArray(r.rules)||!r.rules.length||r.rules.length>30||!Array.isArray(r.paths)||r.paths.length>32)return null;
   lastRevision=r.specRevision;
+  if(!r.rules.every(x=>x&&typeof x==='object')||!r.paths.every(x=>x&&typeof x==='object'))return null;
   const ids=r.rules.map(x=>x.requirementId);
   if(!uniq(ids)||!r.rules.every(x=>x&&/^C-\d{3,}$/.test(x.candidateId)&&/^REQ-\d{3,}$/.test(x.requirementId)&&spanValid(x.source,r.brief)&&
     bounded(x.originalStatement,2000,15)&&bounded(x.importedStatement,2000,15)&&['explicit','review-required'].includes(x.confidence)))return null;
-  if(!r.paths.every(x=>x&&/^P-\d{3,}$/.test(x.proposalId)&&ids.includes(x.requirementId)&&spanValid(x.source,r.brief)&&bounded(x.description,420,8)&&['interactive','background'].includes(x.kind)))return null;
+  if(!uniq(r.rules.map(x=>x.candidateId))||!uniq(r.paths.map(x=>x.proposalId)))return null;
+  if(!r.paths.every(x=>/^P-\d{3,}$/.test(x.proposalId)&&ids.includes(x.requirementId)&&spanValid(x.source,r.brief)&&bounded(x.description,420,8)&&['interactive','background'].includes(x.kind)&&
+    (x.edgeId===undefined&&x.disposition===undefined||typeof x.edgeId==='string'&&/^EDGE-\d{3,}$/.test(x.edgeId)&&x.disposition==='open-edge-flag')))return null;
+  if(!uniq(r.paths.filter(x=>x.edgeId!==undefined).map(x=>x.edgeId!)))return null;
  }
  return h;
 }

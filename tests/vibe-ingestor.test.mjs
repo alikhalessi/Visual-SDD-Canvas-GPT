@@ -1,8 +1,8 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {createSpecification,approveSpecification,validateSpecification,readSpecification} from '../lib/spec-core.ts';
-import {readStakeholderReview,projectStakeholderRules} from '../lib/stakeholder-view-core.ts';
-import {parseVibeBrief,defaultImportChoices,prepareVibeImport,appendVibeImportHistory,readVibeImportHistory,localVibeHistoryKey} from '../lib/vibe-ingestor-core.ts';
+import {readStakeholderReview,projectStakeholderRules,approveBehaviourReview} from '../lib/stakeholder-view-core.ts';
+import {parseVibeBrief,defaultImportChoices,prepareVibeImport,appendVibeImportHistory,readVibeImportHistory,localVibeHistoryKey,retainedVibeRequirements} from '../lib/vibe-ingestor-core.ts';
 
 const NOW='2026-11-21T09:00:00.000Z';
 const BRIEF='An athlete must be able to revoke coach access to the dashboard. The system should queue weekly reports and check permissions when delivering a report.';
@@ -55,11 +55,64 @@ test('existing approved specification becomes draft on change and source IDs rem
  assert.equal(r.spec.requirements.length,3);
  assert.deepEqual(r.addedRequirements,['REQ-002','REQ-003']);
 });
-test('selected speculative paths remain open edge flags, never confirmed background workflows',()=>{
- const p=parseVibeBrief(BRIEF),choices=choose(p);
- const r=prepareVibeImport(null,null,p,choices,NOW);
- assert.equal(r.review.rules.flatMap(x=>x.edges).every(x=>x.status==='open'),true);
- assert.equal(r.review.rules.flatMap(x=>x.workflows).every(x=>x.kind==='interactive'),true);
+for(const path of parseVibeBrief(BRIEF).paths.filter(p=>p.kind==='background')){
+ test(`background path ${path.id} (${path.ruleId}) creates a traceable open flag and blocks approval`,()=>{
+  const source=createSpecification(BRIEF,NOW),p=parseVibeBrief(BRIEF),c=defaultImportChoices(p);
+  c.rules.forEach(r=>{r.include=true;r.linkInteractive=r.id==='C-001';});
+  c.paths.find(x=>x.id===path.id).include=true;
+  const before=JSON.stringify({source,p,c});
+  const r=prepareVibeImport(source,null,p,c,NOW);
+  const reqId=path.ruleId==='C-001'?'REQ-002':'REQ-003';
+  assert.deepEqual(r.addedRequirements,['REQ-002','REQ-003']);
+  assert.deepEqual(r.spec.requirements[0],source.requirements[0]);
+  assert.deepEqual(r.openedEdges,[reqId]);
+  assert.deepEqual(r.linkedWorkflows,['REQ-002']);
+  const edges=r.review.rules.flatMap(x=>x.edges);
+  assert.equal(edges.length,1,'assertion must not pass on an empty list');
+  assert.equal(edges[0].status,'open');
+  assert.equal(edges[0].evidenceExampleId,null);
+  assert.equal(edges[0].reviewNote,'');
+  assert.equal(r.review.rules.find(x=>x.requirementId===reqId).edges[0].id,edges[0].id);
+  assert.equal(r.review.rules.flatMap(x=>x.workflows).length,1);
+  assert.ok(r.review.rules.flatMap(x=>x.workflows).every(x=>x.kind==='interactive'));
+  assert.equal(r.spec.approval.status,'draft');
+  assert.ok(r.review.rules.every(x=>x.decision.status==='draft'));
+  assert.throws(()=>approveBehaviourReview(r.spec,r.review,reqId,NOW),/flagged uncovered paths/);
+  const h=readVibeImportHistory(JSON.parse(JSON.stringify(appendVibeImportHistory(null,r.receipt))));
+  assert.ok(h);
+  assert.deepEqual(h.receipts[0].paths,[{proposalId:path.id,requirementId:reqId,source:path.source,
+   description:path.description,kind:'background',edgeId:edges[0].id,disposition:'open-edge-flag'}]);
+  assert.equal(JSON.stringify({source,p,c}),before);
+ });
+}
+
+test('no selected paths produces no flags and empty path provenance',()=>{
+ const p=parseVibeBrief(BRIEF),c=defaultImportChoices(p);c.rules.forEach(r=>r.include=true);
+ const r=prepareVibeImport(createSpecification(BRIEF,NOW),null,p,c,NOW);
+ assert.deepEqual(r.openedEdges,[]);assert.deepEqual(r.receipt.paths,[]);
+ assert.deepEqual(r.review.rules.flatMap(x=>x.edges),[]);
+ assert.deepEqual(r.review.rules.flatMap(x=>x.workflows),[]);
+});
+
+test('multiple paths for the scheduled rule get distinct edge IDs on the correct requirement',()=>{
+ const p=parseVibeBrief(BRIEF),c=defaultImportChoices(p);c.rules[1].include=true;
+ c.paths.forEach(x=>x.include=p.paths.find(p=>p.id===x.id).ruleId==='C-002');
+ const r=prepareVibeImport(createSpecification(BRIEF,NOW),null,p,c,NOW);
+ assert.equal(r.receipt.paths.length,2);
+ assert.equal(new Set(r.receipt.paths.map(x=>x.edgeId)).size,2);
+ assert.ok(r.receipt.paths.every(x=>x.requirementId==='REQ-002'&&x.disposition==='open-edge-flag'));
+ assert.equal(r.review.rules.find(x=>x.requirementId==='REQ-002').edges.length,2);
+ assert.deepEqual(r.review.rules.flatMap(x=>x.workflows),[]);
+});
+
+test('retained counts include empty placeholders and match the committed requirement total',()=>{
+ const source=createSpecification(BRIEF,NOW),p=parseVibeBrief(BRIEF),c=defaultImportChoices(p);
+ c.rules.forEach(r=>r.include=true);
+ const counts=retainedVibeRequirements(source),r=prepareVibeImport(source,null,p,c,NOW);
+ assert.deepEqual(counts,{total:1,withStatements:0,emptyIds:['REQ-001']});
+ assert.equal(counts.total+r.addedRequirements.length,r.spec.requirements.length);
+ assert.deepEqual(retainedVibeRequirements(r.spec),{total:3,withStatements:2,emptyIds:['REQ-001']});
+ assert.deepEqual(retainedVibeRequirements(null),{total:0,withStatements:0,emptyIds:[]});
 });
 test('selecting a path without its source rule fails without partial updates',()=>{
  const p=parseVibeBrief(BRIEF),choices=defaultImportChoices(p);
@@ -154,4 +207,19 @@ test('tampered import receipts are rejected without overwriting history',()=>{
  tampered.receipts[0].rules[0].source.quote='faked provenance';
  assert.equal(readVibeImportHistory(tampered),null);
  assert.throws(()=>appendVibeImportHistory(tampered,r.receipt),/history full, corrupt, or inconsistent/i);
+});
+
+test('legacy path receipts remain readable while malformed and ambiguous mappings fail closed',()=>{
+ const p=parseVibeBrief(BRIEF),c=defaultImportChoices(p);c.rules[1].include=true;
+ c.paths.find(x=>x.id===p.paths.find(x=>x.ruleId==='C-002'&&x.kind==='background').id).include=true;
+ const h=appendVibeImportHistory(null,prepareVibeImport(null,null,p,c,NOW).receipt);
+ const legacy=structuredClone(h);delete legacy.receipts[0].paths[0].edgeId;delete legacy.receipts[0].paths[0].disposition;
+ assert.ok(readVibeImportHistory(legacy));
+ for(const mutate of [
+  x=>x.receipts[0].rules[0]=null,
+  x=>x.receipts[0].paths[0]=null,
+  x=>x.receipts[0].paths[0].disposition='confirmed-workflow',
+  x=>x.receipts[0].paths[0].requirementId='REQ-999',
+  x=>x.receipts[0].paths.push(structuredClone(x.receipts[0].paths[0])),
+ ]){const corrupt=structuredClone(h);mutate(corrupt);assert.equal(readVibeImportHistory(corrupt),null);}
 });

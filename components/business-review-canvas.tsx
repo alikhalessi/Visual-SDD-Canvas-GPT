@@ -159,7 +159,7 @@ export default function BusinessReviewCanvas({spec,idea,projectId,onSpecificatio
  }
  return <section className="business-view" aria-labelledby="business-view-title">
   <header className="business-hero"><div><span className="eyebrow">SPRINT 08 · BUSINESS REVIEW</span><h1 id="business-view-title">Understand the rules.<br/><em>See what could be missed.</em></h1><p>Review how your product should behave, including the work people never see. The same source requirements remain available to engineers. Nothing is approved automatically.</p></div><span className="business-local">REVIEW NOTES: BROWSER ONLY</span></header>
-  <VibeImportPanel spec={spec} review={ready?document:null} reviewReady={canImport&&(!spec||ready)} onCommit={commitVibeImport}/>
+  <VibeImportPanel spec={spec} key={key||'empty-'+(projectId??'guest')} review={ready?document:null} reviewReady={canImport&&(!spec||ready)} onCommit={commitVibeImport}/>
   {!spec?<section className="business-empty"><h2>Start with your product idea</h2><p>{idea.trim()||'No idea has been saved yet.'}</p><p>Write the first specification to make its business rules visible here.</p><button className="business-primary" onClick={onCreateSpecification}>Start a specification</button></section>:
    <>
     <div className="business-summary"><div><strong>{cards.length}</strong><span>Business rules</span></div><div><strong>{examples}</strong><span>Example attached, review pending</span></div><div><strong>{signed}</strong><span>Behaviour reviewed &amp; approved</span></div><div><strong>r{spec.revision}</strong><span>Source specification revision</span></div></div>

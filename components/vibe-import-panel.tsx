@@ -3,7 +3,7 @@ import {useState} from 'react';
 import type {Specification} from '../lib/spec-core';
 import type {StakeholderReviewDocument} from '../lib/stakeholder-view-core';
 import {
- parseVibeBrief,defaultImportChoices,prepareVibeImport,
+ parseVibeBrief,defaultImportChoices,prepareVibeImport,retainedVibeRequirements,
  type VibeProposal,type ImportChoices,type ImportResult,type RuleChoice,type PathChoice
 } from '../lib/vibe-ingestor-core';
 
@@ -12,14 +12,14 @@ export default function VibeImportPanel({spec,review,reviewReady,onCommit}:Props
  const [brief,setBrief]=useState('');
  const [proposal,setProposal]=useState<VibeProposal|null>(null);
  const [choices,setChoices]=useState<ImportChoices|null>(null);
- const [baseRevision,setBaseRevision]=useState<number|null>(null);
+ const [baseSnapshot,setBaseSnapshot]=useState('');
  const [message,setMessage]=useState('');
  const [busy,setBusy]=useState(false);
- function clearPreview(){setProposal(null);setChoices(null);setBaseRevision(null);setMessage('Brief changed. Preview again before importing.');}
+ function clearPreview(){setProposal(null);setChoices(null);setBaseSnapshot('');setMessage('Brief changed. Preview again before importing.');}
  function preview(){
   try{
    const next=parseVibeBrief(brief);
-   setProposal(next);setChoices(defaultImportChoices(next));setBaseRevision(spec?.revision??null);
+   setProposal(next);setChoices(defaultImportChoices(next));setBaseSnapshot(JSON.stringify({spec,review}));
    setMessage(next.rules.length?'Candidates ready. None is selected or approved automatically.':'No importable rules found. Use sentences describing what users or systems must, should or can do.');
   }catch(e){setProposal(null);setChoices(null);setMessage(e instanceof Error?e.message:'Could not safely inspect the brief.');}
  }
@@ -31,18 +31,19 @@ export default function VibeImportPanel({spec,review,reviewReady,onCommit}:Props
  }
  function commit(){
   if(!proposal||!choices||!reviewReady||busy)return;
-  if((spec?.revision??null)!==baseRevision){setMessage('The Specification changed since preview. Re-preview to avoid importing into a stale revision.');return;}
+  if(JSON.stringify({spec,review})!==baseSnapshot){setMessage('The Specification or review changed since preview. Preview again before importing.');return;}
   try{
    setBusy(true);
    const result=prepareVibeImport(spec,review,proposal,choices);
    if(!window.confirm('Import '+result.addedRequirements.length+' candidate rule(s), '+result.linkedWorkflows.length+' explicit interactive link(s), and '+result.openedEdges.length+' OPEN edge flag(s)? All source and stakeholder approvals will be draft. No software behavior has been verified.'))return;
    onCommit(result,proposal.brief);
-   setProposal(null);setChoices(null);setBrief('');setBaseRevision(null);
+   setProposal(null);setChoices(null);setBrief('');setBaseSnapshot('');
    setMessage('Candidate rules imported as unapproved drafts. Complete acceptance criteria and review all potential background paths.');
   }catch(e){setMessage(e instanceof Error?e.message:'Import aborted; previous records preserved.');}
   finally{setBusy(false);}
  }
  const selected=choices?.rules.filter(c=>c.include).length??0;
+ const retained=retainedVibeRequirements(spec);
  return <section className="vibe-import" aria-labelledby="vibe-title">
   <details>
    <summary id="vibe-title"><strong>Import a prototype or feature brief</strong><span>SPRINT 09 · Proposed behavior, never automatic approval</span></summary>
@@ -70,7 +71,7 @@ export default function VibeImportPanel({spec,review,reviewReady,onCommit}:Props
       <label>Proposed path to investigate<input maxLength={420} value={c.description} onChange={e=>path(p.id,{description:e.target.value})}/></label>
      </div>;})}
      <h3>Blind spots and missing evidence</h3><ul>{proposal.blindSpots.map(s=><li key={s}>{s}</li>)}</ul>
-     <div className="vibe-diff" role="note"><strong>Changes if confirmed</strong><p>Current source: {spec?'revision '+spec.revision:'no Specification'} → draft revision {spec?spec.revision+1:2}. Existing rules: {spec?.requirements.filter(r=>r.statement.trim()).length??0} retained. New rules: {selected}. Potential paths becoming OPEN flags: {choices.paths.filter(x=>x.include).length}. Interactive links: {choices.rules.filter(x=>x.include&&x.linkInteractive).length}. No approval or cloud save is implied.</p></div>
+     <div className="vibe-diff" role="note" aria-label="Import change summary"><strong>Changes if confirmed</strong><p>Current source: {spec?'revision '+spec.revision:'no Specification'} → draft revision {spec?spec.revision+1:2}.</p><p>Existing requirements retained: {retained.total}. With rule text: {retained.withStatements}. Empty placeholders retained: {retained.emptyIds.length}{retained.emptyIds.length?' ('+retained.emptyIds.join(', ')+')':''}.</p><p>New rules: {selected}. Total requirements after import: {retained.total+selected}. Potential paths becoming OPEN flags: {choices.paths.filter(x=>x.include).length}. Interactive links: {choices.rules.filter(x=>x.include&&x.linkInteractive).length}. No approval or cloud save is implied.</p></div>
      <p className="vibe-warning">Acceptance conditions are left blank for human specification editing. Import changes the source revision and clears earlier approvals. Nothing is committed until you confirm.</p>
      <div className="vibe-actions"><span>{selected} selected rule(s)</span><button type="button" className="business-primary" disabled={selected===0||!reviewReady||busy} onClick={commit}>Review changes &amp; commit draft</button></div>
     </div>}

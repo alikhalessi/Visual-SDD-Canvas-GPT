@@ -1,6 +1,6 @@
 # ADR-018 — Vibe-to-Spec ingestion with bounded proposals and human-confirmed commit
 
-**Status:** Proposed for Sprint 09; awaits integrated CI and Product Owner browser acceptance.
+**Status:** Implemented on the Sprint 09 feature branch; automated verification and earlier owner source-provenance evidence recorded. Final product acceptance/release decision remains pending in PR #6.
 
 ## Context
 
@@ -34,3 +34,7 @@ Test the acceptance matrix and real mobile/keyboard behavior before approval; do
 ## Provenance retention refinement
 
 A third project-scoped, browser-local document (`vibe-import-history-v1`) stores append-only import receipts with the original brief, original source spans and quotes, source/target requirement IDs, edited statements, explicitly selected potential paths, specification revision and recording timestamp. Receipt history is independently bounded and validated; malformed history prevents import rather than being overwritten. The Business Review mode offers an explicit JSON export. This record is **not** a cryptographic audit trail, is **not** cloud-synchronized, and may be lost if browser storage is cleared before export. The import handler attempts to roll back source, stakeholder and provenance keys together on storage-write failure; browser storage cannot promise crash-atomic durability.
+
+## Selected-path review refinement (2026-11-21)
+
+New path receipts add optional `edgeId` and `disposition: open-edge-flag` fields, retaining legacy v1 read compatibility. They identify the open flag created at import, never a verified workflow. The reader rejects null entries and duplicate proposal mappings. Change summaries include all retained source rows and list empty placeholder IDs. A pending preview is invalidated by any source/review content change, and project identity changes discard the old preview. Desktop/mobile browser tests cover scheduled-path persistence and export, orphan rejection, cancellation, stale review, and recoverable failure of each of the three storage writes. Human acceptance and production release remain separate decisions.
