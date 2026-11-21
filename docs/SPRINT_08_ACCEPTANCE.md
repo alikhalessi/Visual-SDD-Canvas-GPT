@@ -46,3 +46,11 @@ Evidence from the owner's actual Windows checkout and screenshots:
 - Still **not verified**: mobile responsiveness, keyboard-only navigation, separate project review isolation, malformed cache recovery, genuine Google login (earlier local **502** with dummy Auth URL), production deployment, final owner acceptance. A CI green check alone does not clear these gates.
 
 **Release decision:** Code is on an open PR, not a claimed production release. Do not mark Sprint 08 fully accepted until remaining gates are resolved or explicitly waived and documented by the owner.
+
+## Mobile Google authentication recheck — 2026-11-21
+
+- The owner opened the Sprint 08 Vercel preview in a mobile browser. The page rendered, but Google sign-in initially showed HTTP 403.
+- Neon Auth trusted-origin inspection found only the production domain and localhost allowed. The exact preview origin `https://visual-sdd-platform-kkothma88-aleksi9.vercel.app` was added to the allowlist and verified to appear in the Neon Auth settings. No Auth secrets or existing origins were changed.
+- The owner subsequently retested Google sign-in on the same mobile preview and explicitly confirmed: **works, no problem**.
+- Therefore **preview-domain Google sign-in on the tested mobile device is PASS**. This does not certify all browsers, keyboard-only access, project isolation, corrupted-cache recovery, or production release.
+- The Vercel preview deployment for commit `95d29c5` was reported **READY**; GitHub Actions run **#188** for the branch completed **successfully** after the documentary updates.
