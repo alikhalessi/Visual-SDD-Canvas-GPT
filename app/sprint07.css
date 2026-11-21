@@ -4,6 +4,7 @@
   Kept additive to preserve the governed SDD components and business logic.
 */
 :root{--s07-ink:#eef9fa;--s07-muted:#b5cbd4;--s07-line:#486879;--s07-focus:#f2cf88}
+@media(max-width:650px){.topbar .top-right{flex-shrink:0}}
 html{scroll-padding-top:95px}
 body{font-size:14px}
 button,input,textarea,select,summary{font:inherit}

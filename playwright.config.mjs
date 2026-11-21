@@ -9,6 +9,8 @@ export default defineConfig({
  projects:[
   {name:'desktop-chromium',use:{...devices['Desktop Chrome']}},
   {name:'mobile-chromium',use:{...devices['Pixel 7']}},
+  {name:'desktop-firefox',use:{...devices['Desktop Firefox']}},
+  {name:'mobile-webkit',use:{...devices['iPhone 13']}},
  ],
  webServer:external?undefined:{
   command:'node node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port 3100',

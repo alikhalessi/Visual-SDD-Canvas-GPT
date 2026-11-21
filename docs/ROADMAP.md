@@ -33,7 +33,7 @@ The proposed response is a **Dual-Mode Experience over a Single Underlying Model
 | 06 | Public PR/commit/check evidence and revision-bound task traceability | Production READY; 136 tests and real CI evidence; owner acceptance pending |
 | 07 | State-aware UX, progressive disclosure, safe local recovery, accessibility fixes and audit | Production READY; **160/160 Node tests**, typecheck/build verified; owner/real-browser acceptance pending |
 | **08** | **Dual-Mode Stakeholder Experience** | **Owner-authorized production release, PR #5 merged; CI and production READY; deferred keyboard/recovery/project-isolation QA remains** |
-| **09** | **Vibe-to-Spec Ingestion Bridge** | **214 Node / 9 Python regressions and automated desktop/mobile browser scenarios; selected-path provenance and count clarification prepared for PR #6 owner review; final sign-off and production pending** |
+| **09** | **Vibe-to-Spec Ingestion Bridge** | **220 Node / 9 Python regressions and expanded Chromium/Firefox/WebKit browser scenarios; selected-path provenance and count clarification prepared for PR #6 owner review; final sign-off and production pending** |
 | **10** | **Human-Readable Impact & Agent Handoff** | **Planned — not started** |
 | **11** | **Empirical Evaluation Sandbox** | **Planned — not started** |
 

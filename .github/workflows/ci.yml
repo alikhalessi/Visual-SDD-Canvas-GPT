@@ -29,6 +29,6 @@ jobs:
           export NEON_AUTH_COOKIE_SECRET="$(openssl rand -hex 32)"
           npm run build
       - name: Install browser for isolated import tests
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install --with-deps chromium firefox webkit
       - name: Verify import in desktop and mobile browsers
         run: npm run test:e2e

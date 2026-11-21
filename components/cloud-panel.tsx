@@ -2,14 +2,15 @@
 import {useCallback,useEffect,useState} from 'react';
 import {authClient} from '../lib/auth/client';
 import type {Specification} from '../lib/spec-core';
+import type {CloudReference} from '../lib/cloud-link-core';
+export type {CloudReference} from '../lib/cloud-link-core';
 
 export type CloudProject={
  id:string;title:string;idea:string;specification:Specification|null;
  revision:number;approval_status:'draft'|'approved';created_at:string;updated_at:string;
 };
-export type CloudReference={id:string;updatedAt:string};
 type Activity={id:number;project_id:string;event_type:string;summary:string;revision:number;created_at:string};
-type Props={idea:string;spec:Specification|null;cloudRef:CloudReference|null;onRef:(v:CloudReference|null)=>void;onLoad:(project:CloudProject)=>boolean;};
+type Props={idea:string;spec:Specification|null;cloudRef:CloudReference|null;onRef:(v:CloudReference|null,firstSave?:boolean)=>void;onLoad:(project:CloudProject)=>boolean;};
 
 function friendlyDate(value:string){const time=new Date(value);return Number.isNaN(time.getTime())?value:time.toLocaleString();}
 function providerMessage(error:unknown){return error instanceof Error?error.message:'Authentication failed. Please retry.';}
@@ -58,7 +59,7 @@ export default function CloudPanel({idea,spec,cloudRef,onRef,onLoad}:Props){
    const response=await fetch('/api/workspace',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
    const result=await response.json();
    if(!response.ok)throw new Error(result.error||'Save failed.');
-   onRef({id:result.project.id,updatedAt:result.project.updated_at});
+   onRef({id:result.project.id,updatedAt:result.project.updated_at},result.created===true);
    setMessage(result.created?'New project saved securely to your account.':'Project revision and activity saved. Planning and task drafts are still browser-local.');
    await refresh();
   }catch(e){setError(providerMessage(e));}finally{setBusy(false);}

@@ -23,3 +23,7 @@ The owner must decide whether the revised counts and the visible meaning of a se
 Source, stakeholder review and import receipts have separate local keys. The importer attempts rollback of all three after a storage-write failure. Single recoverable failures were tested; browser crash-atomic storage and permanent device failures are not guaranteed. Review notes and provenance are browser-local and exportable, not automatically cloud-synced, cryptographically authenticated or tamper-evident. Existing explicit cloud-save behavior is unchanged.
 
 Text heuristics can miss or invent potential paths. No live prototype crawl, image/code parser, automatic acceptance criteria, LLM execution or coding-agent implementation is claimed. Newly imported source acceptance criteria deliberately remain blank until specified by a human. Merge, production publication and Sprint 10 require separate owner authorization.
+
+## Cloud-link clarification
+
+The first explicit cloud save now copies the current browser review and import history into the new project's local keys; the original browser-draft copies remain available. Reopening an existing project keeps that project's own records. A source-bound local project link survives reload, including its conflict token. This preserves local identity; it does not synchronize review notes, provenance, plans or tasks across devices. The source Specification alone is saved to the cloud through the existing explicit action. The server still verifies the account and project owner on every request.

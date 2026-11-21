@@ -13,14 +13,16 @@ Date: 2026-11-21. Engineering verification is separate from owner acceptance and
 | S09-07 | Duplicate, unsafe, oversized or corrupt input fails closed | Core negatives; malformed provenance and ambiguous mappings rejected |
 | S09-08 | Changes invalidate source/stakeholder approval; preserve notes | Regression tests; browser blocks stale preview after rationale edit |
 | S09-09 | Browser-local source/review/provenance rollback | Injected failure of each of three writes passed on desktop/mobile; permanent storage/crash durability unclaimed |
-| S09-10 | Preserve prior sprint regressions | 214 Node tests, 9 Python tests, adapter self-test, typecheck/build passed locally; final CI linked in PR |
-| S09-11 | Keyboard/mobile usability | Space/focus and viewport overflow automated in Chromium/mobile emulation; real device, screen reader and human UX acceptance pending |
+| S09-10 | Preserve prior sprint regressions | 220 Node tests, 9 Python tests, adapter self-test, typecheck/build passed locally; final CI linked in PR |
+| S09-11 | Keyboard/mobile usability | Keyboard and 320/390/768px layout checks across Chromium, Firefox and WebKit; Chromium automated WCAG audit. Physical device and screen-reader study unclaimed |
 | S09-12 | Documentation, PR and exact deployment evidence | Updated matrix/evidence/guide/ADR/roadmap; owner release decision pending |
 | S09-13 | Export source/path provenance and reload | Owner's earlier two-rule export verified; new scheduled-path browser download equals stored history and links edge ID |
 | S09-14 | Counts include existing empty placeholders | 1 total retained, 0 with text, 1 empty REQ-001, 3 after two new rules; core and browser assertions |
+| S09-15 | First cloud save preserves the local review/provenance namespace | Reproduced failure before fix; exact guest bytes copied to unoccupied project keys, originals retained; browser scenarios cover preservation |
+| S09-16 | Cloud project identity and conflict token survive reload without mixing project notes | Source-bound link validation plus browser reload/switch scenarios; server ownership remains authoritative |
 
 ## Decision boundary
 
 The owner already verified importing two rules and their source provenance. The previously missing selected-path engineering check is now automated through a real Chromium engine, including reload and download. Final owner approval of the revised preview remains pending; automation does not impersonate that approval.
 
-Live Google sign-in, real mobile/accessibility acceptance, signed-in cloud-project switching and cross-device persistence remain unverified here. Notes/provenance are explicitly browser-local. No merge to main, production publication or Sprint 10 advancement is authorized by a green test result.
+Live Google sign-in on the stable Sprint 09 preview passed. New regression scenarios cover first cloud save, local review/provenance retention, source-bound cloud identity after reload, and project switching. Exact live cloud outcomes are recorded in PR #6. Physical-phone and screen-reader-user acceptance remain unclaimed. Notes/provenance are explicitly browser-local. No merge to main, production publication or Sprint 10 advancement is authorized by a green test result.

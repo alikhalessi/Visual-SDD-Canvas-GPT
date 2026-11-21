@@ -38,3 +38,7 @@ A third project-scoped, browser-local document (`vibe-import-history-v1`) stores
 ## Selected-path review refinement (2026-11-21)
 
 New path receipts add optional `edgeId` and `disposition: open-edge-flag` fields, retaining legacy v1 read compatibility. They identify the open flag created at import, never a verified workflow. The reader rejects null entries and duplicate proposal mappings. Change summaries include all retained source rows and list empty placeholder IDs. A pending preview is invalidated by any source/review content change, and project identity changes discard the old preview. Desktop/mobile browser tests cover scheduled-path persistence and export, orphan rejection, cancellation, stale review, and recoverable failure of each of the three storage writes. Human acceptance and production release remain separate decisions.
+
+## Browser-to-cloud identity refinement
+
+A versioned browser-only cloud-link hint binds project ID and conflict token to the current source identity, restoring the same local review namespace on reload. On the first explicit cloud creation only, guest review/provenance bytes are copied into unoccupied project keys before activating that identity; guest originals are retained and a failed copy attempts destination rollback. Existing-project opens never migrate guest records. Authentication and server-side ownership checks remain authoritative; this hint carries no credential and does not claim automatic cloud synchronization.
