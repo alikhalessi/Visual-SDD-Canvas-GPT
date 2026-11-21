@@ -1,6 +1,6 @@
 # ADR 019 Human impact and deterministic agent handoff
 
-Date: 2026-11-21. Status: implemented for review on the Sprint 10 branch; release permission pending.
+Date: 2026-11-21. Status: implemented and merged in PR #7 after explicit owner merge/production authorization. Exact deployment/health evidence is maintained in the release record. No authenticated-signature or agent-execution permission is added by publication.
 
 ## Problem and decision
 

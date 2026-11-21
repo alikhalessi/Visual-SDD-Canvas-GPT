@@ -1,6 +1,6 @@
 # Sprint 10 acceptance matrix
 
-Engineering verification is separate from owner product acceptance and release permission. Exact final counts, CI head and preview deployment are recorded in the Sprint 10 PR, not inferred from an earlier green run.
+Engineering verification remains distinct from human comprehension studies. The owner explicitly authorized PR #7 merge and production publication after the candidate checks. Exact final counts, approved code head, documentation closeout, production deployment and post-deploy results are linked in [the release record](SPRINT_10_RELEASE_RECORD.md) and PR #7; no earlier green run is substituted for a later source revision.
 
 | ID | Contract | Verification |
 | --- | --- | --- |
@@ -20,4 +20,4 @@ Engineering verification is separate from owner product acceptance and release p
 | S10-14 | Existing v1 readers/API/runner and prior sprints remain compatible | Full Node/Python/browser regression suite; no Neon schema change |
 | S10-15 | Scenario definitions and per-run evidence remain reviewable | Versioned catalog, 90-day CI logs/HTML/JSON/attachments, rendered delivery reports |
 
-Draft export is intentionally available when review is incomplete; the exported package explicitly states blocked readiness and carries every open question. It does not grant approval. Physical device/screen-reader-user studies and authenticated/auditable sign-off remain outside the verified scope. Merge/publication require the owner's separate approval.
+Draft export is intentionally available when review is incomplete; the exported package explicitly states blocked readiness and carries every open question. It does not grant approval. Physical device/screen-reader-user studies and authenticated/auditable sign-off remain outside the verified scope. The owner subsequently gave the separate merge/publication authorization. Sprint 11 remains unauthorized.

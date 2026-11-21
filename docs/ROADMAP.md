@@ -1,8 +1,8 @@
 # Visual SDD Canvas — Engineering & MSc Thesis Roadmap v0.2
 
 **Repository:** `alikhalessi/Visual-SDD-Canvas-GPT` (`main`)
-**Current delivery baseline:** Sprint 09 production, owner-approved merged PR #6, READY deployment at https://visual-sdd-platform.vercel.app/. Exact release/CI/post-deploy evidence is in [the release record](SPRINT_09_RELEASE_RECORD.md).
-**Current engineering work:** Sprint 10 implementation authorized on `sprint-10-impact-agent-handoff`: human-readable business impact, revision-bound local sign-off, deterministic complete export, information parity and a validation-only legacy bridge. Merge and production release require separate owner permission.
+**Current delivery baseline:** Owner-authorized Sprint 10, merged PR #7. Exact production deployment and post-deploy results are recorded in [the release record](SPRINT_10_RELEASE_RECORD.md) and the live PR verification record.
+**Current engineering work:** Sprint 10 release closeout following explicit owner merge/publication authorization. Application code is the approved PR #7 tree; subsequent closeout changes are documentation only. Sprint 11 has not started.
 **Research context:** MSc Computer Science, Åbo Akademi University. This roadmap is an engineering and study plan, not an approved thesis protocol or a claim of experimental results.
 
 ## 1. Product direction
@@ -136,7 +136,7 @@ No invented deadlines. Gates are evidence- and owner-based.
 
 ## 6. Sprint 10 — Human-Readable Impact & Deterministic Agent Handoff
 
-**Status:** In implementation for owner review on `sprint-10-impact-agent-handoff`, following the accepted and released Sprint 09. Final CI/preview evidence is recorded in the Sprint 10 PR; no Sprint 10 release is implied.
+**Status:** Owner explicitly authorized merge and production publication. PR #7 is merged; exact deployment/health evidence is maintained in [the release record](SPRINT_10_RELEASE_RECORD.md) and PR #7.
 **ADR:** `docs/ADR-019-HUMAN-IMPACT-AND-AGENT-HANDOFF.md`
 **Goal:** Make downstream change consequences intelligible and export a verifiable, revision-locked agent specification.
 
@@ -209,4 +209,4 @@ No invented deadlines. Gates are evidence- and owner-based.
 
 `Sprint 07 baseline` → `Sprint 08 stakeholder experience` → `Sprint 09 ingestion` → `Sprint 10 parity + agent handoff` → `Sprint 11 evaluation sandbox` → `owner-accepted research pilot`.
 
-Each arrow is gated by implementation evidence and explicit owner approval. Sprint 09 passed its explicit owner gate and was released. Sprint 10 implementation is authorized; Sprint 10 merge/production and Sprint 11 remain separate owner decisions.
+Each arrow is gated by implementation evidence and explicit owner approval. Sprint 09 passed its explicit owner gate and was released. Sprint 10 implementation, merge and production publication were separately authorized. Sprint 11 remains a separate owner decision.
