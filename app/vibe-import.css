@@ -1,0 +1,27 @@
+/* Sprint 09: disclosure-first, keyboard-friendly, responsive import preview. */
+.vibe-import{margin:0 0 24px;border:1px solid #38675f;background:#112c31;border-radius:14px;color:#e2f7f1;overflow:hidden}
+.vibe-import>details>summary{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 20px;cursor:pointer;min-height:56px}
+.vibe-import>details>summary strong{font-size:15px}
+.vibe-import>details>summary span{color:#a4c7c4;font-size:11px}
+.vibe-content{padding:17px 20px 22px;border-top:1px solid #355c61;display:grid;gap:12px}
+.vibe-content p,.vibe-content li{font-size:12px;line-height:1.65;color:#c6dedb}
+.vibe-content label{font-size:12px;font-weight:650;display:grid;gap:8px}
+.vibe-content textarea,.vibe-content input:not([type=checkbox]),.vibe-content select{width:100%;background:#0a1c29;border:1px solid #55788a;color:#effbf7;border-radius:9px;font-size:13px;padding:12px;line-height:1.5;min-height:44px}
+.vibe-content textarea{resize:vertical}
+.vibe-import :is(summary,button,input,textarea,select):focus-visible{outline:3px solid #9cf9d9;outline-offset:3px}
+.vibe-actions{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+.vibe-actions small{font-size:11px;color:#b1ccc4}
+.vibe-preview{display:grid;gap:14px;border-top:1px solid #3a6663;padding-top:18px}
+.vibe-preview h3{font-size:16px;margin:8px 0 0}
+.vibe-candidate{display:grid;gap:12px;border:1px solid #456c6b;background:#172d3b;border-radius:12px;padding:16px}
+.vibe-candidate .vibe-choice,.vibe-path{display:flex;align-items:flex-start;gap:11px;cursor:pointer;font-size:12px;line-height:1.55}
+.vibe-choice input[type=checkbox],.vibe-path input[type=checkbox]{width:19px;height:19px;min-width:19px;accent-color:#91edd6;margin:1px 0 0}
+.vibe-source{border-left:3px solid #81ddc4;padding:8px 12px;background:#1c3b44;font-size:11px}
+.vibe-source blockquote{margin:7px 0;font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere}
+.vibe-source small,.vibe-path small{display:block;color:#aad1c8;font-weight:400;margin-top:6px}
+.vibe-path{border:1px solid #3c6266;border-radius:9px;padding:13px;background:#162d38}
+.vibe-path span span{display:block;margin-top:5px;font-size:12px}
+.vibe-warning{background:#403324;border:1px solid #8a7252;border-radius:9px;padding:13px;color:#ffe5bd!important}
+.vibe-message{border-left:3px solid #8be9ce;padding:12px;background:#244239;color:#d8fae9}
+.vibe-import ul{margin:0;padding-left:23px}
+@media(max-width:720px){.vibe-import>details>summary{display:grid;gap:7px;padding:17px}.vibe-content{padding:15px}.vibe-actions .business-primary{width:100%}}
