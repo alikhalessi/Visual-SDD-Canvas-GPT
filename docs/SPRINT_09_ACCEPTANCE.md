@@ -15,7 +15,8 @@
 | S09-09 | Browser-local persistence rollback and recovery are explicit, no cloud claims | Unit/wiring and failed-storage browser tests | Implementation prepared; browser pending |
 | S09-10 | Preserve all Sprint 00–08 Node/Python, typing and build tests | Real CI run | Pending |
 | S09-11 | Accessible mobile and keyboard-only interaction | Real device and keyboard QA | Pending |
-| S09-12 | ADR, owner guide, roadmap, PR/review, deployment evidence and owner sign-off | GitHub record and real deployment | Pending |
+| S09-12 | ADR, owner guide, roadmap, PR/review, deployment evidence and owner sign-off | GitHub record and real deployment | Preview deployed; final owner sign-off pending |
+| S09-13 | Original source quotes, offsets and imported revision links survive commit in exportable browser-local history | Unit/wiring tests plus browser export/reload | Implemented; latest CI and browser check pending |
 
 ## Manual owner acceptance scenario
 
