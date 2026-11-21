@@ -109,3 +109,16 @@ test('parser never leaks source text into a fictitious AI authority label',()=>{
  assert.equal(p.paths.every(x=>x.confidence==='potential'),true);
  assert.ok(p.blindSpots.some(x=>/No source-code inspection/.test(x)));
 });
+
+test('retired requirement IDs in the review history are never reassigned to new imports',()=>{
+ const s=createSpecification(BRIEF,NOW);
+ const initial={schemaVersion:1,kind:'stakeholder-review',specId:s.id,sourceIdea:s.sourceIdea,specRevision:s.revision,revision:1,nextId:1,updatedAt:NOW,rules:[
+  {requirementId:'REQ-001',revision:1,workflows:[],edges:[],examples:[],rationale:'',decision:{status:'draft',at:null,ruleRevision:null,specRevision:null}},
+  {requirementId:'REQ-007',revision:1,workflows:[],edges:[],examples:[],rationale:'Historical notes must not be attached to a different requirement.',decision:{status:'draft',at:null,ruleRevision:null,specRevision:null}}
+ ]};
+ assert.ok(readStakeholderReview(initial));
+ const p=parseVibeBrief(BRIEF),c=defaultImportChoices(p);c.rules[0].include=true;
+ const r=prepareVibeImport(s,initial,p,c,NOW);
+ assert.deepEqual(r.addedRequirements,['REQ-008']);
+ assert.equal(r.review.rules.find(x=>x.requirementId==='REQ-007').rationale,initial.rules[1].rationale);
+});
