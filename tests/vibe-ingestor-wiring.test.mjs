@@ -35,6 +35,8 @@ test('client saves source and review locally and rolls back if persistence fails
  assert.match(review,/localStorage\.setItem\(sourceKey,JSON.stringify\(result.spec\)\)/);
  assert.match(review,/if\(originalReview===null\)localStorage\.removeItem\(nextKey\)/);
  assert.match(review,/onSpecificationChange\(result.spec\)/);
+ assert.match(review,/if\(!canImport\)throw Error/);
+ assert.match(page,/canImport=\{hydrated&&unreadableSpec===null\}/);
 });
 test('newly imported idea is surfaced in canonical workspace and no auto cloud save occurs',()=>{
  assert.match(page,/onImportedSourceIdea=\{\(source\)=>/);
