@@ -1,6 +1,6 @@
 # Sprint 08 — Dual-Mode Stakeholder Experience: Acceptance Matrix
 
-**Status (2026-11-21):** Full-checkout automated tests and PR #5 GitHub CI passed; manual stakeholder review and revision invalidation passed. Mobile/keyboard, malformed-cache recovery, project-switch isolation, real Google authentication, deployment and Product Owner final sign-off remain unverified.
+**Status (2026-11-21):** Owner-authorized Sprint 08 production release; automated tests and CI passed, core stakeholder walkthrough passed, and mobile preview Google sign-in passed. Keyboard-only accessibility, malformed-cache recovery, project-switch isolation and full mobile responsive coverage remain **unverified and explicitly deferred**, not passed. Production deployment must be separately verified.
 **Baseline:** Sprint 07 on `main`, 160 Node tests previously recorded as passing, owner/browser acceptance still pending.
 **Branch/deployment:** `sprint-08-dual-mode`, commit `7cec6eb`, PR #5 (`https://github.com/alikhalessi/Visual-SDD-Canvas-GPT/pull/5`). No production release or empirical user study is claimed.
 
@@ -32,7 +32,7 @@
 6. Reload, export JSON and confirm scoped persistence. Introduce malformed cache; verify no silent overwrite and that export/explicit clearing controls appear.
 7. Check keyboard focus, labels, contrast and responsive presentation. Confirm no source Plan/Task cloud-sync claim.
 
-**Release gate:** Owner acceptance only after complete CI evidence and manual checks. Sprint 09 not authorized by this document.
+**Release gate:** Initial acceptance matrix required full manual verification. On 2026-11-21 the owner explicitly authorized production release with the remaining manual checks documented as follow-up risks (see below). This does not convert them into passed tests.
 
 ## Integration checkpoint — 2026-11-21
 
@@ -54,3 +54,13 @@ Evidence from the owner's actual Windows checkout and screenshots:
 - The owner subsequently retested Google sign-in on the same mobile preview and explicitly confirmed: **works, no problem**.
 - Therefore **preview-domain Google sign-in on the tested mobile device is PASS**. This does not certify all browsers, keyboard-only access, project isolation, corrupted-cache recovery, or production release.
 - The Vercel preview deployment for commit `95d29c5` was reported **READY**; GitHub Actions run **#188** for the branch completed **successfully** after the documentary updates.
+
+## Owner release authorization — 2026-11-21
+
+The Product Owner explicitly responded **«تأیید، منتشر کن»** ('Approved, publish') to the proposed Sprint 08 merge and production release **with outstanding keyboard-only navigation, malformed-cache recovery and project-switch isolation recorded as unverified follow-ups**. This is authorization to release, not evidence that those checks passed or that an empirical study was completed.
+
+**Release policy for this exception:** Merge PR #5 only with green CI at its actual head revision, deploy the resulting commit to the pre-existing Vercel production project (without modifying the Neon Auth security allowlist other than the already documented preview origin), then verify READY state and the canonical production domain. Update status after verification. If deployment fails, do not mark the release complete.
+
+**Deferred acceptance issues to track after release:** Keyboard-only navigation and focus, malformed browser review-cache recovery, cross-project local review isolation, broad viewport/mobile visual audit, and DOCX report. Each remains a known verification gap for a subsequent hardening pass.
+
+**Latest before-release CI:** GitHub Actions Visual SDD CI **#189** succeeded for branch commit `3fd72c9e171681835b12c192fbe6d8012cdb1b17` (contains mobile OAuth allowlist evidence). The owner's tested mobile preview successfully completed Google authentication.
