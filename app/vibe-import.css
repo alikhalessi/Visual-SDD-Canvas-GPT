@@ -19,9 +19,11 @@
 .vibe-source{border-left:3px solid #81ddc4;padding:8px 12px;background:#1c3b44;font-size:11px}
 .vibe-source blockquote{margin:7px 0;font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere}
 .vibe-source small,.vibe-path small{display:block;color:#aad1c8;font-weight:400;margin-top:6px}
-.vibe-path{border:1px solid #3c6266;border-radius:9px;padding:13px;background:#162d38}
+.vibe-path{display:grid;gap:12px;border:1px solid #3c6266;border-radius:9px;padding:13px;background:#162d38}
 .vibe-path span span{display:block;margin-top:5px;font-size:12px}
 .vibe-warning{background:#403324;border:1px solid #8a7252;border-radius:9px;padding:13px;color:#ffe5bd!important}
 .vibe-message{border-left:3px solid #8be9ce;padding:12px;background:#244239;color:#d8fae9}
 .vibe-import ul{margin:0;padding-left:23px}
 @media(max-width:720px){.vibe-import>details>summary{display:grid;gap:7px;padding:17px}.vibe-content{padding:15px}.vibe-actions .business-primary{width:100%}}
+
+.vibe-diff{padding:15px;border:1px solid #5c9d85;background:#173d36;border-radius:10px}.vibe-diff p{margin:8px 0 0}
