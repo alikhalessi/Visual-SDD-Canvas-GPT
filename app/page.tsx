@@ -104,7 +104,7 @@ export default function Page(){
    <div className="profile"><div className="avatar">VS</div><div><strong>Visual SDD</strong><small>UX & Quality · Sprint 07</small></div></div>
   </aside>}
   <div className="main">
-   <header className="topbar"><div>Workspace <span className="sep">/</span> {experience==='business'?'Business Review':tab==='overview'?'Overview':tab==='canvas'?'SDD Canvas':tab==='cloud'?'My Projects':'Specification'}</div><div className="top-right"><AccountStatus onProjects={()=>{setExperience('engineering');setTab('cloud');}}/><span className="tag">v0.8.0-preview</span></div></header>
+   <header className="topbar"><div>Workspace <span className="sep">/</span> {experience==='business'?'Business Review':tab==='overview'?'Overview':tab==='canvas'?'SDD Canvas':tab==='cloud'?'My Projects':'Specification'}</div><div className="top-right"><AccountStatus onProjects={()=>{setExperience('engineering');setTab('cloud');}}/><span className="tag">v0.9.0-preview</span></div></header>
    {experience==='engineering'&&<nav className="mobile-workspace-nav" aria-label="Mobile workspace navigation">
     <button aria-current={tab==='overview'?'page':undefined} onClick={()=>setTab('overview')}>Overview</button>
     <button aria-current={tab==='canvas'?'page':undefined} onClick={()=>setTab('canvas')}>SDD Canvas</button>
