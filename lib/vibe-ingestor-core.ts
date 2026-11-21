@@ -7,7 +7,7 @@ export type RuleProposal={id:string;title:string;statement:string;priority:Prior
 export type PathProposal={id:string;ruleId:string;kind:'interactive'|'background';description:string;reason:string;source:SourceSpan;confidence:'potential'};
 export type VibeProposal={schemaVersion:1;brief:string;rules:RuleProposal[];paths:PathProposal[];blindSpots:string[]};
 export type RuleChoice={id:string;include:boolean;title:string;statement:string;priority:Priority;linkInteractive:boolean};
-export type PathChoice={id:string;include:boolean};
+export type PathChoice={id:string;include:boolean;description:string};
 export type ImportChoices={rules:RuleChoice[];paths:PathChoice[]};
 export type ImportResult={spec:Specification;review:StakeholderReviewDocument;addedRequirements:string[];openedEdges:string[];linkedWorkflows:string[]};
 
@@ -80,7 +80,7 @@ export function parseVibeBrief(brief:string):VibeProposal{
 }
 export function defaultImportChoices(proposal:VibeProposal):ImportChoices {
  return {rules:proposal.rules.map(r=>({id:r.id,include:false,title:r.title,statement:r.statement,priority:r.priority,linkInteractive:false})),
-  paths:proposal.paths.map(p=>({id:p.id,include:false}))};
+  paths:proposal.paths.map(p=>({id:p.id,include:false,description:p.description}))};
 }
 /** Validated, all-or-nothing adapter. No input text gains approval or execution authority. */
 export function prepareVibeImport(spec:Specification|null,review:StakeholderReviewDocument|null,proposal:VibeProposal,choices:ImportChoices,now=new Date().toISOString()):ImportResult {
@@ -100,7 +100,7 @@ export function prepareVibeImport(spec:Specification|null,review:StakeholderRevi
  const existing=base.requirements.filter(r=>!(!spec&&r.id==='REQ-001'&&!r.statement.trim()));
  const keys=new Set(existing.map(r=>matchKey(r.statement)));
  const added:Requirement[]=[],chosen=new Map<string,RuleChoice>(),ids=new Map<string,string>();
- let nextId=Math.max(0,...base.requirements.map(r=>Number(r.id.slice(4))||0));
+ let nextId=Math.max(0,...existing.map(r=>Number(r.id.slice(4))||0));
  for(const c of accepted){
   if(!bounded(c.title,160,5)||!bounded(c.statement,2000,15)||!['must','should','could'].includes(c.priority))throw Error('Rule title, statement or priority is invalid.');
   if(invalidControl.test(c.title+c.statement)||markupAttack.test(c.title+c.statement)||instructionAttack.test(c.title+c.statement))throw Error('Unsafe rule content. Import aborted.');
@@ -117,6 +117,7 @@ export function prepareVibeImport(spec:Specification|null,review:StakeholderRevi
  if(existing.length+added.length>30)throw Error('The 30-requirement limit would be exceeded.');
  for(const p of chosenPaths){const candidate=proposal.paths.find(x=>x.id===p.id);
   if(!candidate||!ids.has(candidate.ruleId))throw Error('A selected path has no selected source rule.');
+  if(!bounded(p.description,420,8)||invalidControl.test(p.description)||instructionAttack.test(p.description)||markupAttack.test(p.description))throw Error('Potential path description is invalid.');
  }
  const nextSpec=revise(base,{requirements:[...existing,...added]},now);
  if(!readSpecification(nextSpec)||nextSpec.approval.status!=='draft')throw Error('Specification validation failed; import aborted.');
@@ -134,7 +135,7 @@ export function prepareVibeImport(spec:Specification|null,review:StakeholderRevi
   const p=proposal.paths.find(x=>x.id===choice.id)!;
   const target=ids.get(p.ruleId)!;
   // Potential paths are *open questions*, never asserted background workflows.
-  nextReview=flagEdgeCondition(nextReview,target,p.description+' Source: '+p.source.quote.slice(0,150),now);
+  nextReview=flagEdgeCondition(nextReview,target,normalize(choice.description)+' Source: '+p.source.quote.slice(0,150),now);
   openedEdges.push(target);
  }
  if(!readStakeholderReview(nextReview))throw Error('Stakeholder sidecar validation failed; import aborted.');
