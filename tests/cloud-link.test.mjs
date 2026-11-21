@@ -44,3 +44,11 @@ test('a failed local history copy restores new destination keys and preserves ev
  assert.throws(()=>preserveLocalReviewOnFirstSave(s,spec,ref.id),/source was saved.*Original browser notes were preserved/);
  assert.deepEqual([...s.map],before);
 });
+
+
+test('first cloud save also retains complete-snapshot sign-off history',()=>{
+ const guest=localStakeholderKey(spec,null)+'-handoff-v1',target=localStakeholderKey(spec,ref.id)+'-handoff-v1',s=storage([[guest,'original sign-off bytes']]);
+ preserveLocalReviewOnFirstSave(s,spec,ref.id);assert.equal(s.getItem(guest),'original sign-off bytes');assert.equal(s.getItem(target),'original sign-off bytes');
+});
+
+test('a failed sign-off history copy restores every newly created project key',()=>{const guest=localStakeholderKey(spec,null)+'-handoff-v1',target=localStakeholderKey(spec,ref.id)+'-handoff-v1',s=storage([[localStakeholderKey(spec,null),'review'],[localVibeHistoryKey(spec,null),'provenance'],[guest,'sign-off history']]);const before=[...s.map],write=s.setItem;s.setItem=(k,v)=>{if(k===target)throw Error('quota');write(k,v);};assert.throws(()=>preserveLocalReviewOnFirstSave(s,spec,ref.id),/Original browser notes/);assert.deepEqual([...s.map],before);});

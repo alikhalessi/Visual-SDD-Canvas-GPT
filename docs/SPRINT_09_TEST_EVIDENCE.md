@@ -30,7 +30,11 @@ Local Windows/Node 22 checkout: **214/214 Node tests**, **9/9 Python tests**, ad
 
 The full CI workflow now installs the pinned browser-test dependency from the lockfile and runs these browser cases after the production build. Screenshots and synthetic provenance are attached to the positive browser test; the machine-readable local run record is `test-results/results.json` (ignored, not a source artifact).
 
-## Final remote evidence
+## Released remote evidence
+
+PR #6 is merged and production is live after explicit owner authorization. CI #211 on the merged main tree and 28 direct production importer checks passed. See [the release record](SPRINT_09_RELEASE_RECORD.md) for exact IDs, hashes, limits and the Word closeout. The detailed evidence below records verification before that owner decision.
+
+## Release candidate evidence
 
 The exact final branch head, fresh CI run, matching Vercel preview deployment, deployed-browser result and protected-access limitations are recorded in the live [PR #6 verification record](https://github.com/alikhalessi/Visual-SDD-Canvas-GPT/pull/6). This avoids claiming that an earlier green build verifies later code. The PR is the current release-candidate record; merge and production release require a separate owner decision.
 

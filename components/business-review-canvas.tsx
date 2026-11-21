@@ -1,4 +1,5 @@
 'use client';
+import HandoffModal from './handoff-modal';
 import {useEffect,useMemo,useState} from 'react';
 import type {Specification} from '../lib/spec-core';
 import VibeImportPanel from './vibe-import-panel';
@@ -162,6 +163,7 @@ export default function BusinessReviewCanvas({spec,idea,projectId,onSpecificatio
   <VibeImportPanel spec={spec} key={projectId??'guest'} review={ready?document:null} reviewReady={canImport&&(!spec||ready)} onCommit={commitVibeImport}/>
   {!spec?<section className="business-empty"><h2>Start with your product idea</h2><p>{idea.trim()||'No idea has been saved yet.'}</p><p>Write the first specification to make its business rules visible here.</p><button className="business-primary" onClick={onCreateSpecification}>Start a specification</button></section>:
    <>
+    <HandoffModal key={key} spec={spec} review={ready?document:null} projectId={projectId} reviewReady={canImport&&ready}/>
     <div className="business-summary"><div><strong>{cards.length}</strong><span>Business rules</span></div><div><strong>{examples}</strong><span>Example attached, review pending</span></div><div><strong>{signed}</strong><span>Behaviour reviewed &amp; approved</span></div><div><strong>r{spec.revision}</strong><span>Source specification revision</span></div></div>
     <div className="business-source"><div><strong>{spec.title}</strong><p>Specification {spec.id} · {spec.approval.status==='approved'?'Source approved':'Source draft — separate source approval pending'} · Review notes and edge flags are not cloud-synced.</p></div><div className="business-source-actions"><button className="business-outline" onClick={onOpenSpecification}>Open source specification</button>{document&&ready&&<button className="business-outline" onClick={()=>download('stakeholder-review-r'+document.revision+'.json',JSON.stringify(document,null,2))}>Export review JSON</button>}{ready&&<button className="business-outline" onClick={()=>{
  const raw=localStorage.getItem(localVibeHistoryKey(spec,projectId));

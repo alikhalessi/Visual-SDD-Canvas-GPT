@@ -1,8 +1,8 @@
 # Visual SDD Canvas — Engineering & MSc Thesis Roadmap v0.2
 
 **Repository:** `alikhalessi/Visual-SDD-Canvas-GPT` (`main`)
-**Current delivery baseline:** Sprint 08 production (merged PR #5, deployment READY at https://visual-sdd-platform.vercel.app/; manually deferred QA documented)
-**Current engineering work:** Sprint 09 on `sprint-09-vibe-to-spec`: scheduled/open-edge browser regression suite and explicit placeholder counts prepared for owner review. Earlier owner rule/provenance acceptance is credited. Exact final CI/preview evidence is recorded in PR #6; final product sign-off and production release remain pending.
+**Current delivery baseline:** Sprint 09 production, owner-approved merged PR #6, READY deployment at https://visual-sdd-platform.vercel.app/. Exact release/CI/post-deploy evidence is in [the release record](SPRINT_09_RELEASE_RECORD.md).
+**Current engineering work:** Sprint 10 implementation authorized on `sprint-10-impact-agent-handoff`: human-readable business impact, revision-bound local sign-off, deterministic complete export, information parity and a validation-only legacy bridge. Merge and production release require separate owner permission.
 **Research context:** MSc Computer Science, Åbo Akademi University. This roadmap is an engineering and study plan, not an approved thesis protocol or a claim of experimental results.
 
 ## 1. Product direction
@@ -107,7 +107,7 @@ No invented deadlines. Gates are evidence- and owner-based.
 
 ## 5. Sprint 09 — Vibe-to-Spec Ingestion Bridge
 
-**Status:** In implementation on `sprint-09-vibe-to-spec`; owner acceptance pending. Initial delivery is a deterministic offline *text-brief* importer, not screenshot crawling.
+**Status:** Released after owner acceptance and explicit merge/production authorization. The delivery is a deterministic offline *text-brief* importer, not screenshot crawling. See [release evidence](SPRINT_09_RELEASE_RECORD.md).
 **ADR:** `docs/ADR-018-VIBE-TO-SPEC-INGESTION.md`
 **Goal:** Turn an exploratory prototype description or feature brief into reviewable, linked specification *candidates*.
 
@@ -136,7 +136,7 @@ No invented deadlines. Gates are evidence- and owner-based.
 
 ## 6. Sprint 10 — Human-Readable Impact & Deterministic Agent Handoff
 
-**Status:** Planned / not started; depends on accepted Sprint 09.
+**Status:** In implementation for owner review on `sprint-10-impact-agent-handoff`, following the accepted and released Sprint 09. Final CI/preview evidence is recorded in the Sprint 10 PR; no Sprint 10 release is implied.
 **ADR:** `docs/ADR-019-HUMAN-IMPACT-AND-AGENT-HANDOFF.md`
 **Goal:** Make downstream change consequences intelligible and export a verifiable, revision-locked agent specification.
 
@@ -209,4 +209,4 @@ No invented deadlines. Gates are evidence- and owner-based.
 
 `Sprint 07 baseline` → `Sprint 08 stakeholder experience` → `Sprint 09 ingestion` → `Sprint 10 parity + agent handoff` → `Sprint 11 evaluation sandbox` → `owner-accepted research pilot`.
 
-Each arrow is gated by implementation evidence and explicit owner approval. **Sprint 08 is authorized for implementation. Do not begin Sprint 09 until Sprint 08 has passed integration checks, browser acceptance and explicit owner approval.**
+Each arrow is gated by implementation evidence and explicit owner approval. Sprint 09 passed its explicit owner gate and was released. Sprint 10 implementation is authorized; Sprint 10 merge/production and Sprint 11 remain separate owner decisions.
