@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {createSpecification,approveSpecification,validateSpecification,readSpecification} from '../lib/spec-core.ts';
 import {readStakeholderReview,projectStakeholderRules} from '../lib/stakeholder-view-core.ts';
-import {parseVibeBrief,defaultImportChoices,prepareVibeImport} from '../lib/vibe-ingestor-core.ts';
+import {parseVibeBrief,defaultImportChoices,prepareVibeImport,appendVibeImportHistory,readVibeImportHistory,localVibeHistoryKey} from '../lib/vibe-ingestor-core.ts';
 
 const NOW='2026-11-21T09:00:00.000Z';
 const BRIEF='An athlete must be able to revoke coach access to the dashboard. The system should queue weekly reports and check permissions when delivering a report.';
@@ -121,4 +121,37 @@ test('retired requirement IDs in the review history are never reassigned to new 
  const r=prepareVibeImport(s,initial,p,c,NOW);
  assert.deepEqual(r.addedRequirements,['REQ-008']);
  assert.equal(r.review.rules.find(x=>x.requirementId==='REQ-007').rationale,initial.rules[1].rationale);
+});
+
+test('import receipt survives JSON roundtrip and identifies each original quote and new requirement',()=>{
+ const p=parseVibeBrief(BRIEF),r=prepareVibeImport(null,null,p,choose(p),NOW);
+ const h=appendVibeImportHistory(null,r.receipt);
+ assert.deepEqual(readVibeImportHistory(JSON.parse(JSON.stringify(h))),h);
+ assert.equal(h.receipts.length,1);
+ assert.equal(h.receipts[0].rules.length,2);
+ for(const x of h.receipts[0].rules){
+  assert.equal(BRIEF.slice(x.source.start,x.source.end),x.source.quote);
+  assert.ok(r.addedRequirements.includes(x.requirementId));
+ }
+ assert.match(localVibeHistoryKey(r.spec,null),/^visual-sdd-vibe-history-v1-/);
+ assert.notEqual(localVibeHistoryKey(r.spec,'p-one'),localVibeHistoryKey(r.spec,'p-two'));
+});
+test('later imports append provenance without erasing previous source evidence',()=>{
+ const p=parseVibeBrief(BRIEF),one=prepareVibeImport(null,null,p,choose(p),NOW);
+ const otherBrief='Users must confirm their own data sharing before granting any access.';
+ const p2=parseVibeBrief(otherBrief),c2=defaultImportChoices(p2);c2.rules[0].include=true;
+ const two=prepareVibeImport(one.spec,one.review,p2,c2,'2026-11-21T10:00:00.000Z');
+ const a=appendVibeImportHistory(null,one.receipt),b=appendVibeImportHistory(a,two.receipt);
+ assert.equal(b.receipts.length,2);
+ assert.equal(b.receipts[0].brief,BRIEF);
+ assert.equal(b.receipts[1].specRevision,two.spec.revision);
+ assert.ok(readVibeImportHistory(b));
+});
+test('tampered import receipts are rejected without overwriting history',()=>{
+ const p=parseVibeBrief(BRIEF),r=prepareVibeImport(null,null,p,choose(p),NOW);
+ const h=appendVibeImportHistory(null,r.receipt);
+ const tampered=JSON.parse(JSON.stringify(h));
+ tampered.receipts[0].rules[0].source.quote='faked provenance';
+ assert.equal(readVibeImportHistory(tampered),null);
+ assert.throws(()=>appendVibeImportHistory(tampered,r.receipt),/history full, corrupt, or inconsistent/i);
 });
