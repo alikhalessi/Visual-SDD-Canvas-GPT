@@ -10,3 +10,5 @@ test-results/
 __pycache__/
 qa-reports/
 document-results/
+research-private/
+*.evaluation-key.json

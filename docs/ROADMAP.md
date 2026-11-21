@@ -2,7 +2,7 @@
 
 **Repository:** `alikhalessi/Visual-SDD-Canvas-GPT` (`main`)
 **Current delivery baseline:** Owner-authorized Sprint 10, merged PR #7. Exact production deployment and post-deploy results are recorded in [the release record](SPRINT_10_RELEASE_RECORD.md) and the live PR verification record.
-**Current engineering work:** Sprint 10 release closeout following explicit owner merge/publication authorization. Application code is the approved PR #7 tree; subsequent closeout changes are documentation only. Sprint 11 has not started.
+**Current engineering work:** Sprint 11 implementation is explicitly authorized by the owner. The evaluation rehearsal and Visual SDD thesis-alignment assessment are implemented. Local verification passed 299 Node checks, 9 Python checks and 116 browser results; exact final candidate CI/preview/report review evidence is maintained in PR #8. Main/production remains the owner-authorized Sprint 10 baseline until a separate reviewed publication decision.
 **Research context:** MSc Computer Science, Åbo Akademi University. This roadmap is an engineering and study plan, not an approved thesis protocol or a claim of experimental results.
 
 ## 1. Product direction
@@ -32,10 +32,10 @@ The proposed response is a **Dual-Mode Experience over a Single Underlying Model
 | 05 | Baseline-aware change impact, dependent task review and stale approval gates | Delivered; owner-approved |
 | 06 | Public PR/commit/check evidence and revision-bound task traceability | Production READY; 136 tests and real CI evidence; owner acceptance pending |
 | 07 | State-aware UX, progressive disclosure, safe local recovery, accessibility fixes and audit | Production READY; **160/160 Node tests**, typecheck/build verified; owner/real-browser acceptance pending |
-| **08** | **Dual-Mode Stakeholder Experience** | **Owner-authorized production release, PR #5 merged; CI and production READY; deferred keyboard/recovery/project-isolation QA remains** |
-| **09** | **Vibe-to-Spec Ingestion Bridge** | **220 Node / 9 Python regressions and expanded Chromium/Firefox/WebKit browser scenarios; selected-path provenance and count clarification prepared for PR #6 owner review; final sign-off and production pending** |
-| **10** | **Human-Readable Impact & Agent Handoff** | **Planned — not started** |
-| **11** | **Empirical Evaluation Sandbox** | **Planned — not started** |
+| **08** | **Dual-Mode Stakeholder Experience** | **Released, PR #5; subsequent regressions expanded in Sprints 09–10; physical-device and participant studies remain separately unclaimed** |
+| **09** | **Vibe-to-Spec Ingestion Bridge** | **Owner-authorized release, PR #6 merged; CI #211 and production/cloud verification recorded in SPRINT_09_RELEASE_RECORD.md** |
+| **10** | **Human-Readable Impact & Agent Handoff** | **Owner-authorized release, PR #7 merged; final main CI #215 and production verification recorded in SPRINT_10_RELEASE_RECORD.md** |
+| **11** | **Empirical Evaluation Sandbox** | **Implementation completed for owner review, PR #8; final candidate verification is recorded there; production publication and empirical use remain separate gates** |
 
 Existing source-of-truth files include `lib/spec-core.ts`, `lib/workflow-core.ts`, `lib/impact-core.ts`, `lib/github-trace-core.ts`, `lib/agent-run-core.ts`, `lib/run-evidence-core.ts`, `scripts/sdd_runner_adapter.py`, `scripts/verify_run.py`, `app/api/workspace/route.ts` and `SPRINT_01B_MIGRATION.sql`.
 
@@ -76,7 +76,7 @@ No invented deadlines. Gates are evidence- and owner-based.
 
 ## 4. Sprint 08 — Dual-Mode Stakeholder Experience
 
-**Status:** Implementation package prepared; integration and acceptance pending.
+**Status:** Owner-authorized release completed in PR #5; later regressions and their limits are tracked in Sprint 09–10 evidence.
 **ADR:** `docs/ADR-017-DUAL-MODE-STAKEHOLDER-VIEW.md`
 **Goal:** Make behavioral governance usable by non-technical stakeholders without removing engineering capabilities.
 
@@ -165,7 +165,7 @@ No invented deadlines. Gates are evidence- and owner-based.
 
 ## 7. Sprint 11 — Empirical Evaluation Sandbox
 
-**Status:** Planned / not started; depends on accepted Sprint 10.
+**Status:** Owner authorized starting and completing implementation after accepted Sprint 10. See ADR-020, Sprint 11 acceptance/catalog and the thesis-alignment assessment. Candidate engineering verification is separate from production publication and empirical research use.
 **ADR:** `docs/ADR-020-EVALUATION-SANDBOX.md`
 **Goal:** Enable a controlled MSc study of how well non-technical stakeholders and PO–developer pairs find and explain behavioral mismatches in visual versus structured-text specifications.
 
@@ -209,4 +209,8 @@ No invented deadlines. Gates are evidence- and owner-based.
 
 `Sprint 07 baseline` → `Sprint 08 stakeholder experience` → `Sprint 09 ingestion` → `Sprint 10 parity + agent handoff` → `Sprint 11 evaluation sandbox` → `owner-accepted research pilot`.
 
-Each arrow is gated by implementation evidence and explicit owner approval. Sprint 09 passed its explicit owner gate and was released. Sprint 10 implementation, merge and production publication were separately authorized. Sprint 11 remains a separate owner decision.
+Each arrow is gated by implementation evidence and explicit owner approval. Sprint 09 passed its explicit owner gate and was released. Sprint 10 implementation, merge and production publication were separately authorized. Sprint 11 implementation has now been explicitly authorized. Its production publication and empirical use remain separate decisions after concrete engineering and pilot evidence.
+
+## 10. Visual SDD alignment boundary
+
+The owner clarified that the thesis concerns **Visual SDD**, not visual storytelling or AI-generated storyboards. Sprint 11 compares read-only visual and structured-text projections derived from the existing source/review domain model. The current text importer is heuristic, and optional LLM ingestion and a verified coding-agent implementation run remain separate unproven capabilities. Completing Sprint 11 does not establish commercial maturity, research effectiveness or an approved thesis protocol. See `THESIS_ALIGNMENT_REVIEW.md` for the evidence-based product comparison and open scope decisions.

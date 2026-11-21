@@ -27,7 +27,8 @@ for report in reports:
         raise SystemExit('Unexpected report pagination: '+str(count))
     for page in range(1,count+1):
         visible=subprocess.check_output(['pdftotext','-f',str(page),'-l',str(page),str(pdf),'-'],encoding='utf-8')
-        if len(visible.strip())<80:
+        # Reject a sparse spill page as well as a fully blank page.
+        if len(visible.strip())<450:
             raise SystemExit('Unexpected blank or near-empty report page: '+report.name+' page '+str(page))
     subprocess.run(['pdftoppm','-r','120','-png',str(pdf),str(out/'page')],check=True,timeout=90)
     if len(list(out.glob('page-*.png')))!=count:

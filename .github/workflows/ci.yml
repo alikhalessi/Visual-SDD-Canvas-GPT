@@ -50,7 +50,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: sprint-10-verification-${{ env.CI_HEAD_SHA }}-${{ github.run_attempt }}
+          name: sprint-11-verification-${{ env.CI_HEAD_SHA }}-${{ github.run_attempt }}
           path: |
             qa-reports/
             test-results/
@@ -71,7 +71,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: sprint-10-report-render-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_attempt }}
+          name: sprint-11-report-render-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_attempt }}
           path: document-results/
           retention-days: 90
           if-no-files-found: warn
