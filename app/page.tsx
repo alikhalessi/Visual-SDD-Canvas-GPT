@@ -120,6 +120,7 @@ export default function Page(){
      </div>
     </section>
     {experience==='business'?<BusinessReviewCanvas spec={spec} idea={idea} projectId={cloudRef?.id||null} onSpecificationChange={setSpec}
+     onImportedSourceIdea={(source)=>{setIdea(source);setDraft(buildIdeaDraft(source));setCloudRef(null);}}
      onCreateSpecification={()=>{setExperience('engineering');if(idea.trim().length>=12)openSpec();else captureIdea();}}
      onOpenSpecification={()=>{setExperience('engineering');openSpec();}}/>:<>
     <StakeholderEngineeringSummary spec={spec} projectId={cloudRef?.id||null} onReview={()=>setExperience('business')}/>
