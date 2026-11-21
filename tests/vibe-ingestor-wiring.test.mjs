@@ -33,6 +33,8 @@ test('no LLM calls, public Issue upload or agent dispatch in the import core',()
 test('client saves source and review locally and rolls back if persistence fails',()=>{
  assert.match(review,/localStorage\.setItem\(nextKey,JSON.stringify\(result.review\)\)/);
  assert.match(review,/localStorage\.setItem\(sourceKey,JSON.stringify\(result.spec\)\)/);
+ assert.match(review,/localStorage\.setItem\(historyKey,JSON.stringify\(nextHistory\)\)/);
+ assert.match(review,/Export import provenance/);
  assert.match(review,/if\(originalReview===null\)localStorage\.removeItem\(nextKey\)/);
  assert.match(review,/onSpecificationChange\(result.spec\)/);
  assert.match(review,/if\(!canImport\)throw Error/);
