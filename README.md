@@ -107,3 +107,8 @@ npm run dev
 ## Delivery policy
 
 Each sprint requires implementation, CI evidence, Git commit, DOCX report, verified production deployment and explicit Product Owner approval before the next sprint.
+## Sprint 11 evaluation rehearsal
+
+The `/evaluate` route compares frozen visual and structured-text specifications without reading or changing workspace projects. It records local rehearsal consent, counterbalanced assignment, rule judgements, cited evidence, rationale, timing and independent predictions. Completed JSON/CSV is exported deliberately; actual reference answers stay in a private researcher-controlled file and are scored offline. This is not recruitment authorization or evidence of effectiveness.
+
+See [acceptance](docs/SPRINT_11_ACCEPTANCE.md), [scenario catalog](docs/SPRINT_11_TEST_CATALOG.md), [owner guide](docs/SPRINT_11_OWNER_GUIDE.md) and [Visual SDD thesis alignment review](docs/THESIS_ALIGNMENT_REVIEW.md).

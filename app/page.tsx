@@ -133,6 +133,7 @@ export default function Page(){
     <button aria-current={tab==='cloud'?'page':undefined} onClick={()=>setTab('cloud')}>My Projects</button>
    </nav>}
    <main id="workspace-main" tabIndex={-1} className="content">
+    <a className="eval-entry" href="/evaluate">Evaluation rehearsal · Compare visual and text specifications →</a>
     <section className="experience-controls" aria-label="Workspace experience">
      <strong>How would you like to review this project?</strong>
      <div className="experience-switch" role="group" aria-label="Workspace mode">
