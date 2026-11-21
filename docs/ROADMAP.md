@@ -2,7 +2,7 @@
 
 **Repository:** `alikhalessi/Visual-SDD-Canvas-GPT` (`main`)
 **Current delivery baseline:** Owner-authorized Sprint 10, merged PR #7. Exact production deployment and post-deploy results are recorded in [the release record](SPRINT_10_RELEASE_RECORD.md) and the live PR verification record.
-**Current engineering work:** Sprint 11 implementation is explicitly authorized by the owner. The evaluation rehearsal is being completed and compared with the Visual SDD thesis direction. Main/production remains the owner-authorized Sprint 10 baseline until a separate reviewed publication decision.
+**Current engineering work:** Sprint 11 implementation is explicitly authorized by the owner. The evaluation rehearsal and Visual SDD thesis-alignment assessment are implemented. Local verification passed 299 Node checks, 9 Python checks and 116 browser results; exact final candidate CI/preview/report review evidence is maintained in PR #8. Main/production remains the owner-authorized Sprint 10 baseline until a separate reviewed publication decision.
 **Research context:** MSc Computer Science, Åbo Akademi University. This roadmap is an engineering and study plan, not an approved thesis protocol or a claim of experimental results.
 
 ## 1. Product direction
@@ -35,7 +35,7 @@ The proposed response is a **Dual-Mode Experience over a Single Underlying Model
 | **08** | **Dual-Mode Stakeholder Experience** | **Released, PR #5; subsequent regressions expanded in Sprints 09–10; physical-device and participant studies remain separately unclaimed** |
 | **09** | **Vibe-to-Spec Ingestion Bridge** | **Owner-authorized release, PR #6 merged; CI #211 and production/cloud verification recorded in SPRINT_09_RELEASE_RECORD.md** |
 | **10** | **Human-Readable Impact & Agent Handoff** | **Owner-authorized release, PR #7 merged; final main CI #215 and production verification recorded in SPRINT_10_RELEASE_RECORD.md** |
-| **11** | **Empirical Evaluation Sandbox** | **Owner-authorized implementation; candidate rehearsal and thesis-alignment assessment in progress; publication and empirical use remain separate gates** |
+| **11** | **Empirical Evaluation Sandbox** | **Implementation completed for owner review, PR #8; final candidate verification is recorded there; production publication and empirical use remain separate gates** |
 
 Existing source-of-truth files include `lib/spec-core.ts`, `lib/workflow-core.ts`, `lib/impact-core.ts`, `lib/github-trace-core.ts`, `lib/agent-run-core.ts`, `lib/run-evidence-core.ts`, `scripts/sdd_runner_adapter.py`, `scripts/verify_run.py`, `app/api/workspace/route.ts` and `SPRINT_01B_MIGRATION.sql`.
 
