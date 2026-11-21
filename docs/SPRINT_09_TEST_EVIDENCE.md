@@ -21,6 +21,6 @@ No browser interaction, keyboard-only mobile acceptance, failure-injected storag
 
 ## Known limitations and follow-up verification
 
-Text-only descriptions are parsed; no live prototype, screenshots, code, APIs or third-party systems are inspected. Potential background and role-boundary paths are open questions and remain unapproved. Newly created acceptance criteria are intentionally blank until reviewed. Source span evidence is visible in the candidate preview; **a durable import-provenance audit export is not yet implemented**. This is a material limitation for research-grade provenance and must be resolved or explicitly accepted before final Sprint 09 sign-off.
+Text-only descriptions are parsed; no live prototype, screenshots, code, APIs or third-party systems are inspected. Potential background and role-boundary paths are open questions and remain unapproved. Newly created acceptance criteria are intentionally blank until reviewed. A separate, append-only browser-local provenance history and manual JSON export have now been implemented, retaining source spans, original quotations and imported revision links. It is not tamper-proof or cloud-synced; it is **not yet manually verified** in a real browser. A research-grade authenticated/tamper-evident archive is outside this sprint.
 
 Deployment readiness and CI success alone do not establish user comprehension, accessibility, real OAuth, semantic equivalence to a prototype, or acceptance for Sprint 10.
