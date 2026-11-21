@@ -1,4 +1,6 @@
-# Sprint 08 — Local Engineering Test Evidence
+# Sprint 08 — Engineering Test Evidence
+
+The original fixture results below document package preparation. Actual full-checkout integration and CI verification were completed later; see the dated addendum at the end.
 
 **Date:** 2026-11-21 (project time zone: Europe/Helsinki)
 **Source:** Implementation bundle prepared against `alikhalessi/Visual-SDD-Canvas-GPT` main as inspected through the GitHub connector.
@@ -39,3 +41,20 @@ python3 -m unittest discover -s tests_python -v
 ```
 
 Record outputs, GitHub CI/commit, verified deployment URL, and the Product Owner's real-browser acceptance in `docs/SPRINT_08_ACCEPTANCE.md`. Keep Sprint 09 blocked until authorized.
+
+## Full-repository integration addendum — 2026-11-21
+
+The following outcomes were reported from the owner's **real** `F:\\Projects\\Visual-SDD-Canvas-GPT` checkout, rather than the synthetic fixture:
+
+| Check | Observed result | Confidence boundary |
+| --- | --- | --- |
+| `npm test` | **184 passed, 0 failed** | Full local checkout, including 24 Sprint 08 tests |
+| `python -m unittest discover -s tests_python -v` | **9 passed, 0 failed** | Full local checkout |
+| `npm run typecheck` | **Passed** | Full local checkout |
+| `npm run build` | **Passed** | Used deliberately fake non-production Auth URL and ephemeral cookie secret; not an OAuth or production-deployment test |
+| GitHub Actions `Visual SDD CI` run **#186** for PR **#5** | **Success** (green check, ~41 s), per owner screenshot | CI tests/build on GitHub; cloud OAuth not exercised |
+| Interactive stakeholder manual QA | **Passed** approval gating, linked background timing, F5 recovery, sign-off invalidation | One SetPilot browser-local scenario; does not establish exhaustive coverage |
+
+Git delivery: branch `sprint-08-dual-mode`, implementation commit `7cec6eb`, PR: https://github.com/alikhalessi/Visual-SDD-Canvas-GPT/pull/5.
+
+**Open checks:** real Google Auth (local 502 reported with placeholder configuration), mobile/keyboard, project isolation, corrupted-cache recovery, production deployment and final Product Owner sign-off. Earlier fixture-only caveats above are historical and should not be mistaken for the current integrated test result.
