@@ -4,7 +4,7 @@ import {randomBytes} from 'node:crypto';
 const external=process.env.E2E_BASE_URL;
 export default defineConfig({
  testDir:'./tests_browser',fullyParallel:false,workers:1,retries:0,
- reporter:[['list'],['json',{outputFile:'test-results/results.json'}]],
+ reporter:[['list'],['json',{outputFile:'test-results/results.json'}],['html',{outputFolder:'playwright-report',open:'never'}]],
  use:{baseURL:external||'http://127.0.0.1:3100',trace:'retain-on-failure',screenshot:'only-on-failure'},
  projects:[
   {name:'desktop-chromium',use:{...devices['Desktop Chrome']}},

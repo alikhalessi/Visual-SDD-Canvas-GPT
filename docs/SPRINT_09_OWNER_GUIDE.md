@@ -27,3 +27,7 @@ Text heuristics can miss or invent potential paths. No live prototype crawl, ima
 ## Cloud-link clarification
 
 The first explicit cloud save now copies the current browser review and import history into the new project's local keys; the original browser-draft copies remain available. Reopening an existing project keeps that project's own records. A source-bound local project link survives reload, including its conflict token. This preserves local identity; it does not synchronize review notes, provenance, plans or tasks across devices. The source Specification alone is saved to the cloud through the existing explicit action. The server still verifies the account and project owner on every request.
+
+## Reviewable test history
+
+The [scenario catalog](SPRINT_09_TEST_CATALOG.md) records every browser case, expected outcome, evidence location and the process for adding regression scenarios. Each CI run uploads available logs and browser reports, even on failure, with requested 90-day retention. Test definitions remain in Git history after run artifacts expire.

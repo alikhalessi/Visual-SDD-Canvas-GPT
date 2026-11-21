@@ -42,6 +42,8 @@ Review sidecar and provenance remain browser-local/exportable, not cloud-synced 
 
 ## Extended release-readiness verification
 
+The permanent [scenario catalog](SPRINT_09_TEST_CATALOG.md) maps all 12 browser cases to their inputs, assertions and source files. CI preserves per-test Node/Python logs, build/typecheck logs, exact head/run context, machine-readable and HTML browser results, attachments and failure traces as a downloadable verification artifact with a requested 90-day retention. Private live-account evidence remains local; its outcome and hashes are recorded in PR #6.
+
 Follow-up verification reproduced two real project-link defects before fixing them: assigning the first cloud ID hid guest-local review/provenance, and reloading lost the cloud project identity. The first-save path now copies (never removes) guest records into the newly assigned project key, preserves existing target records, and compensates failed copies. A versioned local cloud-link hint restores the project ID and optimistic-concurrency token only when its specification/source identity matches. It contains no login credential and grants no server access. Loading another existing project does not copy guest notes into it.
 
 Six domain checks cover identity round trips, source mismatch, idea-only projects, malformed references, byte-preserving copies, destination preservation and failed-copy compensation. Three browser scenarios test first-save review/history retention, reload/switch isolation, and preservation of an unreadable source even when the cloud-link hint is also corrupt, with independent mock Auth/API data (not a claim of live DB persistence).

@@ -8,3 +8,4 @@ out/
 playwright-report/
 test-results/
 __pycache__/
+qa-reports/
