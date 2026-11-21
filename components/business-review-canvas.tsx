@@ -1,6 +1,8 @@
 'use client';
 import {useEffect,useMemo,useState} from 'react';
 import type {Specification} from '../lib/spec-core';
+import VibeImportPanel from './vibe-import-panel';
+import type {ImportResult} from '../lib/vibe-ingestor-core.ts';
 import {updateRequirement} from '../lib/spec-core';
 import {
  createStakeholderReview,rebaseStakeholderReview,readStakeholderReview,projectStakeholderRules,localStakeholderKey,
@@ -9,7 +11,7 @@ import {
  type StakeholderReviewDocument,type RuleCard,type WorkflowKind,type EdgeCondition,type BehaviourExample
 } from '../lib/stakeholder-view-core';
 
-type Props={spec:Specification|null;idea:string;projectId:string|null;onSpecificationChange:(s:Specification)=>void;onCreateSpecification:()=>void;onOpenSpecification:()=>void};
+type Props={spec:Specification|null;idea:string;projectId:string|null;onSpecificationChange:(s:Specification)=>void;onCreateSpecification:()=>void;onOpenSpecification:()=>void;onImportedSourceIdea:(text:string)=>void};
 function download(name:string,value:string){
  const url=URL.createObjectURL(new Blob([value],{type:'application/json;charset=utf-8'}));
  const link=document.createElement('a');link.href=url;link.download=name;document.body.appendChild(link);link.click();link.remove();
@@ -79,7 +81,7 @@ function RuleEditor({card,spec,onWording,onChange,doc}:{card:RuleCard;spec:Speci
   {notice&&<p role="status" className="business-notice">{notice}</p>}
  </section>;
 }
-export default function BusinessReviewCanvas({spec,idea,projectId,onSpecificationChange,onCreateSpecification,onOpenSpecification}:Props){
+export default function BusinessReviewCanvas({spec,idea,projectId,onSpecificationChange,onCreateSpecification,onOpenSpecification,onImportedSourceIdea}:Props){
  const [document,setDocument]=useState<StakeholderReviewDocument|null>(null);
  const [loadedKey,setLoadedKey]=useState('');
  const [rawRecovery,setRawRecovery]=useState<string|null>(null);
@@ -113,6 +115,28 @@ export default function BusinessReviewCanvas({spec,idea,projectId,onSpecificatio
   if(!key||loadedKey!==key||!spec||!document||document.specRevision!==spec.revision||rawRecovery!==null)return;
   try{localStorage.setItem(key,JSON.stringify(document));}catch{setMessage('Could not save stakeholder notes. Export them before closing the browser.');}
  },[key,loadedKey,spec,document,rawRecovery]);
+
+ function commitVibeImport(result:ImportResult,brief:string){
+  if(rawRecovery!==null|| (spec&&(!document||loadedKey!==key||document.specRevision!==spec.revision)))throw Error('Current review is not safely loaded.');
+  const nextKey=localStakeholderKey(result.spec,projectId);
+  const sourceKey='visual-sdd-specification-v1';
+  // Save both documents before updating React. If either storage write fails, restore both.
+  const originalSpec=localStorage.getItem(sourceKey),originalReview=localStorage.getItem(nextKey);
+  try{
+   localStorage.setItem(nextKey,JSON.stringify(result.review));
+   localStorage.setItem(sourceKey,JSON.stringify(result.spec));
+  }catch(error){
+   try{if(originalReview===null)localStorage.removeItem(nextKey);else localStorage.setItem(nextKey,originalReview);
+       if(originalSpec===null)localStorage.removeItem(sourceKey);else localStorage.setItem(sourceKey,originalSpec);}
+   catch{throw Error('Import stopped. Storage rollback failed; export and inspect existing local data before continuing.');}
+   throw Error('Import stopped because browser storage was unavailable. Existing records restored.');
+  }
+  setDocument(result.review);setLoadedKey(nextKey);setRawRecovery(null);
+  if(!spec)onImportedSourceIdea(result.spec.sourceIdea||brief.slice(0,600));
+  onSpecificationChange(result.spec);
+  setSelected(result.addedRequirements[0]??null);
+  setMessage('New unapproved specification revision saved with '+result.addedRequirements.length+' imported candidate rule(s). Linked review notes are browser-local, not cloud-synced.');
+ }
  const ready=loadedKey===key&&!!spec&&!!document&&document.specRevision===spec.revision&&rawRecovery===null;
  const cards=spec?projectStakeholderRules(spec,ready?document:null):[];
  const active=cards.find(c=>c.id===selected)??cards[0];
@@ -124,6 +148,7 @@ export default function BusinessReviewCanvas({spec,idea,projectId,onSpecificatio
  }
  return <section className="business-view" aria-labelledby="business-view-title">
   <header className="business-hero"><div><span className="eyebrow">SPRINT 08 · BUSINESS REVIEW</span><h1 id="business-view-title">Understand the rules.<br/><em>See what could be missed.</em></h1><p>Review how your product should behave, including the work people never see. The same source requirements remain available to engineers. Nothing is approved automatically.</p></div><span className="business-local">REVIEW NOTES: BROWSER ONLY</span></header>
+  <VibeImportPanel spec={spec} review={ready?document:null} reviewReady={!spec||ready} onCommit={commitVibeImport}/>
   {!spec?<section className="business-empty"><h2>Start with your product idea</h2><p>{idea.trim()||'No idea has been saved yet.'}</p><p>Write the first specification to make its business rules visible here.</p><button className="business-primary" onClick={onCreateSpecification}>Start a specification</button></section>:
    <>
     <div className="business-summary"><div><strong>{cards.length}</strong><span>Business rules</span></div><div><strong>{examples}</strong><span>Example attached, review pending</span></div><div><strong>{signed}</strong><span>Behaviour reviewed &amp; approved</span></div><div><strong>r{spec.revision}</strong><span>Source specification revision</span></div></div>
