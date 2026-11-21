@@ -100,7 +100,7 @@ export function prepareVibeImport(spec:Specification|null,review:StakeholderRevi
  const existing=base.requirements.filter(r=>!(!spec&&r.id==='REQ-001'&&!r.statement.trim()));
  const keys=new Set(existing.map(r=>matchKey(r.statement)));
  const added:Requirement[]=[],chosen=new Map<string,RuleChoice>(),ids=new Map<string,string>();
- let nextId=Math.max(0,...existing.map(r=>Number(r.id.slice(4))||0));
+ let nextId=Math.max(0,...existing.map(r=>Number(r.id.slice(4))||0),...(review?.rules??[]).map(r=>Number(r.requirementId.slice(4))||0));
  for(const c of accepted){
   if(!bounded(c.title,160,5)||!bounded(c.statement,2000,15)||!['must','should','could'].includes(c.priority))throw Error('Rule title, statement or priority is invalid.');
   if(invalidControl.test(c.title+c.statement)||markupAttack.test(c.title+c.statement)||instructionAttack.test(c.title+c.statement))throw Error('Unsafe rule content. Import aborted.');
