@@ -2,6 +2,8 @@
 import {useEffect,useRef,useState} from 'react';
 import {SDD_STAGES,getStage,buildIdeaDraft,normalizeIdea,type StageId} from '../lib/sdd-core';
 import SpecEditor from '../components/spec-editor';
+import BusinessReviewCanvas from '../components/business-review-canvas';
+import StakeholderEngineeringSummary from '../components/stakeholder-engineering-summary';
 import UxGuide from '../components/ux-guide';
 import WorkspaceBrief from '../components/workspace-brief';
 import {inspectCachedSpecification} from '../lib/quality-core';
@@ -12,6 +14,7 @@ type Mode='simple'|'professional';
 type Draft={id:string;title:string;description:string;status:'draft'};
 export default function Page(){
  const [mode,setMode]=useState<Mode>('simple');
+ const [experience,setExperience]=useState<'business'|'engineering'>('business');
  const [stage,setStage]=useState<StageId>('idea');
  const [idea,setIdea]=useState('');
  const ideaInput=useRef<HTMLTextAreaElement>(null);
@@ -89,7 +92,7 @@ export default function Page(){
  function resetSpec(){if(window.confirm('Remove the local specification and start again? Export first if needed.')){setSpec(null);setCloudRef(null);setTab('overview');setStage('idea');setNotice('Specification cleared. Your idea draft is preserved.');}}
  return <div className="app-shell">
   <a className="skip-link" href="#workspace-main">Skip to main content</a>
-  <aside className="nav" aria-label="Workspace navigation">
+  {experience==='engineering'&&<aside className="nav" aria-label="Workspace navigation">
    <div className="brand"><div className="brand-mark">◇</div><div><strong>visual<span>SDD</span></strong><small>DEVELOP WITH CLARITY</small></div></div>
    <div className="nav-label">WORKSPACE</div>
    <button aria-current={tab==='overview'?'page':undefined} className={'nav-item '+(tab==='overview'?'active':'')} onClick={()=>setTab('overview')}><span>▦</span> Overview</button>
@@ -99,16 +102,28 @@ export default function Page(){
    <div className="nav-label push-down">ACTIVE PROJECT</div>
    <div className="project"><span className="orange-dot"></span>{spec?.title||(draft?'Saved idea draft':'New project')}<small>{cloudRef?'CLOUD LINKED':'BROWSER'}</small></div>
    <div className="profile"><div className="avatar">VS</div><div><strong>Visual SDD</strong><small>UX & Quality · Sprint 07</small></div></div>
-  </aside>
+  </aside>}
   <div className="main">
-   <header className="topbar"><div>Workspace <span className="sep">/</span> {tab==='overview'?'Overview':tab==='canvas'?'SDD Canvas':tab==='cloud'?'My Projects':'Specification'}</div><div className="top-right"><AccountStatus onProjects={()=>setTab('cloud')}/><span className="tag">v0.7.0</span></div></header>
-   <nav className="mobile-workspace-nav" aria-label="Mobile workspace navigation">
+   <header className="topbar"><div>Workspace <span className="sep">/</span> {experience==='business'?'Business Review':tab==='overview'?'Overview':tab==='canvas'?'SDD Canvas':tab==='cloud'?'My Projects':'Specification'}</div><div className="top-right"><AccountStatus onProjects={()=>{setExperience('engineering');setTab('cloud');}}/><span className="tag">v0.8.0-preview</span></div></header>
+   {experience==='engineering'&&<nav className="mobile-workspace-nav" aria-label="Mobile workspace navigation">
     <button aria-current={tab==='overview'?'page':undefined} onClick={()=>setTab('overview')}>Overview</button>
     <button aria-current={tab==='canvas'?'page':undefined} onClick={()=>setTab('canvas')}>SDD Canvas</button>
     <button aria-current={tab==='specification'?'page':undefined} onClick={()=>spec?setTab('specification'):openSpec()}>Specification</button>
     <button aria-current={tab==='cloud'?'page':undefined} onClick={()=>setTab('cloud')}>My Projects</button>
-   </nav>
+   </nav>}
    <main id="workspace-main" tabIndex={-1} className="content">
+    <section className="experience-controls" aria-label="Workspace experience">
+     <strong>How would you like to review this project?</strong>
+     <div className="experience-switch" role="group" aria-label="Workspace mode">
+      <button type="button" aria-pressed={experience==='business'} onClick={()=>setExperience('business')}>Business Review Mode</button>
+      <button type="button" aria-pressed={experience==='engineering'} onClick={()=>setExperience('engineering')}>Engineering Cockpit</button>
+     </div>
+    </section>
+    {experience==='business'?<BusinessReviewCanvas spec={spec} idea={idea} projectId={cloudRef?.id||null} onSpecificationChange={setSpec}
+     onCreateSpecification={()=>{setExperience('engineering');if(idea.trim().length>=12)openSpec();else captureIdea();}}
+     onOpenSpecification={()=>{setExperience('engineering');openSpec();}}/>:<>
+    <StakeholderEngineeringSummary spec={spec} projectId={cloudRef?.id||null} onReview={()=>setExperience('business')}/>
+
     <div className="overline"><span className="green-dot"></span> VISUAL SDD WORKSPACE <span className="overline-line"></span></div>
     {tab==='overview'&&<div className="hero"><div><h1>See every decision.<br/><em>Understand every change.</em></h1><p>Shape your idea through a visible, reviewable development process. Know what is planned, what is approved, and what has actually been verified.</p></div><span className="hero-badge">HUMAN-GOVERNED WORKSPACE · SPRINT 07</span></div>}
     {tab==='overview'&&<div className="intro-grid">
@@ -128,6 +143,7 @@ export default function Page(){
     {storageError&&<div className="notice" role="alert">{storageError}</div>}
     {unreadableSpec!==null&&<section className="recovery-banner" aria-labelledby="recovery-title"><div><strong id="recovery-title">Recovery needed: unreadable browser Specification</strong><p>We will not overwrite or delete the original cached text automatically. First export it to inspect or recover later, then choose whether to clear this single cache.</p></div><div className="recovery-actions"><button className="spec-outline" onClick={exportRecoveryCopy}>Download recovery copy</button><button className="spec-danger" onClick={clearUnreadableCache}>Clear unreadable cache…</button></div></section>}
     <footer>Visual SDD · Sprint 07 UX & Quality <span>A visual operating environment for SDD</span></footer>
+    </>}
    </main>
   </div>
  </div>;
