@@ -27,6 +27,9 @@ test('draft handoff preserves an open timing flag and cannot approve or authoriz
  await dialog.getByLabel('Reviewer name',{exact:true}).fill('QA reviewer');await dialog.getByLabel('Decision rationale',{exact:true}).fill('This draft still has an unanswered timing question.');await dialog.getByRole('combobox',{name:'Decision',exact:true}).selectOption('approved');
  await dialog.getByRole('checkbox').check();await expect(dialog.getByRole('button',{name:'Record snapshot decision',exact:true})).toBeDisabled();
  const m=await jsonDownload(page,'Export draft manifest');
+ await expect(dialog).toContainText('Target audience: '+m.canonical.source.audience);
+ await expect(dialog).toContainText('Priority: Must have');
+ await expect(dialog).toContainText(m.canonical.review.rules[0].examples[0].given);
  expect(m.canonical.review.rules[0].edges).toHaveLength(1);expect(m.canonical.review.rules[0].edges[0].status).toBe('open');expect(m.canonical.review.rules[0].workflows.map(w=>w.kind)).toEqual(['interactive']);expect(m.readiness.canImplement).toBe(false);expect(m.execution.authorized).toBe(false);
  await testInfo.attach('draft-handoff-manifest',{body:JSON.stringify(m,null,2),contentType:'application/json'});
 });

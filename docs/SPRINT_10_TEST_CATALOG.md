@@ -25,3 +25,7 @@ Each case in [the executable browser suite](../tests_browser/handoff.spec.mjs) r
 | S10-B07 | Switch to Engineering impact using the same source/review | The identical recorded timing question and non-workflow warning remain visible |
 
 Passing tests are not product comprehension acceptance, authenticated signatures, full interoperability, physical-device evidence or proof that implemented business behaviour is correct. Exact final CI/preview/deployed-browser evidence and any protection/tool limitations belong in the PR verification record. No unexecuted case is counted as passed.
+
+## Delivery report layout
+
+CI renders both versioned Persian Word reports on an isolated Linux runner. Conversion, expected page-count bounds, per-page text presence and matching PNG counts are required. Blank/near-empty pages fail the report job. Every resulting page still receives a visual review for RTL flow, heading style, borders, clipping, spacing and pagination before the DOCX is delivered. The first render exposed an unwanted title border and an empty intermediate page; both were corrected rather than counting conversion success as layout acceptance.
