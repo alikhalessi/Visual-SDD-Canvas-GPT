@@ -1,6 +1,6 @@
 # Sprint 09 — Acceptance matrix for owner review
 
-Date: 2026-11-21. Engineering verification is separate from owner acceptance and production release. Exact remote evidence: [PR #6](https://github.com/alikhalessi/Visual-SDD-Canvas-GPT/pull/6).
+Date: 2026-11-21. Owner merge and production acceptance completed after engineering verification; see [the released baseline](SPRINT_09_RELEASE_RECORD.md). Engineering evidence does not impersonate that decision. Exact remote evidence: [PR #6](https://github.com/alikhalessi/Visual-SDD-Canvas-GPT/pull/6).
 
 | ID | Contract | Evidence / status |
 | --- | --- | --- |
@@ -15,7 +15,7 @@ Date: 2026-11-21. Engineering verification is separate from owner acceptance and
 | S09-09 | Browser-local source/review/provenance rollback | Injected failure of each of three writes passed on desktop/mobile; permanent storage/crash durability unclaimed |
 | S09-10 | Preserve prior sprint regressions | 220 Node tests, 9 Python tests, adapter self-test, typecheck/build passed locally; final CI linked in PR |
 | S09-11 | Keyboard/mobile usability | Keyboard and 320/390/768px layout checks across Chromium, Firefox and WebKit; Chromium automated WCAG audit. Physical device and screen-reader study unclaimed |
-| S09-12 | Documentation, PR and exact deployment evidence | Updated matrix/evidence/guide/ADR/roadmap; owner release decision pending |
+| S09-12 | Documentation, PR and exact deployment evidence | Updated matrix/evidence/guide/ADR/roadmap; owner release decision completed; see release record |
 | S09-13 | Export source/path provenance and reload | Owner's earlier two-rule export verified; new scheduled-path browser download equals stored history and links edge ID |
 | S09-14 | Counts include existing empty placeholders | 1 total retained, 0 with text, 1 empty REQ-001, 3 after two new rules; core and browser assertions |
 | S09-15 | First cloud save preserves the local review/provenance namespace | Reproduced failure before fix; exact guest bytes copied to unoccupied project keys, originals retained; browser scenarios cover preservation |
@@ -23,6 +23,6 @@ Date: 2026-11-21. Engineering verification is separate from owner acceptance and
 
 ## Decision boundary
 
-The owner already verified importing two rules and their source provenance. The previously missing selected-path engineering check is now automated through a real Chromium engine, including reload and download. Final owner approval of the revised preview remains pending; automation does not impersonate that approval.
+The owner already verified importing two rules and their source provenance. The previously missing selected-path engineering check is now automated through a real Chromium engine, including reload and download. The owner subsequently approved merge and production publication; automation did not impersonate that approval.
 
-Live Google sign-in on the stable Sprint 09 preview passed. New regression scenarios cover first cloud save, local review/provenance retention, source-bound cloud identity after reload, and project switching. Exact live cloud outcomes are recorded in PR #6. Physical-phone and screen-reader-user acceptance remain unclaimed. Notes/provenance are explicitly browser-local. No merge to main, production publication or Sprint 10 advancement is authorized by a green test result.
+Live Google sign-in on the stable Sprint 09 preview passed. New regression scenarios cover first cloud save, local review/provenance retention, source-bound cloud identity after reload, and project switching. Exact live cloud outcomes are recorded in PR #6. Physical-phone and screen-reader-user acceptance remain unclaimed. Notes/provenance are explicitly browser-local. A green test result alone authorized none of these actions; the owner later explicitly authorized Sprint 09 release and Sprint 10 implementation.

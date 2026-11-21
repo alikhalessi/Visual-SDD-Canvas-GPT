@@ -1,16 +1,24 @@
 'use client';
-import {useMemo,useState} from 'react';
+import {useEffect,useMemo,useState} from 'react';
 import type {Specification} from '../lib/spec-core';
 import type {PlanningDocument} from '../lib/workflow-core';
 import {assessChangeImpact,impactMarkdown,type ImpactChange} from '../lib/impact-core';
+import {describeBusinessImpact} from '../lib/business-impact-core';
+import {localStakeholderKey,readStakeholderReview,type StakeholderReviewDocument} from '../lib/stakeholder-view-core';
 
-type Props={spec:Specification|null;plan:PlanningDocument|null;onSpecification:()=>void;onPlan:()=>void;onTasks:()=>void};
+type Props={spec:Specification|null;plan:PlanningDocument|null;projectId:string|null;onSpecification:()=>void;onPlan:()=>void;onTasks:()=>void};
 function exportMarkdown(markdown:string){
  const url=URL.createObjectURL(new Blob([markdown],{type:'text/markdown;charset=utf-8'}));
  const a=document.createElement('a');a.href=url;a.download='visual-sdd-change-impact.md';document.body.append(a);a.click();a.remove();
  setTimeout(()=>URL.revokeObjectURL(url),1500);
 }
-export default function ImpactExplorer({spec,plan,onSpecification,onPlan,onTasks}:Props){
+export default function ImpactExplorer({spec,plan,projectId,onSpecification,onPlan,onTasks}:Props){
+ const [review,setReview]=useState<StakeholderReviewDocument|null>(null);
+ useEffect(()=>{
+  if(!spec){setReview(null);return;}
+  try{const raw=localStorage.getItem(localStakeholderKey(spec,projectId));setReview(raw&&raw.length<=2000000?readStakeholderReview(JSON.parse(raw)):null);}catch{setReview(null);}
+ },[spec,projectId]);
+ const business=spec?describeBusinessImpact(spec,review,plan):null;
  const report=useMemo(()=>assessChangeImpact(spec,plan),[spec,plan]);
  const [focus,setFocus]=useState<string|null>(null);
  const selected=report.changes.find(c=>c.key===focus)??report.changes[0]??null;
@@ -28,6 +36,7 @@ export default function ImpactExplorer({spec,plan,onSpecification,onPlan,onTasks
    <div><strong>{report.staleApprovalStages.length}</strong><span>Blocked / stale gates</span></div>
   </div>
   <p className="impact-summary" role="status">{report.summary}</p>
+  {business&&<section className="impact-business-findings" aria-label="Business consequences"><h4>What this means for the business behaviour</h4>{business.findings.length?<ul>{business.findings.map(f=><li key={f.key}><strong>{f.certainty==='unknown'?'Uncertainty: ':'Recorded: '}</strong>{f.message}</li>)}</ul>:<p>No source differences from the verified baseline; current business review gates still apply.</p>}</section>}
   {(report.state==='no_plan'||report.state==='missing_baseline')&&<div className="impact-warning">
    <strong>{report.state==='no_plan'?'No planning baseline yet.':'Legacy plan — baseline missing.'}</strong>
    <p>{report.state==='no_plan'

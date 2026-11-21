@@ -1,3 +1,4 @@
+import {localHandoffHistoryKey} from './agent-handoff-core.ts';
 import type {Specification} from './spec-core.ts';
 import {localStakeholderKey} from './stakeholder-view-core.ts';
 import {localVibeHistoryKey} from './vibe-ingestor-core.ts';
@@ -27,6 +28,7 @@ export function preserveLocalReviewOnFirstSave(storage:LocalStorage,spec:Specifi
  const pairs=[
   [localStakeholderKey(spec,null),localStakeholderKey(spec,projectId)],
   [localVibeHistoryKey(spec,null),localVibeHistoryKey(spec,projectId)],
+  [localHandoffHistoryKey(spec,null),localHandoffHistoryKey(spec,projectId)],
  ];
  const changes=pairs.map(([source,target])=>({target,raw:storage.getItem(source),previous:storage.getItem(target)})).filter(x=>x.raw!==null&&x.previous===null);
  const attempted:typeof changes=[];

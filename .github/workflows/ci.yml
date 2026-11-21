@@ -50,10 +50,28 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: sprint-09-verification-${{ env.CI_HEAD_SHA }}-${{ github.run_attempt }}
+          name: sprint-10-verification-${{ env.CI_HEAD_SHA }}-${{ github.run_attempt }}
           path: |
             qa-reports/
             test-results/
             playwright-report/
+          retention-days: 90
+          if-no-files-found: warn
+  document_qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Install isolated report renderer
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends libreoffice-writer poppler-utils fonts-noto-core fonts-dejavu-core
+      - name: Render delivery reports for visual review
+        run: python3 scripts/render_docx_reports.py
+      - name: Preserve report layout evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: sprint-10-report-render-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_attempt }}
+          path: document-results/
           retention-days: 90
           if-no-files-found: warn

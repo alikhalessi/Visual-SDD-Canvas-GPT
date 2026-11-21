@@ -14,15 +14,15 @@ The owner's two-rule import and source export are credited. Automated checks now
 
 The owner's existing requirements do not need to be entered again. Test data lives in isolated browser contexts, not the owner's session. No manual technical commands are required for this review package.
 
-## Human decision still pending
+## Released owner decision
 
-The owner must decide whether the revised counts and the visible meaning of a selected open path are understandable and acceptable for the product. Real phone/screen-reader behavior, live Google sign-in, signed-in project switching and cross-device cloud round trips are separate unverified acceptance areas. Automated Chromium mobile emulation is not evidence for every browser or assistive technology.
+The owner explicitly accepted merge and production publication on 2026-11-21. PR #6 is merged and Sprint 09 is live. Google sign-in, cloud save/reload and production source retrieval were verified; the expanded Chromium/Firefox/WebKit matrix passed. Physical-device and screen-reader-user studies remain unclaimed. Exact evidence and the Persian Word closeout are linked in [the release record](SPRINT_09_RELEASE_RECORD.md).
 
 ## Persistence and limits
 
 Source, stakeholder review and import receipts have separate local keys. The importer attempts rollback of all three after a storage-write failure. Single recoverable failures were tested; browser crash-atomic storage and permanent device failures are not guaranteed. Review notes and provenance are browser-local and exportable, not automatically cloud-synced, cryptographically authenticated or tamper-evident. Existing explicit cloud-save behavior is unchanged.
 
-Text heuristics can miss or invent potential paths. No live prototype crawl, image/code parser, automatic acceptance criteria, LLM execution or coding-agent implementation is claimed. Newly imported source acceptance criteria deliberately remain blank until specified by a human. Merge, production publication and Sprint 10 require separate owner authorization.
+Text heuristics can miss or invent potential paths. No live prototype crawl, image/code parser, automatic acceptance criteria, LLM execution or coding-agent implementation is claimed. Newly imported source acceptance criteria deliberately remain blank until specified by a human. The owner subsequently authorized Sprint 09 merge/production and then Sprint 10 implementation. Sprint 10 merge/production remain separate owner decisions.
 
 ## Cloud-link clarification
 
