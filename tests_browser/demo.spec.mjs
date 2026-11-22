@@ -27,14 +27,14 @@ test('confirmed reset restores exact sample and removes only demo decisions and 
 });
 test('failed reset restores prior bytes and reports the failure',async({page})=>{
  await open(page);const before=await state(page);await page.evaluate(key=>{const put=Storage.prototype.setItem;let fail=true;Storage.prototype.setItem=function(k,v){if(this===localStorage&&k===key&&fail){fail=false;throw Error('Simulated quota');}return put.call(this,k,v);};},DEMO_SOURCE_KEY);
- page.once('dialog',d=>d.accept());await page.getByRole('button',{name:'Reset demo sample',exact:true}).click();await expect(page.getByRole('alert')).toContainText('previous records were restored');expect(await state(page)).toEqual(before);
+ page.once('dialog',d=>d.accept());await page.getByRole('button',{name:'Reset demo sample',exact:true}).click();await expect(page.locator('.demo-shell').getByRole('alert')).toContainText('previous records were restored');expect(await state(page)).toEqual(before);
 });
 test('another-tab source edit pauses stale editing and can be deliberately restored',async({page,context})=>{
  await open(page);const other=await context.newPage();await open(other);await other.evaluate(key=>{const s=JSON.parse(localStorage.getItem(key));s.title='SetPilot changed in another tab';localStorage.setItem(key,JSON.stringify(s));},DEMO_SOURCE_KEY);
- await expect(page.getByRole('alert')).toContainText('another tab');await expect(page.getByLabel('What must happen?',{exact:true})).toHaveCount(0);await page.getByRole('button',{name:'Reload saved demo',exact:true}).click();await expect(page.locator('.business-source')).toContainText('SetPilot changed in another tab');await other.close();
+ await expect(page.locator('.demo-shell').getByRole('alert')).toContainText('another tab');await expect(page.getByLabel('What must happen?',{exact:true})).toHaveCount(0);await page.getByRole('button',{name:'Reload saved demo',exact:true}).click();await expect(page.locator('.business-source')).toContainText('SetPilot changed in another tab');await other.close();
 });
 test('corrupt demo source is retained until the visitor confirms reset',async({page})=>{
- await open(page);await page.evaluate(key=>localStorage.setItem(key,'{broken demo source'),DEMO_SOURCE_KEY);await page.reload();await expect(page.getByRole('alert')).toBeVisible();expect(await page.evaluate(key=>localStorage.getItem(key),DEMO_SOURCE_KEY)).toBe('{broken demo source');
+ await open(page);await page.evaluate(key=>localStorage.setItem(key,'{broken demo source'),DEMO_SOURCE_KEY);await page.reload();await expect(page.locator('.demo-shell').getByRole('alert')).toBeVisible();expect(await page.evaluate(key=>localStorage.getItem(key),DEMO_SOURCE_KEY)).toBe('{broken demo source');
  page.once('dialog',d=>d.accept());await page.getByRole('button',{name:'Reset demo sample',exact:true}).click();await expect(page.getByRole('heading',{name:'Withdraw coach access',exact:true})).toBeVisible();
 });
 test('demo cloud and authentication endpoints refuse access without contacting live services',async({request})=>{

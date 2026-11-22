@@ -32,7 +32,7 @@ export function demoRecordKeys(source:Specification){return [DEMO_SOURCE_KEY,'vi
 export function installDemoSample(storage:StorageAccess,reset=false):Specification{
  const original=storage.getItem(DEMO_SOURCE_KEY),owned=storage.getItem(DEMO_MARKER)==='1';
  if(original!==null&&!owned)throw Error('Existing browser work was preserved. Open the demo on its independent website address.');
- if(!reset&&original!==null){const source=readSpecification(JSON.parse(original));if(!source)throw Error('Saved demo source is unreadable. Reset the demo sample deliberately to restore it.');return source;}
+ if(!reset&&original!==null){let source:Specification|null=null;try{source=readSpecification(JSON.parse(original));}catch{}if(!source)throw Error('Saved demo source is unreadable. Use Reset demo sample to restore the fictitious records.');return source;}
  const fixture=createDemoSample();
  let previous:Specification|null=null;try{previous=original?readSpecification(JSON.parse(original)):null;}catch{}
  const keys=[...new Set([...demoRecordKeys(fixture.source),...(previous?demoRecordKeys(previous):[])])];
