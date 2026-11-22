@@ -11,9 +11,14 @@ import VisualSDDCanvas from '../components/visual-sdd-canvas';
 import CloudPanel,{AccountStatus,type CloudReference,type CloudProject} from '../components/cloud-panel';
 import {createSpecification,readSpecification,validateSpecification,type Specification} from '../lib/spec-core';
 import {CLOUD_LINK_KEY,readCloudReference,storeCloudReference,preserveLocalReviewOnFirstSave} from '../lib/cloud-link-core';
+import DemoWorkspace from '../components/demo-workspace';
+import {DEMO_ENABLED} from '../lib/demo-config';
 type Mode='simple'|'professional';
 type Draft={id:string;title:string;description:string;status:'draft'};
 export default function Page(){
+ return DEMO_ENABLED?<DemoWorkspace/>:<WorkspacePage/>;
+}
+function WorkspacePage(){
  const [mode,setMode]=useState<Mode>('simple');
  const [experience,setExperience]=useState<'business'|'engineering'>('business');
  const [stage,setStage]=useState<StageId>('idea');

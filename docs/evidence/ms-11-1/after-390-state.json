@@ -1,0 +1,114 @@
+{
+  "source": {
+    "schemaVersion": 1,
+    "id": "SPEC-001",
+    "sourceIdea": "An athlete can revoke coach access. A weekly report may already be queued when that access is withdrawn.",
+    "title": "SetPilot — Coach access and weekly reports",
+    "goal": "Athletes control dashboard access and review what happens to weekly reports queued before access is withdrawn.",
+    "audience": "Athletes and coaches",
+    "exclusions": "Billing, training plans and implementation execution.",
+    "requirements": [
+      {
+        "id": "REQ-001",
+        "title": "Withdraw coach access",
+        "statement": "An athlete must be able to withdraw coach access and block subsequent dashboard reads.",
+        "priority": "must",
+        "criteria": [
+          {
+            "id": "AC-001",
+            "text": "Given coach access exists, when the athlete withdraws it, then subsequent dashboard reads by that coach are denied."
+          }
+        ]
+      },
+      {
+        "id": "REQ-002",
+        "title": "Check access before weekly report delivery",
+        "statement": "A queued weekly report must check current coach access at delivery time.",
+        "priority": "must",
+        "criteria": [
+          {
+            "id": "AC-001",
+            "text": "Given a weekly report was queued before access withdrawal, when delivery is attempted, then it is withheld from the revoked coach."
+          }
+        ]
+      }
+    ],
+    "revision": 7,
+    "updatedAt": "2026-11-22T09:00:00.000Z",
+    "approval": {
+      "status": "draft",
+      "approvedAt": null,
+      "approvedRevision": null
+    }
+  },
+  "review": {
+    "schemaVersion": 1,
+    "kind": "stakeholder-review",
+    "specId": "SPEC-001",
+    "sourceIdea": "An athlete can revoke coach access. A weekly report may already be queued when that access is withdrawn.",
+    "specRevision": 7,
+    "revision": 5,
+    "nextId": 5,
+    "updatedAt": "2026-11-22T09:00:00.000Z",
+    "rules": [
+      {
+        "requirementId": "REQ-001",
+        "revision": 4,
+        "workflows": [
+          {
+            "id": "FLOW-001",
+            "label": "Coach opens the dashboard",
+            "kind": "interactive"
+          }
+        ],
+        "edges": [
+          {
+            "id": "EDGE-003",
+            "description": "A weekly report was queued before access was withdrawn. Review delivery-time access checks before accepting this background path; it is not a confirmed workflow.",
+            "status": "open",
+            "evidenceExampleId": null,
+            "reviewNote": ""
+          }
+        ],
+        "examples": [
+          {
+            "id": "EX-002",
+            "workflowId": "FLOW-001",
+            "given": "Coach access has been withdrawn",
+            "when": "The coach requests the dashboard",
+            "then": "The request is denied"
+          }
+        ],
+        "rationale": "",
+        "decision": {
+          "status": "draft",
+          "at": null,
+          "ruleRevision": null,
+          "specRevision": null
+        }
+      },
+      {
+        "requirementId": "REQ-002",
+        "revision": 2,
+        "workflows": [],
+        "edges": [
+          {
+            "id": "EDGE-004",
+            "description": "What happens if access changes after a weekly report is queued but before delivery? No background workflow or delivery example has been confirmed.",
+            "status": "open",
+            "evidenceExampleId": null,
+            "reviewNote": ""
+          }
+        ],
+        "examples": [],
+        "rationale": "",
+        "decision": {
+          "status": "draft",
+          "at": null,
+          "ruleRevision": null,
+          "specRevision": null
+        }
+      }
+    ]
+  }
+}

@@ -1,13 +1,14 @@
 import {NextRequest,NextResponse} from 'next/server';
 import {randomUUID} from 'node:crypto';
 import {neon} from '@neondatabase/serverless';
-import {auth} from '../../../lib/auth/server';
+import {DEMO_ENABLED} from '../../../lib/demo-config';
 import {inferCloudEvent,isSameOrigin,parseCloudPayload} from '../../../lib/cloud-core';
 
 export const runtime='nodejs';
 export const dynamic='force-dynamic';
 function db(){if(!process.env.DATABASE_URL)throw Error('Database is not configured');return neon(process.env.DATABASE_URL);}
 async function getUserId(){
+ const {auth}=await import('../../../lib/auth/server');
  const session=await auth.getSession();
  const id=session.data?.user?.id;
  return typeof id==='string'&&id.length>0?id:null;
@@ -16,6 +17,7 @@ function error(message:string,status:number){return NextResponse.json({error:mes
 function verifyOrigin(request:NextRequest){return isSameOrigin(request.headers.get('origin'),request.url);}
 
 export async function GET(){
+ if(DEMO_ENABLED)return error('Cloud workspace is disabled in this sample demo.',403);
  let userId:string|null;try{userId=await getUserId();}catch{return error('Authentication unavailable.',503);}
  if(!userId)return error('Sign in to access your private workspace.',401);
  try{
@@ -28,6 +30,7 @@ export async function GET(){
  }catch{return error('Could not load your workspace. Please try again.',503);}
 }
 export async function POST(request:NextRequest){
+ if(DEMO_ENABLED)return error('Cloud workspace is disabled in this sample demo.',403);
  if(!verifyOrigin(request))return error('Cross-origin request rejected.',403);
  let userId:string|null;try{userId=await getUserId();}catch{return error('Authentication unavailable.',503);}
  if(!userId)return error('Sign in to save your work.',401);
@@ -59,6 +62,7 @@ export async function POST(request:NextRequest){
  }catch{return error('Could not save your project. Please try again.',503);}
 }
 export async function DELETE(request:NextRequest){
+ if(DEMO_ENABLED)return error('Cloud workspace is disabled in this sample demo.',403);
  if(!verifyOrigin(request))return error('Cross-origin request rejected.',403);
  let userId:string|null;try{userId=await getUserId();}catch{return error('Authentication unavailable.',503);}
  if(!userId)return error('Sign in to delete a project.',401);
