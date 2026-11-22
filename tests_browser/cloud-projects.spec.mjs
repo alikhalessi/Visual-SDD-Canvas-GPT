@@ -15,6 +15,7 @@ const cloudToken='2026-11-21T16:00:00.000Z';
 const qaSession={session:{id:'qa-session',userId:'qa-user'},user:{id:'qa-user',name:'QA account',email:'qa@example.invalid'}};
 function project(id,title){return {id,title,idea:brief,specification:imported.spec,revision:2,approval_status:'draft',updated_at:cloudToken,created_at:cloudToken};}
 async function openProjects(page){await page.getByRole('button',{name:'◉ QA account',exact:true}).click();}
+function queuedRule(page){return page.locator('.business-rule-card').filter({hasText:imported.spec.requirements.find(r=>r.id==='REQ-003').statement});}
 test.beforeEach(async({page})=>{
  test.skip(!!process.env.E2E_BASE_URL,'Mocked cloud integration runs locally; live OAuth is verified separately.');
  await page.route('**/api/auth/**',r=>r.fulfill({json:qaSession}));
@@ -39,7 +40,7 @@ test('first cloud save retains browser review and provenance under the new proje
  await openProjects(page);await page.getByRole('button',{name:'Save to my account →',exact:true}).click();
  await expect(page.getByRole('status')).toContainText('New project saved securely');
  await page.getByRole('button',{name:'Business Review Mode',exact:true}).click();
- await expect(page.getByRole('button',{name:/REQ-003 No Example/})).toContainText('1 uncovered path(s)');
+ await expect(queuedRule(page)).toContainText('1 uncovered path(s)');
  const values=await page.evaluate(keys=>keys.map(k=>localStorage.getItem(k)),[localStakeholderKey(imported.spec,projectId),localVibeHistoryKey(imported.spec,projectId)]);
  expect(JSON.parse(values[0])).toEqual(imported.review);expect(JSON.parse(values[1])).toEqual(history);
 });
@@ -48,23 +49,23 @@ test('project identity survives reload and project switching keeps local notes s
  await openProjects(page);await page.getByRole('button',{name:'Save to my account →',exact:true}).click();
  await expect(page.getByRole('status')).toContainText('New project saved securely');
  await page.getByRole('button',{name:'Business Review Mode',exact:true}).click();
- await page.getByRole('button',{name:/REQ-003 No Example/}).click();
+ await queuedRule(page).click();
  await page.getByLabel('Why is this behaviour acceptable (or what still needs work)?').fill('Only the first cloud project owns this QA review note.');
  await page.getByRole('button',{name:'Save review rationale',exact:true}).click();
  await page.reload();
- await page.getByRole('button',{name:/REQ-003 No Example/}).click();
+ await queuedRule(page).click();
  await expect(page.getByLabel('Why is this behaviour acceptable (or what still needs work)?')).toHaveValue('Only the first cloud project owns this QA review note.');
  await openProjects(page);
  page.once('dialog',d=>d.accept());
  await page.locator('.cloud-project').filter({hasText:'QA second project'}).getByRole('button',{name:'Open',exact:true}).click();
  await page.getByRole('button',{name:'Business Review Mode',exact:true}).click();
- await page.getByRole('button',{name:/REQ-003 No Example/}).click();
+ await queuedRule(page).click();
  await expect(page.getByLabel('Why is this behaviour acceptable (or what still needs work)?')).toHaveValue('');
- await expect(page.getByRole('button',{name:/REQ-003 No Example/})).toContainText('0 uncovered path(s)');
+ await expect(queuedRule(page)).toContainText('0 uncovered path(s)');
  await openProjects(page);page.once('dialog',d=>d.accept());
  await page.locator('.cloud-project').filter({hasText:imported.spec.title}).getByRole('button',{name:'Open',exact:true}).click();
  await page.getByRole('button',{name:'Business Review Mode',exact:true}).click();
- await page.getByRole('button',{name:/REQ-003 No Example/}).click();
+ await queuedRule(page).click();
  await expect(page.getByLabel('Why is this behaviour acceptable (or what still needs work)?')).toHaveValue('Only the first cloud project owns this QA review note.');
 });
 

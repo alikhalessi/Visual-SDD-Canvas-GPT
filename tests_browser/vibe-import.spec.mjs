@@ -71,6 +71,7 @@ test('scheduled path commits as an open flag, survives reload and exports exact 
  expect(review.rules.flatMap(x=>x.workflows).map(x=>x.kind)).toEqual(['interactive']);
  expect(values[unrelatedKey]).toBe('unrelated history sentinel');
  const downloadEvent=page.waitForEvent('download');
+ await page.getByText('Details & exports',{exact:true}).click();
  await page.getByRole('button',{name:'Export import provenance',exact:true}).click();
  const download=await downloadEvent;expect(download.suggestedFilename()).toBe('vibe-import-provenance.json');
  const chunks=[];for await(const chunk of await download.createReadStream())chunks.push(chunk);
@@ -79,7 +80,7 @@ test('scheduled path commits as an open flag, survives reload and exports exact 
  expect(exported.receipts[0].paths).toHaveLength(1);
  expect(exported.receipts[0].paths[0]).toMatchObject({requirementId:'REQ-003',kind:'background',edgeId:report.edges[0].id,disposition:'open-edge-flag'});
  const path=exported.receipts[0].paths[0];expect(brief.slice(path.source.start,path.source.end)).toBe(path.source.quote);
- await page.getByRole('button',{name:/REQ-003 No Example/}).click();
+ await page.locator('.business-rule-card').filter({hasText:spec.requirements.find(r=>r.id==='REQ-003').statement}).click();
  await expect(page.getByRole('button',{name:'Approve reviewed behaviour',exact:true})).toBeDisabled();
  await expect(page.locator('.business-detail')).toContainText('Uncovered / needs review');
  expect(errors).toEqual([]);

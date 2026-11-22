@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
+    branches: [main, sprint-11-evaluation-sandbox]
 permissions:
   contents: read
 jobs:
@@ -73,5 +73,32 @@ jobs:
         with:
           name: sprint-11-report-render-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_attempt }}
           path: document-results/
+          retention-days: 90
+          if-no-files-found: warn
+  demo_verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22'
+      - run: npm ci --no-audit --no-fund
+      - name: Build isolated demo without Auth or database credentials
+        run: npm run build
+        env:
+          NEXT_PUBLIC_VISUAL_SDD_DEMO: '1'
+      - run: npx playwright install --with-deps chromium firefox webkit
+      - name: Verify demo and reset in all browser projects
+        run: npm run test:e2e
+        env:
+          DEMO_TEST: '1'
+      - name: Preserve demo verification evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ms-11-1-demo-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_attempt }}
+          path: |
+            test-results/
+            playwright-report/
           retention-days: 90
           if-no-files-found: warn

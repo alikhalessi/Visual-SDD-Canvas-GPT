@@ -1,9 +1,14 @@
-import { auth } from './lib/auth/server';
+import {NextRequest,NextResponse} from 'next/server';
+import {DEMO_ENABLED} from './lib/demo-config';
 
 // Next.js 16 OAuth callback finalizer. The public homepage is not globally
 // protected: only OAuth callback requests are routed through this proxy.
 // All cloud API operations independently verify the user session and owner ID.
-export default auth.middleware({ loginUrl: '/' });
+export default async function proxy(request:NextRequest){
+ if(DEMO_ENABLED)return NextResponse.next();
+ const {auth}=await import('./lib/auth/server');
+ return auth.middleware({loginUrl:'/'})(request);
+}
 
 export const config = {
   matcher: [
