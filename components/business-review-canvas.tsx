@@ -162,11 +162,9 @@ export default function BusinessReviewCanvas({spec,idea,projectId,onSpecificatio
   try{localStorage.removeItem(key);setRawRecovery(null);setDocument(createStakeholderReview(spec));setMessage('Invalid review cache cleared with your confirmation.');}catch{setMessage('Storage could not be cleared. Original review cache remains.');}
  }
  return <section className="business-view" aria-labelledby="business-view-title">
-  <header className="business-hero"><div><span className="eyebrow">SPRINT 08 · BUSINESS REVIEW</span><h1 id="business-view-title">Understand the rules.<br/><em>See what could be missed.</em></h1><p>Review how your product should behave, including the work people never see. The same source requirements remain available to engineers. Nothing is approved automatically.</p></div><span className="business-local">REVIEW NOTES: BROWSER ONLY</span></header>
-  <VibeImportPanel spec={spec} key={projectId??'guest'} review={ready?document:null} reviewReady={canImport&&(!spec||ready)} onCommit={commitVibeImport}/>
+  <header className="business-hero"><div><span className="eyebrow">BUSINESS REVIEW</span><h1 id="business-view-title">Understand the rules.<br/><em>See what could be missed.</em></h1><p>Review how your product should behave, including the work people never see. The same source requirements remain available to engineers. Nothing is approved automatically.</p></div><span className="business-local">REVIEW NOTES: BROWSER ONLY</span></header>
   {!spec?<section className="business-empty"><h2>Start with your product idea</h2><p>{idea.trim()||'No idea has been saved yet.'}</p><p>Write the first specification to make its business rules visible here.</p><button className="business-primary" onClick={onCreateSpecification}>Start a specification</button></section>:
    <>
-    <HandoffModal key={key} spec={spec} review={ready?document:null} projectId={projectId} reviewReady={canImport&&ready}/>
     <div className="business-summary"><div><strong>{cards.length}</strong><span>Business rules</span></div><div><strong>{examples}</strong><span>Example attached, review pending</span></div><div><strong>{signed}</strong><span>Behaviour reviewed &amp; approved</span></div><div><strong>r{spec.revision}</strong><span>Source specification revision</span></div></div>
     <div className="business-source"><div><strong>{spec.title}</strong><p>{spec.approval.status==='approved'?'Source approved':'Source draft — separate source approval pending'} · Review notes and edge flags are not cloud-synced.</p></div><button className="business-outline" onClick={onOpenSpecification}>Open source specification</button>
     <details className="business-exports"><summary>Details &amp; exports</summary><p>Specification {spec.id} · Source revision {spec.revision}</p><ul>{cards.map(c=><li key={c.id}>{c.id}: {c.title||'Untitled rule'}</li>)}</ul><div className="business-source-actions">{document&&ready&&<button className="business-outline" onClick={()=>download('stakeholder-review-r'+document.revision+'.json',JSON.stringify(document,null,2))}>Export review JSON</button>}{ready&&<button className="business-outline" onClick={()=>{
@@ -182,7 +180,9 @@ export default function BusinessReviewCanvas({spec,idea,projectId,onSpecificatio
      {active&&<RuleEditor key={active.id} card={active} spec={spec} doc={document} onChange={setDocument} onWording={statement=>onSpecificationChange(updateRequirement(spec,active.id,{statement}))}/>}
     </div>}
     {cards.length===0&&<div className="business-empty"><p>No rules exist in this specification yet. Add them in the source specification.</p><button className="business-primary" onClick={onOpenSpecification}>Add business rules</button></div>}
+    <HandoffModal key={key} spec={spec} review={ready?document:null} projectId={projectId} reviewReady={canImport&&ready}/>
    </>}
+  <VibeImportPanel spec={spec} key={projectId??'guest'} review={ready?document:null} reviewReady={canImport&&(!spec||ready)} onCommit={commitVibeImport}/>
   {message&&<p role="status" className="business-notice">{message}</p>}
   <p className="business-disclaimer">Coverage here means stakeholder documentation and explicit human review — not test execution, code verification, GitHub approval, deployment, or proof that every unknown edge case has been found.</p>
  </section>;

@@ -4,7 +4,7 @@ Owner authorization: 22 November 2026. Base commit: `30d9a0a1799059ea03848e0116e
 
 ## Delivered scope
 
-- Business Review moves technical exports and identifiers into keyboard-accessible Details & exports / Reference details disclosures. Source approval, browser-only storage and open questions stay visible. Export schemas and approval semantics are unchanged.
+- Business Review moves technical exports and identifiers into keyboard-accessible Details & exports / Reference details disclosures. Ancillary handoff and import panels follow the business rules. Source approval, browser-only storage and open questions stay visible. Export schemas and approval semantics are unchanged.
 - The independent demo starts with an editable, fictitious SetPilot coach-access and queued weekly-report sample. The source and behaviour decisions are drafts. The potential background path remains an OPEN question, not a confirmed workflow. This fixture is separate from the frozen study scenarios.
 - Reset demo sample requires confirmation, restores the original sample and removes only its known review/provenance/planning/handoff records. Unrelated evaluation and workspace records survive. A failed write attempts restoration and reports its actual outcome. Browser crash recovery is not an atomic storage guarantee.
 - Demo edits remain local. The demo build uses only the public `NEXT_PUBLIC_VISUAL_SDD_DEMO=1` switch; no Auth or database credential is provisioned. Cloud/API and OAuth callback paths are gated before Auth initialization. The normal build retains existing authentication and owner checks.
