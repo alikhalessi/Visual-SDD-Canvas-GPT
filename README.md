@@ -1,5 +1,13 @@
 # Visual SDD Canvas
 
+## Major revision 1
+
+The next product version receives existing software specifications, creates source-grounded visual models, and supports business analyst–mediated stakeholder review.
+
+The [Major revision 1 execution roadmap](docs/major-revision-1/ROADMAP.md) defines fourteen micro sprints, acceptance gates, a versioned scenario catalog and a conditional effort estimate. [Track the work in issue #10](https://github.com/alikhalessi/Visual-SDD-Canvas-GPT/issues/10). The roadmap is prepared; implementation sprints are planned. Target version 1.0.0 is not yet released.
+
+The sections below describe the earlier SDD workflow baseline. Current main is Sprint 10; pending Sprint 11 and demo PRs are listed in the roadmap. Major revision planning does not merge or deploy them.
+
 **Sprint 07 — Human-Centered UX & Quality Foundation**
 
 Visual SDD is a visual operating environment for Spec-Driven Development. Its core product is the **visible, reviewable, and controllable SDD process**, rather than a generic AI app builder.
